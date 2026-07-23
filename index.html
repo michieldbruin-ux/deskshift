@@ -858,14 +858,16 @@
   .mprog{height:6px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden;margin:0 0 18px}
   .mprog span{display:block;height:100%;background:var(--lime);border-radius:4px;transition:width 2.2s linear}
 
-  /* Workweek-staven blijven na het laden subtiel bewegen om aandacht te houden */
-  .week.on .week-day{animation:weekBob 3.4s ease-in-out 1.2s infinite}
-  .week.on .week-day:nth-child(2){animation-delay:1.35s}
-  .week.on .week-day:nth-child(3){animation-delay:1.5s}
-  .week.on .week-day:nth-child(4){animation-delay:1.65s}
-  .week.on .week-day:nth-child(5){animation-delay:1.8s}
-  @keyframes weekBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-  @media (prefers-reduced-motion:reduce){.week.on .week-day{animation:none}}
+  /* Alleen de donkere staaf-delen deinen zacht na het laden (niet de hele sectie).
+     translateY staat vóór scaleY zodat de vulhoogte gelijk blijft. */
+  .week.on .week-fill{animation:weekBob 3.4s ease-in-out 1.2s infinite}
+  .week.on .week-day:nth-child(1) .week-fill{animation-delay:1.2s}
+  .week.on .week-day:nth-child(2) .week-fill{animation-delay:1.35s}
+  .week.on .week-day:nth-child(3) .week-fill{animation-delay:1.5s}
+  .week.on .week-day:nth-child(4) .week-fill{animation-delay:1.65s}
+  .week.on .week-day:nth-child(5) .week-fill{animation-delay:1.8s}
+  @keyframes weekBob{0%,100%{transform:translateY(0) scaleY(var(--h))}50%{transform:translateY(-4px) scaleY(var(--h))}}
+  @media (prefers-reduced-motion:reduce){.week.on .week-fill{animation:none}}
 
   /* 'Deskshift' vetgedrukt met highlight die bij het landen inzweeft */
   .ds-pop{font-weight:700;color:var(--ink);background:linear-gradient(var(--lime),var(--lime)) no-repeat left bottom/0% 34%;padding:0 2px;animation:dsPop .55s var(--ease) 1s forwards}
@@ -880,6 +882,12 @@
     .prijs-dark-in{max-width:1000px}
     .citaat-in,.slot-cta-in{max-width:760px}
   }
+
+  /* Trust-sectie: geen dubbele kaart-in-kaart meer, schonere blokjes met lime-stip */
+  .trust{background:transparent;box-shadow:none;border-radius:0;padding:20px 2px;margin:14px 0}
+  @media(min-width:920px){.trust{max-width:900px}}
+  .trustkaart{background:var(--chalk);border-radius:14px;padding:18px 18px 18px 42px;box-shadow:inset 0 0 0 1px var(--line-2);position:relative}
+  .trustkaart::before{content:"";position:absolute;left:18px;top:23px;width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(191,227,95,.22)}
 </style>
 
 <div class="wrap">
@@ -2343,17 +2351,32 @@ function aflevering(p, s){
         <span class="muted" style="font-size:13px">Kies in het printvenster voor opslaan als pdf.</span></div>
     </div>`;
 }
-/* ---------- Deskshift: subtiele parallax op enkele elementen ---------- */
+/* ---------- Deskshift: parallax door de hele landing ---------- */
 (function(){
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
   if(reduce || !("requestAnimationFrame" in window)) return;
+  // Elementen (zonder eigen transform) door alle secties, met kleine snelheden.
+  var config = [
+    [".hero .eyebrow",0.04],[".hero-mock",0.10],
+    ["#weekViz",0.05],[".week-cap",0.03],
+    [".hoe .mono",0.05],[".hoe .bloktitel",0.03],
+    [".citaat .mono",0.06],[".citaat-tekst",0.04],
+    [".trust .mono",0.05],[".trust .bloktitel",0.03],[".trustkaart",0.05],
+    [".prijs-dark .mono",0.05],[".price-groot",0.07],[".bon-kaart",0.05],
+    [".maker-quote",0.04],[".faq > .mono",0.05],[".slot-cta h2",0.04]
+  ];
+  config.forEach(function(c){
+    [].forEach.call(document.querySelectorAll(c[0]), function(el){
+      if(!el.hasAttribute("data-para")) el.setAttribute("data-para", c[1]);
+    });
+  });
   var els = [].slice.call(document.querySelectorAll("[data-para]"));
   if(!els.length) return;
   var ticking = false;
   function apply(){
     var vh = window.innerHeight;
     els.forEach(function(el){
-      var speed = parseFloat(el.getAttribute("data-para")) || 0.08;
+      var speed = parseFloat(el.getAttribute("data-para")) || 0.06;
       var r = el.getBoundingClientRect();
       var mid = r.top + r.height/2;
       var off = (mid - vh/2) * -speed;
