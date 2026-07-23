@@ -1,6 +1,18 @@
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vrije Uren</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deskshift</title>
+<meta name="description" content="Een korte, zelfstandige online intake voor wie vastloopt op te weinig uitdaging in het werk. Zeven secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
+<meta name="theme-color" content="#E6E6E6">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Deskshift">
+<meta property="og:title" content="Deskshift">
+<meta property="og:description" content="Zeven korte secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
+<meta property="og:url" content="https://deskshift.pro">
+<meta property="og:locale" content="nl_NL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Deskshift">
+<meta name="twitter:description" content="Zeven korte secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23404E3B'/><rect x='7.5' y='7.5' width='7' height='7' rx='1.6' fill='%23BAC8B1'/><rect x='17.5' y='7.5' width='7' height='7' rx='1.6' fill='%237B9669'/><rect x='7.5' y='17.5' width='7' height='7' rx='1.6' fill='%237B9669'/><rect x='17.5' y='17.5' width='7' height='7' rx='1.6' fill='%23BAC8B1'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -337,12 +349,121 @@
   .body li{margin-bottom:5px}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.hr-cell{opacity:1;transform:none}}
   @media(max-width:520px){.grid-hours{grid-template-columns:repeat(8,1fr)}.rail .nm{display:none}}
+
+  /* ============================================================
+     Deskshift — premium + mobiel-first pass (appended overrides).
+     Gelaagd bovenop de basis; latere regels winnen. Palet ongewijzigd.
+     Animaties uitsluitend via transform/opacity, geen layout-shift.
+     Primair getest op 375–430px; desktop is de afgeleide.
+     ============================================================ */
+  :root{
+    --r:8px; --r-lg:16px;
+    --line:rgba(64,78,59,.12); --line-2:rgba(64,78,59,.07);
+    --sh-1:0 1px 2px rgba(31,42,26,.05), 0 1px 3px rgba(31,42,26,.05);
+    --sh-2:0 2px 6px rgba(31,42,26,.05), 0 8px 20px rgba(31,42,26,.07);
+    --sh-3:0 12px 34px rgba(31,42,26,.11), 0 3px 10px rgba(31,42,26,.06);
+    --sh-ink:0 14px 36px rgba(31,42,26,.20);
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --safe-b:env(safe-area-inset-bottom,0px);
+  }
+  html{-webkit-text-size-adjust:100%}
+  html,body{overflow-x:hidden}
+  img,svg,canvas{max-width:100%;height:auto}
+
+  /* Ruimer, mobiel-first kader (ruimte voor sticky CTA onderaan) */
+  .wrap{max-width:720px;padding:22px 18px calc(112px + var(--safe-b))}
+  @media(min-width:760px){.wrap{padding:40px 24px 120px}}
+
+  /* Secties: zachte gelaagde schaduw i.p.v. harde rand */
+  .wrap > section{border:0;border-radius:var(--r-lg);box-shadow:var(--sh-2),inset 0 0 0 1px var(--line-2);padding:24px 18px;margin-bottom:20px}
+  @media(min-width:760px){.wrap > section{padding:38px 40px;margin-bottom:30px}}
+
+  /* Type-schaal met discipline; headline breekt netjes op mobiel */
+  h1{font-size:clamp(27px,7.6vw,56px);line-height:1.05;letter-spacing:-.025em;text-wrap:balance}
+  h2{font-size:clamp(22px,5.2vw,32px);line-height:1.12;text-wrap:balance}
+  .lead{font-size:clamp(16px,4.3vw,20px);line-height:1.45}
+  .mono{font-size:10.5px;letter-spacing:.16em;color:rgba(64,78,59,.55)}
+  @media(min-width:760px){.mono{font-size:11px}}
+
+  /* Touch targets ≥44px + tik-feedback; hover alleen waar het kan */
+  button,.btn,.btn-ghost,.btn-lime{min-height:44px;transition:transform .16s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease),border-color .2s var(--ease)}
+  .btn{box-shadow:var(--sh-1)}
+  @media(hover:hover){
+    .btn:hover{background:var(--petrol);transform:translateY(-1px);box-shadow:var(--sh-2)}
+    .btn-lime:hover{transform:translateY(-1px);box-shadow:var(--sh-2)}
+  }
+  button:active,.btn:active,.btn-ghost:active,.btn-lime:active{transform:scale(.975);box-shadow:var(--sh-1)}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:5px}
+
+  /* Primaire CTA meer gewicht */
+  #start,#landing .btn:not(.btn-ghost):not(.btn-sm){font-size:17px;padding:15px 24px}
+
+  /* Hero week-grid: past altijd, ruimte gereserveerd, stagger via .on */
+  .grid-hours{gap:6px;max-width:min(360px,84vw)}
+  .hr-cell{animation:none;opacity:0;transform:scale(.55);transition:opacity .32s var(--ease),transform .42s var(--ease);will-change:transform,opacity}
+  .hr-cell.on{opacity:1;transform:none}
+
+  /* Herken-lijst: hele rij tappable, 44px, fijne check */
+  .herken{border-radius:var(--r-lg);padding:22px 18px 16px}
+  .hlijst li{padding:10px 8px;margin:0 -8px;border-radius:10px;min-height:44px;transition:background .18s var(--ease),transform .12s var(--ease)}
+  .hlijst li:active{transform:scale(.99);background:rgba(255,255,255,.06)}
+  .hlijst li .vink{transition:background .2s var(--ease),border-color .2s var(--ease),transform .22s var(--ease)}
+  .hlijst li.aan .vink{transform:scale(1.08)}
+
+  /* Drie kaartjes: gelijk, ademend, verticaal gestapeld op mobiel */
+  .stappen3{gap:12px}
+  .stap3{display:flex;flex-direction:column;border:0;box-shadow:var(--sh-1),inset 0 0 0 1px var(--line-2);border-radius:var(--r-lg);padding:20px}
+  @media(min-width:620px){.stappen3{gap:16px}}
+
+  /* Lichte kaarten (step/uitklap): zachte schaduw i.p.v. rand */
+  .step,.uitklap{border:0;box-shadow:var(--sh-1),inset 0 0 0 1px var(--line-2);border-radius:var(--r-lg)}
+
+  /* Donkere kaarten: subtiele diepte binnen het palet */
+  .opener,.herken,.klap,.profiel,.paywall,.doelblok,.gratisstap{
+    background-image:radial-gradient(120% 120% at 0% 0%,rgba(255,255,255,.06),transparent 58%),linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.05));
+    box-shadow:var(--sh-ink)
+  }
+
+  /* Prijsblok als één geheel, niet als losse tabel */
+  #landing .step .row.spread{align-items:center;gap:16px}
+  .price{letter-spacing:-.03em}
+
+  /* FAQ: 44px rijen, roterende plus, zachte fade van het antwoord */
+  .uitklap summary{min-height:44px}
+  .faq summary{min-height:44px;align-items:center;padding:5px 0}
+  .faq summary::after{content:"+";font-size:20px;font-weight:400;transition:transform .28s var(--ease)}
+  .faq details[open] summary::after{content:"+";transform:rotate(45deg)}
+  .faq p{margin:0;padding:2px 0 6px}
+  .faq details[open] p{animation:dsIn .3s var(--ease) both}
+  @keyframes dsIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  /* Fade-up on scroll (transform/opacity, geen layout-shift) */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease);will-change:transform,opacity}
+  .reveal.in{opacity:1;transform:none}
+
+  /* Ruimere touch targets in de vragenlijst-flow */
+  input[type=range]{height:40px}
+  .opt{min-height:44px;align-items:center}
+  .rank li{min-height:44px}
+  .acties li{padding:9px 0}
+  .mv,.pen,.rev .pen{min-width:40px;min-height:40px}
+
+  /* Sticky mobiele CTA: klein, rustig, respecteert de safe-area */
+  #mobielCta{padding:10px 16px calc(10px + var(--safe-b));gap:12px;box-shadow:0 -6px 20px rgba(31,42,26,.10);background:rgba(255,255,255,.92);-webkit-backdrop-filter:saturate(1.1) blur(8px);backdrop-filter:saturate(1.1) blur(8px)}
+  #mobielCta span{flex:0 0 auto;font-size:10.5px;letter-spacing:.08em}
+  #mobielCta .btn{flex:1;min-height:46px}
+
+  /* Reduced motion: alles zichtbaar, niets beweegt */
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1!important;transform:none!important}
+    .hr-cell{opacity:1!important;transform:none!important}
+  }
 </style>
 
 <div class="wrap">
 
 <section id="landing">
-  <div class="mono">Vrije Uren</div>
+  <div class="mono">Deskshift</div>
   <h1 style="margin:14px 0 18px">Je bent niet lui.<br>Je bent gewoon heel efficiënt.</h1>
   <p class="lead">En niemand heeft je verteld wat je met de rest moet doen.</p>
 
@@ -389,7 +510,7 @@
 
   <div class="step">
     <div class="row spread">
-      <div><div class="mono">Wat het kost</div><div class="price" style="font-size:34px;margin-top:6px">€17</div></div>
+      <div><div class="mono">Wat het kost</div><div class="price" style="font-size:34px;margin-top:6px">€25</div></div>
       <div style="max-width:380px"><p style="margin:0" class="muted">Eenmalig, geen abonnement. De intake en je eerste inzicht zijn gratis. Je ziet je patroon voordat je iets betaalt.</p></div>
     </div>
   </div>
@@ -424,6 +545,11 @@
     <span class="muted" style="font-size:13px">Alleen voor jezelf tijdens het bouwen.</span>
   </div>
 </section>
+
+<div id="mobielCta" class="hidden" role="region" aria-label="Snel starten">
+  <span>±15 min · gratis inzicht</span>
+  <button class="btn" onclick="document.getElementById('start').click()">Start — gratis inzicht</button>
+</div>
 
 <section id="intake" class="hidden">
   <div class="rail">
@@ -509,7 +635,7 @@
 
 <script>
 const MODEL = "claude-sonnet-4-6";
-const KEY = "vrije-uren:draft";
+const KEY = "deskshift:draft";
 const KAARTEN = ["Analyseren","Presenteren","Schrijven","Overleggen","Plannen","Onderhandelen","Uitzoeken","Bouwen of maken","Anderen helpen","Details controleren","Nieuwe mensen spreken","Beslissen","Documenteren","Improviseren"];
 
 /* rolduur: maanden, daarna halve jaren, daarna hele jaren */
@@ -617,7 +743,7 @@ async function bewaar(){
 async function laad(){ try{ const r = await window.storage.get(KEY); return r?JSON.parse(r.value):null; }catch(e){ return null; } }
 async function wis(){ try{ await window.storage.delete(KEY); }catch(e){} }
 
-(function(){ const g=$("heroGrid"); for(let i=0;i<40;i++){ const c=document.createElement("div"); c.className="hr-cell"+(i>=26?" free":""); c.style.animationDelay=(i*20)+"ms"; g.appendChild(c);} })();
+(function(){ const g=$("heroGrid"); if(!g) return; const reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches; const frag=document.createDocumentFragment(); const cells=[]; for(let i=0;i<40;i++){ const c=document.createElement("div"); c.className="hr-cell"+(i>=26?" free":""); frag.appendChild(c); cells.push(c);} g.appendChild(frag); if(reduce){ cells.forEach(c=>c.classList.add("on")); return; } const start=()=>cells.forEach((c,i)=>setTimeout(()=>c.classList.add("on"), i*34)); if("IntersectionObserver" in window){ const io=new IntersectionObserver((e,o)=>{ if(e[0].isIntersecting){ start(); o.disconnect(); } },{threshold:.12}); io.observe(g); } else { start(); } })();
 
 function md(t){
   let out="",list=false;
@@ -1488,7 +1614,7 @@ async function draaien(feedback){
           <li><span class="lk"></span><span>Berichten die je meteen kunt versturen</span></li>
         </ul>
         <div class="pwslot">
-          <div><div class="price">€17</div>
+          <div><div class="price">€25</div>
             <p class="muted" style="margin:2px 0 0">Eenmalig. Geen abonnement. Geen account. Direct in beeld.</p></div>
           <button class="btn btn-lime" id="betaalKnop">Bekijk mijn uitkomst</button>
         </div>
@@ -1597,7 +1723,7 @@ async function kies(s){
   try{
     const raw = await ask(P3, msgs, s.id==="zijproject"?[{type:"web_search_20250305",name:"web_search"}]:null, 3000);
     S.plan = jsonUit(raw);
-    $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Vrije Uren · jouw plan van zes weken</div>
+    $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Deskshift · jouw plan van zes weken</div>
       <h1 style="font-size:30px;margin:10px 0 4px">${esc(s.titel)}</h1></div>` + planHtml(S.plan, s);
     $("actBody").innerHTML = aflevering(S.plan, s) + `
       <div class="planstart">
@@ -1653,4 +1779,18 @@ function aflevering(p, s){
         <span class="muted" style="font-size:13px">Kies in het printvenster voor opslaan als pdf.</span></div>
     </div>`;
 }
+/* ---------- Deskshift: fade-up per blok in de landing (mobiel-first) ---------- */
+(function(){
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
+  if(reduce || !("IntersectionObserver" in window)) return; // laat alles gewoon zichtbaar
+  var els = [].slice.call(document.querySelectorAll("#landing .herken, #landing .stappen3, #landing .step, #landing .uitklap, #landing .maker, #landing .faq"));
+  if(!els.length) return;
+  els.forEach(function(el){ el.classList.add("reveal"); });
+  var io = new IntersectionObserver(function(ent){
+    ent.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, {threshold:0.15, rootMargin:"0px 0px 8% 0px"}); // vuurt vroeg genoeg op korte mobiele viewports
+  els.forEach(function(el){ io.observe(el); });
+  // vangnet: mocht een observer-callback uitblijven, toon alles alsnog
+  setTimeout(function(){ els.forEach(function(el){ el.classList.add("in"); }); }, 1600);
+})();
 </script>
