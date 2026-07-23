@@ -351,7 +351,7 @@
   @media(max-width:520px){.grid-hours{grid-template-columns:repeat(8,1fr)}.rail .nm{display:none}}
 
   /* ============================================================
-     Deskshift — premium + mobiel-first pass (appended overrides).
+     Deskshift - premium + mobiel-first pass (appended overrides).
      Gelaagd bovenop de basis; latere regels winnen. Palet ongewijzigd.
      Animaties uitsluitend via transform/opacity, geen layout-shift.
      Primair getest op 375–430px; desktop is de afgeleide.
@@ -460,7 +460,7 @@
   }
 
   /* ============================================================
-     Deskshift v2 — state-of-the-art pass over landing én flow.
+     Deskshift v2 - state-of-the-art pass over landing én flow.
      Diep bosgroen + electric lime accent; latere regels winnen.
      ============================================================ */
   :root{
@@ -574,7 +574,7 @@
   #mobielCta.hidden{display:none!important}
 
   /* ============================================================
-     Deskshift v3 — leesbaarheid, intake-navigatie, capaciteit-visual
+     Deskshift v3 - leesbaarheid, intake-navigatie, capaciteit-visual
      ============================================================ */
   h1,h2,h3,.bloktitel{color:var(--ink)}
   .preview .pv-kop{color:var(--chalk)}
@@ -646,7 +646,7 @@
       <span><i class="dot dot-werk"></i> wat je rol van je vraagt</span>
       <span><i class="dot dot-vrij"></i> ruimte die je overhoudt</span>
     </div>
-    <p class="capcap"><b>Je kunt meer aan dan je rol vraagt.</b> Die ruimte is geen luiheid en geen motivatieprobleem — het is een tekort aan uitdaging. Deskshift laat zien wat je ermee kunt.</p>
+    <p class="capcap"><b>Je kunt meer aan dan je rol vraagt.</b> Die ruimte is geen luiheid en geen motivatieprobleem. Het is een tekort aan uitdaging. Deskshift laat zien wat je ermee kunt.</p>
   </div>
 
   <div class="herken rv">
@@ -666,8 +666,8 @@
     <div class="mono">Hoe het werkt</div>
     <h2 class="bloktitel">Van vage onvrede naar een concreet plan</h2>
     <div class="stappen3">
-      <div class="stap3"><span class="stagtag">01 · Intake</span><h3>Zeven korte secties</h3><p>Schuiven, aantikken en sorteren — geen eindeloze vragenlijst. Vijftien minuten, gewoon op je telefoon.</p></div>
-      <div class="stap3"><span class="stagtag">02 · Inzicht</span><h3>Eén gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden — voordat je iets betaalt.</p></div>
+      <div class="stap3"><span class="stagtag">01 · Intake</span><h3>Zeven korte secties</h3><p>Schuiven, aantikken en sorteren, geen eindeloze vragenlijst. Vijftien minuten, gewoon op je telefoon.</p></div>
+      <div class="stap3"><span class="stagtag">02 · Inzicht</span><h3>Eén gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden, voordat je iets betaalt.</p></div>
       <div class="stap3"><span class="stagtag">03 · Plan</span><h3>Drie gewogen paden</h3><p>Doorgerekend op wat jij belangrijk vindt, met een plan van zes weken. Geen open einde.</p></div>
     </div>
   </div>
@@ -676,7 +676,7 @@
     <div class="mono">Zo ziet je inzicht eruit</div>
     <div class="pv-kop">“Je vak is niet te zwaar. Het is te klein.”</div>
     <div class="pv-spanning"><span>Snel klaar</span><em>schuurt met</em><span>Nergens heen</span></div>
-    <p class="pv-cap">Voorbeeld — jouw inzicht wordt opgebouwd uit jouw eigen antwoorden, met een letterlijk citaat als bewijs.</p>
+    <p class="pv-cap">Voorbeeld: jouw inzicht wordt opgebouwd uit jouw eigen antwoorden, met een letterlijk citaat als bewijs.</p>
   </div>
 
   <div class="trust rv">
@@ -747,7 +747,7 @@
 
 <div id="mobielCta" class="hidden" role="region" aria-label="Snel starten">
   <span>±15 min · gratis inzicht</span>
-  <button class="btn" onclick="document.getElementById('start').click()">Start — gratis inzicht</button>
+  <button class="btn" onclick="document.getElementById('start').click()">Start gratis inzicht</button>
 </div>
 
 <section id="intake" class="hidden">
@@ -898,7 +898,7 @@ const SECTIES = [
     intro:"Denk aan de afgelopen vier weken. Eerlijk mag, er kijkt niemand mee.",
     theorie:"Het verschil tussen contracturen en werkelijke taaktijd is de ruimte waar dit product over gaat. Bij hybride werk zonder harde begin- en eindtijd is dat verschil zelden zichtbaar.",
     stappen:[
-      {id:"echturen",type:"slider",vraag:"Hoeveel uur per week ben je écht met taken bezig?",hint:"Een ruwe schatting van een gemiddelde week is genoeg — exclusief overleg dat je zelf niet nodig vindt. Je contract is {contract} uur.",min:0,max:45,def:26,unit:"uur",pctVan:"contract"},
+      {id:"echturen",type:"slider",vraag:"Hoeveel uur per week ben je écht met taken bezig?",hint:"Een ruwe schatting van een gemiddelde week is genoeg. Exclusief overleg dat je zelf niet nodig vindt. Je contract is {contract} uur.",min:0,max:45,def:26,unit:"uur",pctVan:"contract"},
       {id:"moment",type:"choice",vraag:"Wanneer ben je meestal klaar met je week?",opties:["Al op dinsdag","Woensdag","Donderdag","Vrijdagochtend","Ik ben nooit echt klaar"]},
       {id:"invulling",type:"longtext",vraag:"Wat doe je in de uren dat je technisch werkt, maar niet aan werk denkt?",hint:"Er is geen fout antwoord. Iedereen heeft die uren."}
     ]},
@@ -1513,7 +1513,7 @@ async function askJSON(system, messages, tools, maxTokens){
   let laatste;
   for(let k=0;k<2;k++){
     const sys = k===0 ? system
-      : system + "\n\nLET OP: je vorige antwoord was geen geldige JSON. Antwoord nu UITSLUITEND met één geldig, volledig JSON-object — geen tekst ervoor of erna, geen markdown, met een komma tussen elk element.";
+      : system + "\n\nLET OP: je vorige antwoord was geen geldige JSON. Antwoord nu UITSLUITEND met één geldig, volledig JSON-object. Geen tekst ervoor of erna, geen markdown, met een komma tussen elk element.";
     const raw = await ask(sys, messages, tools, maxTokens);
     try{ return jsonUit(raw); }catch(e){ laatste = e; }
   }
