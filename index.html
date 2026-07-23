@@ -946,6 +946,25 @@
   @media(min-width:920px){.trust{max-width:900px}}
   .trustkaart{background:var(--chalk);border-radius:14px;padding:18px 18px 18px 42px;box-shadow:inset 0 0 0 1px var(--line-2);position:relative}
   .trustkaart::before{content:"";position:absolute;left:18px;top:23px;width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(191,227,95,.22)}
+
+  /* ============================================================
+     Deskshift v9 - parallax alleen op desktop (op mobiel schoof de
+     mock over de tekst), plus teller-animatie voor de EUR 25
+     ============================================================ */
+  @media(max-width:819px){
+    [data-para]{transform:none!important}
+    .hero{gap:36px}
+  }
+
+  /* EUR 25 als rollende teller: eindstand staat in CSS, JS zet alleen de
+     startstand klaar en laat de cijfers los zodra de sectie in beeld is */
+  .price-groot{display:inline-flex;align-items:flex-start;line-height:1}
+  .pd{display:inline-block;height:1em;overflow:hidden}
+  .pd-reel{display:block;transform:translateY(calc(var(--d,0) * -1em));transition:transform 1.35s cubic-bezier(.22,1.08,.36,1)}
+  #prijsGroot .pd:last-child .pd-reel{transition-delay:.14s}
+  .pd-reel i{display:block;height:1em;line-height:1;font-style:normal}
+  .pd-prep .pd-reel{transform:translateY(0)!important;transition:none!important}
+  @media (prefers-reduced-motion:reduce){.pd-reel{transition:none}}
 </style>
 
 <div class="wrap">
@@ -1038,7 +1057,7 @@
     <div class="prijs-dark-in">
       <div class="prijs-links">
         <div class="mono">Wat het kost, en wat er letterlijk op je scherm staat</div>
-        <div class="price-groot" data-para="0.06">€25</div>
+        <div class="price-groot" data-para="0.06" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
         <p class="prijs-onder">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
         <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
         <p class="micro" style="color:#AFC2A4;margin:12px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
@@ -2436,10 +2455,12 @@ function aflevering(p, s){
         <span class="muted" style="font-size:13px">Kies in het printvenster voor opslaan als pdf.</span></div>
     </div>`;
 }
-/* ---------- Deskshift: parallax door de hele landing ---------- */
+/* ---------- Deskshift: parallax door de hele landing (alleen desktop) ---------- */
 (function(){
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
   if(reduce || !("requestAnimationFrame" in window)) return;
+  // Op mobiel schoof de hero-mock over de tekst; parallax is daar uit.
+  if(matchMedia("(max-width:819px)").matches) return;
   // Elementen (zonder eigen transform) door alle secties, met kleine snelheden.
   var config = [
     [".hero .eyebrow",0.04],[".hero-mock",0.10],
@@ -2473,6 +2494,23 @@ function aflevering(p, s){
   window.addEventListener("scroll", onScroll, {passive:true});
   window.addEventListener("resize", apply);
   apply();
+})();
+
+/* ---------- Deskshift: EUR 25 rolt als teller binnen ---------- */
+(function(){
+  var pd = document.querySelector(".prijs-dark");
+  var pg = document.getElementById("prijsGroot");
+  if(!pd || !pg) return;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
+  if(reduce || !("IntersectionObserver" in window)) return; // eindstand (25) staat al in CSS
+  pg.classList.add("pd-prep"); // startstand: 00
+  var io = new IntersectionObserver(function(e){
+    if(e[0].isIntersecting){
+      requestAnimationFrame(function(){ pg.classList.remove("pd-prep"); }); // cijfers rollen naar 2 en 5
+      io.disconnect();
+    }
+  }, {threshold:.5});
+  io.observe(pd);
 })();
 
 /* ---------- Deskshift: workweek- en stepper-scroll-animaties ---------- */
