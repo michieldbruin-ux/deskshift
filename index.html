@@ -618,6 +618,67 @@
   #scrollcue.aan{opacity:1;pointer-events:auto;transform:translate(-50%,0);animation:cueBounce 1.9s var(--ease) infinite}
   @keyframes cueBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,5px)}}
   @media (prefers-reduced-motion:reduce){#scrollcue.aan{animation:none;transform:translate(-50%,0)}}
+
+  /* ============================================================
+     Deskshift v4 — bewijs in de hero, ritme, kassabon-prijs
+     ============================================================ */
+  .hero{display:grid;gap:24px;padding:14px 2px 30px}
+  @media(min-width:820px){.hero{grid-template-columns:1.04fr .96fr;gap:40px;align-items:center;padding:26px 2px 44px}}
+  .hero-tekst{min-width:0}
+
+  /* Product-mock: het inzicht-rapport, meteen zichtbaar */
+  .hero-mock{margin:0}
+  .mock{background:var(--chalk);border-radius:18px;box-shadow:0 20px 46px rgba(21,42,28,.17),inset 0 0 0 1px var(--line-2);overflow:hidden}
+  .mock-bar{display:flex;align-items:center;gap:6px;padding:11px 14px;background:var(--veld);border-bottom:1px solid var(--line-2)}
+  .mock-bar > span{width:9px;height:9px;border-radius:50%;background:#C7D0C2}
+  .mock-bar em{margin-left:auto;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+  .mock-in{padding:18px 18px 20px}
+  .mock-kop{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:clamp(20px,5.6vw,25px);line-height:1.13;letter-spacing:-.015em;color:var(--ink);margin:8px 0 12px}
+  .mock-cit{border-left:2px solid var(--lime);padding-left:12px;font-style:italic;color:var(--petrol);font-size:14.5px;margin:0 0 15px}
+  .mock-span{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .mock-span span{background:var(--veld);border:1px solid var(--line-2);border-radius:9px;padding:7px 11px;font-size:13px;font-weight:600;color:var(--ink)}
+  .mock-span i{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+  .mock-fit{background:var(--veld);border-radius:12px;padding:13px 14px}
+  .mock-fitrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:8px 0}
+  .mock-fitrow span{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.2}
+  .mock-fitrow b{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:27px;color:var(--ink);line-height:1;white-space:nowrap}
+  .mock-fitrow b i{font-style:normal;font-size:13px;color:var(--slate)}
+  .mock-track{height:6px;border-radius:3px;background:rgba(21,42,28,.10);overflow:hidden}
+  .mock-track span{display:block;height:100%;width:91%;background:var(--lime);border-radius:3px;animation:mockFill 1.5s var(--ease) .3s both}
+  @keyframes mockFill{from{width:0}}
+  .mock-cap{font-size:12.5px;color:var(--slate);text-align:center;margin:12px 2px 0}
+  @media (prefers-reduced-motion:reduce){.mock-track span{animation:none}}
+
+  /* Hoe het werkt: luchtig, genummerd, geen kaartenrij */
+  .hoe-licht{padding:22px 2px 8px}
+  .stappen-licht{list-style:none;margin:14px 0 0;padding:0}
+  .stappen-licht li{display:grid;grid-template-columns:38px 1fr;gap:16px;align-items:start;padding:18px 0}
+  .stappen-licht li + li{border-top:1px solid var(--line-2)}
+  .stappen-licht b{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:22px;color:#4A6B1E;line-height:1;padding-top:2px}
+  .stappen-licht h3{font-size:18px;margin:0 0 4px}
+  .stappen-licht p{margin:0;color:var(--petrol);font-size:15px}
+
+  /* Full-bleed donker moment */
+  .bigquote{position:relative;left:50%;margin-left:-50vw;width:100vw;background:var(--ink);color:#fff;padding:52px 0;margin-top:26px;margin-bottom:26px;background-image:radial-gradient(120% 120% at 0% 0%,rgba(255,255,255,.05),transparent 60%)}
+  .bigquote-in{max-width:680px;margin:0 auto;padding:0 20px}
+  .bigquote .mono{color:var(--limeL)}
+  .bigquote-tekst{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:clamp(24px,6.2vw,38px);line-height:1.16;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance;color:#fff}
+
+  /* Prijs als kassabon: precies wat er op je scherm verschijnt */
+  .bon{list-style:none;margin:0;padding:0}
+  .bon li{display:flex;justify-content:space-between;gap:14px;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:15px;color:var(--ink)}
+  .bon li span{flex:1}
+  .bon li em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+  .bon-gratis em{color:#4A6B1E}
+  .bon-split{border-bottom:0!important;color:var(--slate);font-size:12px;padding:16px 0 6px!important;font-family:"IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+  .bon-tot{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:14px 0 22px;padding-top:16px;border-top:2px solid var(--ink)}
+  .bon-tot span{color:var(--petrol);font-size:14px}
+  .bon-tot b{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:34px;letter-spacing:-.02em;color:var(--ink)}
+
+  /* Trust: luchtige pills i.p.v. kaartenblok */
+  .trust-licht{padding:20px 2px}
+  .trustrij{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .trustrij span{background:var(--chalk);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-2)}
 </style>
 
 <div class="wrap">
@@ -629,25 +690,35 @@
   </nav>
 
   <header class="hero">
-    <div class="mono eyebrow">Voor professionals die te snel klaar zijn</div>
-    <h1>Je bent niet lui.<br>Je bent gewoon <em>heel efficiënt</em>.</h1>
-    <p class="lead">Je werk past in drie dagen en niemand vertelt je wat je met de rest moet. Deskshift wel: één scherpe intake, één eerlijk inzicht, drie gewogen paden.</p>
-    <div class="row cta-row">
-      <button class="btn btn-hero" id="start">Start, het eerste inzicht is gratis</button>
-      <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
+    <div class="hero-tekst">
+      <div class="mono eyebrow">Voor professionals die te snel klaar zijn</div>
+      <h1>Je bent niet lui.<br>Je bent gewoon <em>heel efficiënt</em>.</h1>
+      <p class="lead">Je werk past in drie dagen en niemand vertelt je wat je met de rest moet. Deskshift laat in vijftien minuten zien wat er wél in zit.</p>
+      <div class="row cta-row">
+        <button class="btn btn-hero" id="start">Start, het eerste inzicht is gratis</button>
+        <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
+      </div>
+      <p class="micro">Gratis inzicht, geen account. De €25 komt pas ná je gratis inzicht, als je verder wilt.</p>
     </div>
-    <p class="micro">±15 minuten · geen account · stoppen en later verder kan altijd</p>
-  </header>
 
-  <div class="capaciteit rv">
-    <div class="mono">Waar dit over gaat</div>
-    <div class="capbar" aria-hidden="true"><span class="cap-benut"></span><span class="cap-rest"></span></div>
-    <div class="legend caplegend">
-      <span><i class="dot dot-werk"></i> wat je rol van je vraagt</span>
-      <span><i class="dot dot-vrij"></i> ruimte die je overhoudt</span>
-    </div>
-    <p class="capcap"><b>Je kunt meer aan dan je rol vraagt.</b> Die ruimte is geen luiheid en geen motivatieprobleem. Het is een tekort aan uitdaging. Deskshift laat zien wat je ermee kunt.</p>
-  </div>
+    <figure class="hero-mock" aria-hidden="true">
+      <div class="mock">
+        <div class="mock-bar"><span></span><span></span><span></span><em>voorbeeld</em></div>
+        <div class="mock-in">
+          <div class="mono">Jouw gratis inzicht</div>
+          <div class="mock-kop">Je vak is niet te zwaar. Het is te klein.</div>
+          <div class="mock-cit">"Ik ben op donderdag al klaar met mijn week."</div>
+          <div class="mock-span"><span>Snel klaar</span><i>schuurt met</i><span>Nergens heen</span></div>
+          <div class="mock-fit">
+            <div class="mono">Sterkste richting</div>
+            <div class="mock-fitrow"><span>Nieuwe partnercategorie intern opzetten</span><b>91<i>/100</i></b></div>
+            <div class="mock-track"><span></span></div>
+          </div>
+        </div>
+      </div>
+      <figcaption class="mock-cap">Precies dit verschijnt op je scherm, opgebouwd uit je eigen antwoorden.</figcaption>
+    </figure>
+  </header>
 
   <div class="herken rv">
     <div class="mono">Voor wie is dit</div>
@@ -662,62 +733,46 @@
     <p class="hscore" id="hscore">Herken je er twee of meer? Dan is dit voor jou geschreven.</p>
   </div>
 
-  <div class="hoe rv" id="hoe">
+  <div class="hoe-licht rv">
     <div class="mono">Hoe het werkt</div>
-    <h2 class="bloktitel">Van vage onvrede naar een concreet plan</h2>
-    <div class="stappen3">
-      <div class="stap3"><span class="stagtag">01 · Intake</span><h3>Zeven korte secties</h3><p>Schuiven, aantikken en sorteren, geen eindeloze vragenlijst. Vijftien minuten, gewoon op je telefoon.</p></div>
-      <div class="stap3"><span class="stagtag">02 · Inzicht</span><h3>Eén gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden, voordat je iets betaalt.</p></div>
-      <div class="stap3"><span class="stagtag">03 · Plan</span><h3>Drie gewogen paden</h3><p>Doorgerekend op wat jij belangrijk vindt, met een plan van zes weken. Geen open einde.</p></div>
+    <ol class="stappen-licht">
+      <li><b>01</b><div><h3>Zeven korte secties</h3><p>Schuiven, aantikken en sorteren, geen eindeloze vragenlijst. Vijftien minuten op je telefoon.</p></div></li>
+      <li><b>02</b><div><h3>Je gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden, voordat je iets betaalt.</p></div></li>
+      <li><b>03</b><div><h3>Drie gewogen richtingen</h3><p>Elk met een pasvorm-score en een plan van zes weken. Geen open einde.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="bigquote rv">
+    <div class="bigquote-in">
+      <div class="mono">Waar dit over gaat</div>
+      <p class="bigquote-tekst">Je kunt meer aan dan je rol vraagt. Die ruimte is geen luiheid en geen motivatieprobleem. Het is een tekort aan uitdaging.</p>
     </div>
   </div>
-
-  <div class="preview rv">
-    <div class="mono">Zo ziet je inzicht eruit</div>
-    <div class="pv-kop">“Je vak is niet te zwaar. Het is te klein.”</div>
-    <div class="pv-spanning"><span>Snel klaar</span><em>schuurt met</em><span>Nergens heen</span></div>
-    <p class="pv-cap">Voorbeeld: jouw inzicht wordt opgebouwd uit jouw eigen antwoorden, met een letterlijk citaat als bewijs.</p>
-  </div>
-
-  <div class="trust rv">
-    <div class="mono">Jouw data is jouw data</div>
-    <h2 class="bloktitel">Gemaakt om niets over je te onthouden</h2>
-    <ul class="trustlijst">
-      <li><b>Geen account.</b> Geen mailadres, geen registratie, geen tracking.</li>
-      <li><b>Alleen op dit apparaat.</b> Je antwoorden blijven hier, en worden alleen anoniem verwerkt om jouw inzicht te maken.</li>
-      <li><b>Niets naar je werkgever.</b> Of je collega’s, of wie dan ook. Nooit.</li>
-      <li><b>Eén knop wist alles.</b> Ook halverwege.</li>
-    </ul>
-  </div>
-
-  <details class="uitklap rv">
-    <summary><span class="mono">Waar dit op gebaseerd is</span><span class="pijl">▾</span></summary>
-    <p class="muted" style="font-size:15px;margin-top:10px">De intake volgt vier lijnen uit de arbeids- en organisatiepsychologie: het job demands-resources model van Bakker en Demerouti, waarin te weinig taakeisen net zulke klachten geven als te veel; job crafting van Wrzesniewski en Dutton, over het zelf verbouwen van je functie; de zelfdeterminatietheorie van Deci en Ryan, met autonomie, competentie en verbondenheid als brandstof; en Csikszentmihalyi's flow, waarin verveling ontstaat zodra je kunde je uitdaging voorbijstreeft. Daar komen twee lijnen over vrije tijd bij: vrije tijd die alleen herstel is voegt weinig toe, terwijl vrije tijd met betekenis wel telt. En er bestaat zoiets als een optimaal tijdsbudget: te weinig vrije tijd geeft stress, te veel geeft leegte. Dat laatste is precies de klacht die deze test in kaart brengt.</p>
-  </details>
 
   <div class="prijs rv">
-    <div class="mono">Wat het kost</div>
-    <h2 class="bloktitel" style="margin:8px 0 4px">Gratis beginnen, €25 als je verder wilt</h2>
-    <p class="prijs-sub">Je doet de hele intake en ziet je eerste inzicht zonder te betalen. Pas als je de scenario's en het plan wilt, reken je eenmalig af.</p>
-    <div class="prijsgrid">
-      <div class="prijskol">
-        <span class="prijstag gratis">Gratis</span>
-        <ul>
-          <li>De volledige intake van zeven secties</li>
-          <li>Je persoonlijke inzicht: het patroon uit je eigen antwoorden</li>
-        </ul>
-      </div>
-      <div class="prijskol">
-        <span class="prijstag betaald">€25 eenmalig</span>
-        <ul>
-          <li>Drie richtingen, gewogen op wat jij belangrijk vindt</li>
-          <li>Een concreet plan van zes weken, als pdf in je mail</li>
-          <li>De onderbouwing per richting, en waarom de rest afviel</li>
-        </ul>
-      </div>
-    </div>
+    <div class="mono">Wat er op je scherm verschijnt</div>
+    <h2 class="bloktitel" style="margin:8px 0 16px">Gratis tot je je inzicht ziet. €25 als je verder wilt.</h2>
+    <ul class="bon">
+      <li class="bon-gratis"><span>De volledige intake, zeven secties</span><em>gratis</em></li>
+      <li class="bon-gratis"><span>Je patroon, met een letterlijk citaat uit je antwoorden</span><em>gratis</em></li>
+      <li class="bon-split"><span>Tot hier betaal je niets. Wil je verder:</span></li>
+      <li><span>Drie richtingen, elk met een pasvorm-score</span></li>
+      <li><span>Waarom de andere richtingen afvielen</span></li>
+      <li><span>Je eerste stap, deze week uit te voeren</span></li>
+      <li><span>Een plan van zes weken, als pdf in je mail</span></li>
+      <li><span>Kant-en-klare berichten die je meteen kunt versturen</span></li>
+    </ul>
+    <div class="bon-tot"><span>Eenmalig, geen abonnement, geen account</span><b>€25</b></div>
     <button class="btn btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
-    <p class="micro" style="margin:10px 0 0">Geen abonnement, geen account. Je ziet je patroon voordat je iets betaalt.</p>
+    <p class="micro" style="margin:10px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
+  </div>
+
+  <div class="trust-licht rv">
+    <div class="mono">Jouw data is jouw data</div>
+    <div class="trustrij">
+      <span>Geen account</span><span>Geen mailadres</span><span>Geen tracking</span><span>Alleen op dit toestel</span><span>Eén knop wist alles</span>
+    </div>
+    <p class="muted" style="font-size:14px;margin:14px 0 0">Je antwoorden blijven op dit toestel en worden alleen anoniem verwerkt om jouw inzicht en plan te maken. Niets gaat naar je werkgever, je collega's of wie dan ook.</p>
   </div>
 
   <div class="maker rv">
@@ -725,12 +780,17 @@
     <p style="margin:10px 0 0">Ik merkte in vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger. Niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Ik heb er lang schuldig over gedaan in plaats van er iets mee te doen. Dit is het gesprek dat ik toen had willen voeren.</p>
   </div>
 
+  <details class="uitklap rv">
+    <summary><span class="mono">Waar dit op gebaseerd is</span><span class="pijl">▾</span></summary>
+    <p class="muted" style="font-size:15px;margin-top:10px">De intake volgt vier lijnen uit de arbeids- en organisatiepsychologie: het job demands-resources model van Bakker en Demerouti, waarin te weinig taakeisen net zulke klachten geven als te veel; job crafting van Wrzesniewski en Dutton, over het zelf verbouwen van je functie; de zelfdeterminatietheorie van Deci en Ryan, met autonomie, competentie en verbondenheid als brandstof; en Csikszentmihalyi's flow, waarin verveling ontstaat zodra je kunde je uitdaging voorbijstreeft. Daar komen twee lijnen over vrije tijd bij: vrije tijd die alleen herstel is voegt weinig toe, terwijl vrije tijd met betekenis wel telt. En er bestaat zoiets als een optimaal tijdsbudget: te weinig vrije tijd geeft stress, te veel geeft leegte. Dat laatste is precies de klacht die deze test in kaart brengt.</p>
+  </details>
+
   <div class="faq rv">
     <div class="mono" style="margin-bottom:10px">Voor de zekerheid</div>
     <details><summary>Is dit een cursus of coaching-traject?</summary><p>Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen.</p></details>
     <details><summary>Wat als de uitkomst niet bij me past?</summary><p>Je kunt elk antwoord aanpassen voor je verdergaat, en na de scenario’s een correctie geven waarmee de richtingen opnieuw worden bedacht.</p></details>
     <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Geen mens, nee. Je antwoorden blijven op dit apparaat en worden alleen geautomatiseerd en anoniem verwerkt om jouw inzicht en plan te maken.</p></details>
-    <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie paden.</p></details>
+    <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie richtingen.</p></details>
   </div>
 
   <div class="foot rv">
