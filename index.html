@@ -1,0 +1,1656 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vrije Uren</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#404E3B; --petrol:#4F6360; --paper:#E6E6E6; --chalk:#FFFFFF;
+    --veld:#F3F5F1; --slate:#59645A; --line:#CFD6CB;
+    --lime:#7B9669; --limeE:#5F7A50; --limeL:#BAC8B1; --limeT:#1E2A1A;
+    --warn:#A24E33; --r:6px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:26px 16px 96px}
+  section{background:var(--chalk);border:1px solid var(--line);border-radius:10px;padding:30px 28px;margin-bottom:20px}
+  @media(max-width:560px){section{padding:22px 18px}}
+  h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;font-variation-settings:"wdth" 112;font-weight:700;letter-spacing:-.02em;line-height:1.06;margin:0}
+  h1{font-size:clamp(36px,6.6vw,58px)}
+  h2{font-size:clamp(24px,4.2vw,32px)}
+  h3{font-size:19px;letter-spacing:-.01em}
+  p{margin:0 0 14px}
+  .mono{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+  .lead{font-size:19px;color:var(--petrol)}
+  .muted{color:var(--slate);font-size:14px}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+
+  .grid-hours{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;max-width:360px;margin:24px 0 12px}
+  .hr-cell{aspect-ratio:1;background:var(--petrol);border-radius:var(--r);opacity:0;transform:scale(.6);animation:pop .3s ease forwards}
+  .hr-cell.free{background:var(--lime);box-shadow:inset 0 0 0 1px var(--limeE)}
+  @keyframes pop{to{opacity:1;transform:scale(1)}}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:24px}
+  .legend span{display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--slate)}
+  .dot{width:10px;height:10px;border-radius:var(--r);display:inline-block}
+
+  button{font-family:inherit;font-size:16px;cursor:pointer;border-radius:var(--r)}
+  .btn{background:var(--ink);color:var(--chalk);border:1px solid var(--ink);padding:12px 22px;font-weight:600}
+  .btn:hover{background:var(--petrol)}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line);padding:11px 18px;font-weight:500}
+  .btn-ghost:hover{border-color:var(--ink)}
+  .btn-lime{background:var(--lime);color:var(--ink);border-color:var(--limeL)}
+  .btn-lime:hover{background:#4E6742}
+  .btn-sm{font-size:14px;padding:7px 12px}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .spread{justify-content:space-between}
+
+  .rail{position:sticky;top:0;z-index:9;background:var(--chalk);padding:12px 0 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .railkop{display:flex;justify-content:space-between;margin-bottom:7px}
+  .railkop .mono{color:var(--ink)}
+  .railbalk{height:6px;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+  .railbalk span{display:block;height:100%;width:0;background:var(--lime);transition:width .3s ease}
+  .rail ol{list-style:none;display:flex;gap:5px;margin:0;padding:0}
+  .rail li{flex:1;min-width:0}
+  .rail .bar{height:4px;background:var(--line);border-radius:var(--r);margin-bottom:6px}
+  .rail li.done .bar{background:var(--ink)}
+  .rail li.now .bar{background:var(--lime);box-shadow:inset 0 0 0 1px var(--limeE)}
+  .rail .nm{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rail li.now .nm{color:var(--ink)}
+
+  .opener{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:28px 26px;margin:18px 0}
+  .opener h2{color:var(--chalk);margin:10px 0 14px}
+  .opener .mono{color:var(--limeL)}
+  .opener p{color:#DCE2D6;margin-bottom:0}
+  .theory{border-left:2px solid var(--lime);padding-left:14px;margin-top:18px;font-size:15px;color:#C3CDB9}
+
+  .step{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin:18px 0}
+  .step .qnum{margin-bottom:10px}
+  .step h3{margin-bottom:6px}
+  .hint{color:var(--slate);font-size:14px;margin:0 0 16px}
+  textarea,input[type=text]{width:100%;padding:12px 13px;font-family:inherit;font-size:16px;color:var(--ink);background:var(--veld);border:1px solid var(--line);border-radius:var(--r)}
+  textarea{min-height:92px;resize:vertical;line-height:1.5}
+  textarea:focus,input:focus{border-color:var(--ink);outline:none}
+
+  .sl{margin:6px 0 2px}
+  .sl-val{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:38px;line-height:1}
+  .sl-val small{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-left:8px}
+  .sub{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.06em;color:var(--petrol);margin-top:4px;min-height:16px}
+  input[type=range]{width:100%;accent-color:var(--ink);height:26px}
+  .ends{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--slate);text-transform:uppercase;letter-spacing:.08em}
+  .dual{display:grid;gap:22px;grid-template-columns:1fr 1fr}
+  @media(max-width:560px){.dual{grid-template-columns:1fr}}
+
+  .opt{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:var(--r);margin-bottom:8px;cursor:pointer;background:var(--veld)}
+  .opt:hover{border-color:var(--ink)}
+  .opt input{margin-top:4px;accent-color:var(--ink);width:17px;height:17px}
+  .opt.sel{border-color:var(--ink);background:#fff}
+
+  .rank{list-style:none;margin:0;padding:0}
+  .rank li{display:flex;align-items:center;gap:12px;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin-bottom:7px}
+  .rank .num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--slate);width:16px}
+  .rank .grip{color:var(--slate);cursor:grab;touch-action:none;user-select:none;letter-spacing:-2px;font-size:15px}
+  .rank li.dragging{opacity:.55;border-color:var(--ink)}
+  .rank .lbl{flex:1}
+  .mv{background:transparent;border:1px solid var(--line);width:30px;height:30px;line-height:1;color:var(--ink)}
+  .mv:hover{border-color:var(--ink)}
+
+  /* horizontale strip */
+  .strip{position:relative;width:100%;height:210px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;touch-action:none;margin-top:6px;
+    background:linear-gradient(90deg, #EDEDEB 0%, #E6E6E6 38%, rgba(123,150,105,.22) 68%, rgba(123,150,105,.42) 100%)}
+  .strip .half{display:none}
+  .strip .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(23,37,42,.14)}
+  .stl{position:absolute;top:8px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);max-width:44%}
+  .stl.r{text-align:right;color:var(--petrol)}
+  .schaalhint{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-top:8px}
+  .stl.l{left:8px}
+  .stl.r{right:8px}
+  .chip{position:absolute;background:var(--chalk);border:1px solid var(--ink);border-radius:var(--r);padding:5px 9px;font-size:13px;cursor:grab;user-select:none;white-space:nowrap;box-shadow:0 1px 0 rgba(23,37,42,.18)}
+  .chip.drag{cursor:grabbing;box-shadow:0 4px 10px rgba(23,37,42,.22);z-index:3}
+  .tray{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;min-height:20px}
+  .tray .chip{position:static;box-shadow:none}
+  .addrow{display:flex;gap:8px;margin-top:12px}
+
+  /* matrix */
+  .plane{position:relative;width:100%;aspect-ratio:1/.92;min-height:420px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:8px;
+    background:linear-gradient(120deg, #EDEDEB 0%, #E6E6E6 45%, rgba(123,150,105,.16) 78%, rgba(123,150,105,.32) 100%)}
+  .plane .q{position:absolute;width:50%;height:50%}
+  .plane .q-tr{right:0;top:0;background:rgba(123,150,105,.16);border-left:1px solid var(--lime);border-bottom:1px solid var(--lime)}
+  .plane .chip{position:absolute;font-size:12.5px;padding:4px 8px;box-shadow:0 1px 0 rgba(23,37,42,.14)}
+  .qdlabel{position:absolute;right:8px;top:26px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--limeL)}
+  .plane .chip{cursor:default}
+  .plane .chip.hot{background:var(--ink);color:#FFFFFF;border-color:var(--ink)}
+  .basis{background:var(--ink);border-radius:var(--r);padding:20px 22px;margin-top:14px}
+  .pills{display:flex;flex-wrap:wrap;gap:7px}
+  .pills span{background:var(--lime);color:var(--limeT);border-radius:var(--r);padding:5px 10px;font-size:14px;font-weight:600}
+  .plane .axis{position:absolute;background:var(--line)}
+  .plane .axis.v{left:50%;top:0;bottom:0;width:1px}
+  .plane .axis.h{top:50%;left:0;right:0;height:1px}
+  .axl{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+  .axl.l{left:8px;top:50%;transform:translateY(-140%)}
+  .axl.r{right:8px;top:50%;transform:translateY(-140%)}
+  .axl.t{top:6px;left:50%;transform:translateX(-50%)}
+  .axl.b{bottom:6px;left:50%;transform:translateX(-50%)}
+
+  .rev{border-bottom:1px solid var(--line);padding:12px 0;display:flex;gap:14px;align-items:flex-start}
+  .rev .q{flex:1}
+  .rev .a{color:var(--petrol)}
+  .pen{background:transparent;border:1px solid var(--line);width:32px;height:32px;flex:0 0 32px;color:var(--slate)}
+  .pen:hover{border-color:var(--ink);color:var(--ink)}
+
+  .kaartjes{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+  @media(max-width:600px){.kaartjes{grid-template-columns:1fr}}
+  .kaartje{background:var(--veld);border:1px solid var(--line);border-left:3px solid var(--lime);border-radius:var(--r);padding:16px 18px}
+  .kaartje .mono{margin-bottom:6px}
+  .kaartje p{margin:0;font-size:16px}
+  .klap{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:20px 22px;margin-top:14px;font-size:19px;font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:600;line-height:1.25}
+
+  .card{background:var(--veld);border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:var(--r);padding:22px;margin-bottom:18px}
+  .card.weak{border-left-color:var(--warn)}
+  .tag{display:inline-block;background:var(--veld);border:1px solid var(--line);padding:3px 9px;margin-bottom:12px}
+  .quote{border-left:2px solid var(--lime);padding-left:12px;margin:0 0 10px;color:var(--petrol);font-style:italic}
+  .kv dt{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-top:12px}
+  .kv dd{margin:3px 0 0}
+
+  .facts{display:flex;gap:10px;flex-wrap:wrap}
+  .gang{list-style:none;margin:0 0 22px;padding:0}
+  .gang li{display:flex;gap:12px;align-items:center;padding:8px 0;color:var(--slate);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  .gang li b{width:9px;height:9px;border-radius:50%;background:var(--line);flex:0 0 9px}
+  .gang li.bezig{color:var(--ink);background:var(--veld);border-left:3px solid var(--lime);padding-left:12px;margin-left:-12px;border-radius:var(--r)}
+  .gang li.bezig span{font-weight:600} .gang li.bezig b{background:var(--lime);box-shadow:0 0 0 4px rgba(123,150,105,.28)}
+  .gang li.af{color:var(--ink)} .gang li.af b{background:var(--ink)}
+  .profiel{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:26px;margin-bottom:24px}
+  .profiel h2{color:var(--chalk);margin:8px 0 14px}
+  .profiel dl{margin:0}
+  .profiel dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--limeL);margin-top:14px}
+  .profiel dd{margin:3px 0 0;color:#E8EDE2}
+  .bars{margin-top:14px}
+  .bar{display:grid;grid-template-columns:132px 1fr 34px;gap:10px;align-items:center;margin-bottom:6px;font-size:13px}
+  .bar .track{display:block;height:8px;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .bar .fill{display:block;height:100%;background:var(--lime);min-width:2px}
+  .bar .fill.laag{background:var(--warn)}
+  .bar .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--slate);text-align:right}
+  .score{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:30px;line-height:1}
+  .afval{border:1px dashed var(--line);border-radius:var(--r);padding:18px 20px;margin-top:8px}
+  .afval li{margin-bottom:6px;color:var(--slate);font-size:15px}
+  .facts span{display:flex;flex-direction:column;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--slate);min-width:96px}
+  .facts b{font-family:"IBM Plex Sans",sans-serif;font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink);margin-bottom:2px}
+  .paywall{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:28px}
+  .paywall h2{color:var(--chalk)}
+  .paywall p{color:#DCE2D6}
+  .paywall .muted{color:#BBC3B7}
+  .price{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:44px;letter-spacing:-.02em}
+
+  .thinking{display:flex;gap:9px;align-items:center;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--veld);border:1px solid var(--line);border-left:3px solid var(--lime);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
+  .thinking::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:35%;background:var(--lime);animation:loop 1.4s ease-in-out infinite}
+  @keyframes loop{0%{left:-35%}100%{left:100%}}
+  .thinking b{width:6px;height:6px;background:var(--slate);border-radius:50%;animation:blink 1.1s infinite}
+  .thinking b:nth-child(2){animation-delay:.2s}
+  .thinking b:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+  .err{border:1px solid var(--warn);color:var(--warn);padding:12px 14px;border-radius:var(--r);margin:12px 0;background:#fff}
+  .ok{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+  .spin{display:block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .gang li b{width:12px;height:12px;flex:0 0 12px;display:flex;align-items:center;justify-content:center;background:var(--line);border-radius:50%}
+  .gang li.bezig b{background:transparent;box-shadow:none}
+  .gang li em{font-style:normal;color:var(--slate);text-transform:none;letter-spacing:0;font-family:"IBM Plex Sans",sans-serif;font-size:13px}
+  .gang li.af em.done{color:var(--limeL)}
+  .doel{background:rgba(123,150,105,.16);border-radius:var(--r);padding:10px 12px;margin:0 0 12px;font-size:15px}
+  .doel .mono{display:block;margin-bottom:2px}
+  .veilig{display:flex;gap:8px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-top:9px}
+  .veilig i{width:6px;height:6px;border-radius:50%;background:var(--limeE);display:inline-block;flex:0 0 6px}
+  .doelblok{background:var(--ink);border-radius:var(--r);padding:26px}
+  .tijdlijn{margin-top:18px}
+  .wk{display:grid;grid-template-columns:46px 1fr;gap:14px;margin-bottom:14px}
+  .wknr{text-align:center}
+  .wknr span{display:block;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+  .wknr b{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--chalk);align-items:center;justify-content:center;font-family:"Archivo",sans-serif;font-size:16px;margin-top:3px}
+  .wkin{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+  .acties{list-style:none;margin:10px 0 0;padding:0}
+  .acties li{padding:7px 0;border-bottom:1px solid var(--line)}
+  .acties li:last-child{border-bottom:0}
+  .acties label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+  .acties input{margin-top:4px;accent-color:var(--ink);width:17px;height:17px}
+  .acties li.af span{text-decoration:line-through;color:var(--slate)}
+  .uitkomst{margin:12px 0 0;background:rgba(123,150,105,.16);border-radius:var(--r);padding:9px 11px;font-size:15px}
+  .uitkomst .mono{display:block;margin-bottom:2px}
+  .blok{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-top:16px}
+  .blok.laatste{border-left:3px solid var(--lime)}
+  .tw{border-left:2px solid var(--line);padding-left:12px;margin-top:12px}
+  .tw b{display:block;margin-bottom:4px}
+  .tw p{margin:0;color:var(--petrol)}
+  .antw{border-left:2px solid var(--lime);padding-left:16px;margin:22px 0 10px}
+  .coach{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+  .urenkaart{background:var(--veld);border:1px solid var(--line);border-left:3px solid var(--lime);border-radius:var(--r);padding:20px 22px}
+  .groot{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:42px;line-height:1;letter-spacing:-.02em}
+  .groot.lime{color:var(--limeL)}
+  .groot small{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-top:6px}
+  .urengrid{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin-top:18px}
+  .uur{aspect-ratio:1;background:var(--petrol);border-radius:1px}
+  .uur.vrij{background:var(--lime);box-shadow:inset 0 0 0 1px var(--limeE)}
+  .grootcitaat{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:600;font-size:clamp(20px,3.4vw,26px);line-height:1.25;border-left:3px solid var(--lime);padding-left:18px;color:var(--petrol)}
+  .spanning{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:26px 0 10px}
+  .spanning .kant{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:16px 14px;text-align:center;font-weight:600;font-size:15px}
+  .spanning .vs{color:var(--slate);white-space:nowrap}
+  .spanningtekst{margin:0;color:var(--petrol)}
+  @media(max-width:520px){.spanning{grid-template-columns:1fr}.urengrid{grid-template-columns:repeat(10,1fr)}}
+  .planstart{border-top:1px solid var(--line);margin-top:34px;padding-top:26px}
+  .voortbalk{height:8px;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:20px}
+  .voortbalk span{display:block;height:100%;width:0;background:var(--lime);transition:width .25s ease}
+  .slot{position:relative;filter:blur(5px);opacity:.55;pointer-events:none;user-select:none}
+  .slotzone{position:relative;filter:blur(9px);opacity:.32;pointer-events:none;user-select:none;max-height:150px;overflow:hidden;margin-top:20px;
+    -webkit-mask-image:linear-gradient(#000 20%, transparent 100%);mask-image:linear-gradient(#000 20%, transparent 100%)}
+  .pwlijst{list-style:none;margin:18px 0 0;padding:0}
+  .pwlijst li{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.12);color:#E8EDE2;font-size:15px}
+  .pwlijst li:last-child{border-bottom:0}
+  .pwlijst li span:nth-child(2){flex:1}
+  .pwlijst em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--limeL)}
+  .lk{flex:0 0 16px;height:16px;border:1.5px solid var(--limeL);border-radius:3px;position:relative}
+  .lk::before{content:"";position:absolute;left:3px;top:-5px;width:8px;height:7px;border:1.5px solid var(--limeL);border-bottom:0;border-radius:4px 4px 0 0}
+  .plijst{list-style:none;margin:14px 0 0;padding:0}
+  .plijst li{display:flex;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12);color:#E8EDE2}
+  .plijst li:last-child{border-bottom:0}
+  .plabel{flex:0 0 118px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--limeL)}
+  @media(max-width:520px){.plijst li{flex-direction:column;gap:4px}.plabel{flex:none}}
+  .pbagage{margin-top:16px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .pbagage .mono{color:#BBC3B7;width:100%}
+  .btag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:var(--r);padding:5px 10px;font-size:13px;color:#E8EDE2}
+  .pwfomo{margin:18px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.14);color:#BBC3B7;font-size:14px}
+  .pwkolommen{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:620px){.pwkolommen{grid-template-columns:1fr;gap:16px}}
+  .pwkol ul{margin:10px 0 0;padding-left:18px}
+  .pwkol li{margin-bottom:7px;color:#E8EDE2;font-size:15px}
+  .pwkol.laat li{color:#BBC3B7}
+  .pwkol.laat .mono{color:#BBC3B7}
+  .pwslot{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14)}
+  .pwslot .btn{white-space:nowrap}
+  .gratisstap{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:22px;margin-top:20px;border-left:3px solid var(--lime)}
+  .gratisstap .mono{color:var(--limeL)}
+  .gratisstap h3{color:var(--chalk)}
+  .framebox{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-top:20px}
+  .frij{display:grid;grid-template-columns:190px 1fr 44px;gap:12px;align-items:center;margin-bottom:10px}
+  .frij b{display:block;text-transform:capitalize}
+  .frij span.track{display:block;height:10px;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .frij .fill{display:block;height:100%;background:var(--lime)}
+  .frij div span{font-size:13px;color:var(--slate)}
+  .frij em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--slate);text-align:right}
+  .fadvies{margin:14px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+  @media(max-width:560px){.frij{grid-template-columns:1fr;gap:4px}.frij em{text-align:left}}
+  .bericht{border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px;background:var(--veld)}
+  .bericht p{margin:8px 0 0;color:var(--petrol);white-space:pre-wrap}
+  .hlijst li{cursor:pointer;transition:opacity .15s ease}
+  .hlijst li .vink{background:transparent;border:1px solid #6B7A80}
+  .hlijst li.aan .vink{background:var(--lime);border-color:var(--lime)}
+  .hlijst li.aan .vink::after{content:"✓";color:var(--limeT);font-size:12px;font-weight:700}
+  .hscore{transition:color .2s ease}
+  .hscore.sterk{color:var(--limeL)}
+  .maker{border-left:3px solid var(--lime);padding:2px 0 2px 18px;margin:28px 0 4px}
+  #mobielCta{position:fixed;left:0;right:0;bottom:0;background:var(--chalk);border-top:1px solid var(--line);padding:12px 18px;display:flex;gap:12px;align-items:center;z-index:20}
+  #mobielCta span{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
+  #mobielCta .btn{flex:1}
+  @media(min-width:760px){#mobielCta{display:none!important}}
+  #printGebied{display:none}
+  .herken{background:var(--ink);border-radius:var(--r);padding:24px 24px 20px;margin:22px 0}
+  .herken .mono{color:var(--limeL)}
+  .herken h3{color:var(--chalk)}
+  .hlijst{list-style:none;margin:0;padding:0}
+  .hlijst li{display:flex;gap:12px;align-items:flex-start;color:#E8EDE2;padding:7px 0;font-size:16px}
+  .vink{flex:0 0 20px;height:20px;border-radius:50%;background:var(--lime);color:var(--limeT);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:1px}
+  .hscore{margin:14px 0 0;color:var(--limeL);font-weight:600}
+  .stappen3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
+  @media(max-width:620px){.stappen3{grid-template-columns:1fr}}
+  .stap3{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+  .stap3 b{display:inline-flex;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--chalk);align-items:center;justify-content:center;font-family:"Archivo",sans-serif;font-size:14px;margin-bottom:10px}
+  .stap3 h3{font-size:16px;margin-bottom:5px}
+  .stap3 p{margin:0;font-size:14px;color:var(--slate)}
+  .uitklap{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:18px 0;background:var(--veld)}
+  .uitklap summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;list-style:none}
+  .uitklap summary::-webkit-details-marker{display:none}
+  .uitklap .pijl{color:var(--slate);transition:transform .15s ease}
+  .uitklap[open] .pijl{transform:rotate(180deg)}
+  .faq{margin-top:30px}
+  .faq details{border-bottom:1px solid var(--line);padding:13px 0}
+  .faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";color:var(--slate);font-weight:400}
+  .faq details[open] summary::after{content:"–"}
+  .faq p{margin:10px 0 0;color:var(--petrol)}
+  .klaar{background:rgba(123,150,105,.16);border-radius:var(--r);padding:12px 14px;margin-top:12px;font-size:15px}
+  @media print{
+    body{background:#fff}
+    .wrap{display:none}
+    #printGebied{display:block;padding:0 6mm}
+    .doelblok,.wknr b{background:#fff!important;color:#000!important;border:1px solid #000}
+    .doelblok h2,.doelblok p{color:#000!important}
+    .uitkomst,.qdlabel{background:#f2f2f2!important}
+    .wk{break-inside:avoid}
+    .printkop{margin-bottom:14px}
+  }
+  .hidden{display:none}
+  .body ul{margin:6px 0 12px;padding-left:20px}
+  .body li{margin-bottom:5px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.hr-cell{opacity:1;transform:none}}
+  @media(max-width:520px){.grid-hours{grid-template-columns:repeat(8,1fr)}.rail .nm{display:none}}
+</style>
+
+<div class="wrap">
+
+<section id="landing">
+  <div class="mono">Vrije Uren</div>
+  <h1 style="margin:14px 0 18px">Je bent niet lui.<br>Je bent gewoon heel efficiënt.</h1>
+  <p class="lead">En niemand heeft je verteld wat je met de rest moet doen.</p>
+
+  <div class="grid-hours" id="heroGrid" aria-hidden="true"></div>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--petrol)"></i> werk dat er echt is</span>
+    <span><i class="dot" style="background:var(--lime)"></i> ruimte die er in je week zit</span>
+  </div>
+
+  <div class="herken">
+    <div class="mono">Voor wie is dit</div>
+    <h3 style="margin:8px 0 6px">Tik aan wat je herkent</h3>
+    <p style="color:#BBC3B7;font-size:14px;margin:0 0 10px">Niemand ziet dit, ook wij niet.</p>
+    <ul class="hlijst" id="hlijst">
+      <li data-h><span class="vink"></span> Je bent op donderdag al klaar met je werk voor die week</li>
+      <li data-h><span class="vink"></span> Je hebt wel eens gedacht: hier zit meer in dan ik er nu mee doe</li>
+      <li data-h><span class="vink"></span> Je doet in stilte al iets naast je werk, of denkt erover</li>
+      <li data-h><span class="vink"></span> Je twijfelt niet aan je vaardigheden, maar aan wat je ermee moet</li>
+    </ul>
+    <p class="hscore" id="hscore">Herken je er twee of meer? Dan is dit voor jou geschreven.</p>
+  </div>
+
+  <div class="stappen3">
+    <div class="stap3"><b>1</b><h3>Zeven korte secties</h3><p>Sliders en sleepkaartjes, geen open vragenlijst. Ongeveer 15 minuten.</p></div>
+    <div class="stap3"><b>2</b><h3>Eén gratis inzicht</h3><p>Direct een scherp patroon uit je eigen antwoorden, voordat je iets betaalt.</p></div>
+    <div class="stap3"><b>3</b><h3>Drie gewogen paden</h3><p>Met een plan van zes weken, geen open einde.</p></div>
+  </div>
+
+  <div class="step">
+    <div class="mono">Jouw data is jouw data</div>
+    <h3 style="margin:8px 0 8px">Niets van wat je invult verlaat dit scherm</h3>
+    <ul>
+      <li>Geen account, geen mailadres, geen registratie om te beginnen.</li>
+      <li>Je antwoorden worden alleen op dit apparaat bewaard, zodat je later verder kunt.</li>
+      <li>Niets gaat naar je werkgever, je collega's of wie dan ook. Nooit.</li>
+      <li>Eén knop wist alles definitief, ook halverwege.</li>
+    </ul>
+  </div>
+
+  <details class="uitklap">
+    <summary><span class="mono">Waar dit op gebaseerd is</span><span class="pijl">▾</span></summary>
+    <p class="muted" style="font-size:15px;margin-top:10px">De intake volgt vier lijnen uit de arbeids- en organisatiepsychologie: het job demands-resources model van Bakker en Demerouti, waarin te weinig taakeisen net zulke klachten geven als te veel; job crafting van Wrzesniewski en Dutton, over het zelf verbouwen van je functie; de zelfdeterminatietheorie van Deci en Ryan, met autonomie, competentie en verbondenheid als brandstof; en Csikszentmihalyi's flow, waarin verveling ontstaat zodra je kunde je uitdaging voorbijstreeft. Daar komen twee lijnen over vrije tijd bij: vrije tijd die alleen herstel is voegt weinig toe, terwijl vrije tijd met betekenis wel telt. En er bestaat zoiets als een optimaal tijdsbudget: te weinig vrije tijd geeft stress, te veel geeft leegte. Dat laatste is precies de klacht die deze test in kaart brengt.</p>
+  </details>
+
+  <div class="step">
+    <div class="row spread">
+      <div><div class="mono">Wat het kost</div><div class="price" style="font-size:34px;margin-top:6px">€17</div></div>
+      <div style="max-width:380px"><p style="margin:0" class="muted">Eenmalig, geen abonnement. De intake en je eerste inzicht zijn gratis. Je ziet je patroon voordat je iets betaalt.</p></div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:8px">
+    <button class="btn" id="start">Start, het eerste inzicht is gratis</button>
+    <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
+  </div>
+  <p class="muted" style="margin-top:8px">Ongeveer 15 minuten. Geen account. Stoppen en later verder kan altijd.</p>
+
+  <div class="maker">
+    <div class="mono">Waarom dit bestaat</div>
+    <p style="margin:10px 0 0">Ik merkte in vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger. Niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Ik heb er lang schuldig over gedaan in plaats van er iets mee te doen. Dit is het gesprek dat ik toen had willen voeren.</p>
+    <p class="muted" style="margin:12px 0 0;font-size:14px">Gemaakt door één iemand, niet door een bureau. Vervang deze tekst door je eigen woorden en zet er je naam en foto bij, dat verhoogt het vertrouwen meer dan welke claim ook.</p>
+  </div>
+
+  <div class="faq">
+    <div class="mono" style="margin-bottom:10px">Voor de zekerheid</div>
+    <details><summary>Is dit een cursus of coaching-traject?</summary><p>Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen.</p></details>
+    <details><summary>Wat als de uitkomst niet bij me past?</summary><p>Je kunt elk antwoord aanpassen voor je verdergaat, en na de scenario's een correctie geven waarmee de richtingen opnieuw worden bedacht.</p></details>
+    <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Nee. Ze worden alleen op dit apparaat bewaard en gaan nergens anders naartoe dan naar het maken van jouw eigen plan.</p></details>
+    <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de scenario's.</p></details>
+  </div>
+
+  <div class="row" style="margin-top:26px">
+    <button class="btn" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
+  </div>
+
+  <div class="row" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
+    <button class="btn btn-ghost btn-sm" id="demo">Testmodus: vul mijn antwoorden in</button>
+    <button class="btn btn-ghost btn-sm" id="demoLoop">Testmodus: door de intake lopen</button>
+    <span class="muted" style="font-size:13px">Alleen voor jezelf tijdens het bouwen.</span>
+  </div>
+</section>
+
+<section id="intake" class="hidden">
+  <div class="rail">
+    <div class="railkop"><span class="mono" id="railtel"></span><span class="mono" id="resttijd"></span></div>
+    <div class="railbalk"><span id="railvul"></span></div>
+    <ol id="rail"></ol>
+    <div class="veilig"><i></i>Alleen jij ziet dit, niets wordt verstuurd of gedeeld</div>
+  </div>
+  <div id="stage"></div>
+  <div id="err"></div>
+  <div class="row spread" style="margin-top:18px">
+    <button class="btn btn-ghost" id="back">Vorige</button>
+    <div style="text-align:right">
+      <div class="row" style="justify-content:flex-end">
+        <span class="ok" id="saved"></span>
+        <button class="btn" id="next">Volgende</button>
+      </div>
+      <div class="muted" style="font-size:13px;margin-top:6px">Enter om verder te gaan</div>
+    </div>
+  </div>
+</section>
+
+<section id="review" class="hidden">
+  <div class="mono">Bijna klaar</div>
+  <h2 style="margin:12px 0 6px">Kijk je antwoorden nog even na</h2>
+  <p class="muted">Alles is aan te passen. Klik op het potlood bij het antwoord dat je wilt wijzigen.</p>
+  <div id="revBody"></div>
+  <div class="row" style="margin-top:22px"><button class="btn" id="toSummary">Dit klopt, maak de schets</button>
+    <button class="btn btn-ghost" data-terug="intake">Terug naar de vragen</button></div>
+</section>
+
+<section id="summary" class="hidden">
+  <div class="mono">Jouw situatie, zoals die nu is</div>
+  <h2 style="margin:12px 0 18px">De as-is schets</h2>
+  <div id="sumBody"></div>
+  <div id="sumQuad"></div>
+  <div class="row hidden" id="sumRow" style="margin-top:22px">
+    <button class="btn btn-lime" id="toInsight">Klopt. Laat mijn eerste inzicht zien</button>
+    <button class="btn btn-ghost" id="backToReview">Ik wil iets aanpassen</button>
+  </div>
+</section>
+
+<section id="insight" class="hidden">
+  <div class="mono">Gratis inzicht</div>
+  <h2 style="margin:12px 0 18px">Wat er in jouw antwoorden opvalt</h2>
+  <div id="insBody" class="body"></div>
+  <div class="row" style="margin-top:26px">
+    <button class="btn btn-lime" id="unlock">Verder naar de laatste vier keuzes</button>
+    <button class="btn btn-ghost" data-terug="summary">Terug</button>
+  </div>
+</section>
+
+<section id="kalib" class="hidden">
+  <div class="mono">Laatste stap voor de scenario's</div>
+  <h2 style="margin:12px 0 6px">Vier keuzes die het verschil maken</h2>
+  <p class="muted">Geen goede of foute antwoorden. Deze vier bepalen hoe de paden gewogen worden.</p>
+  <div id="kalibBody"></div>
+  <div class="row" style="margin-top:20px"><button class="btn btn-lime" id="kalibKlaar">Klaar, ga verder</button>
+    <button class="btn btn-ghost" data-terug="insight">Terug</button></div>
+</section>
+
+
+
+<section id="scenarios" class="hidden">
+  <div id="gang"></div>
+  <div id="profielBox"></div>
+  <div id="scenBody"></div>
+  <div id="afvallers"></div>
+  <div id="herzien"></div>
+  <div class="row" style="margin-top:18px"><button class="btn btn-ghost" data-terug="kalib">Terug</button></div>
+</section>
+
+<section id="action" class="hidden">
+  <div class="mono">Jouw actiepad</div>
+  <h2 style="margin:12px 0 18px" id="actTitle"></h2>
+  <div id="actBody" class="body"></div>
+  <div class="row" style="margin-top:20px"><button class="btn btn-ghost" data-terug="scenarios">Terug naar de richtingen</button></div>
+</section>
+
+<div id="printGebied" aria-hidden="true"></div>
+
+</div>
+
+<script>
+const MODEL = "claude-sonnet-4-6";
+const KEY = "vrije-uren:draft";
+const KAARTEN = ["Analyseren","Presenteren","Schrijven","Overleggen","Plannen","Onderhandelen","Uitzoeken","Bouwen of maken","Anderen helpen","Details controleren","Nieuwe mensen spreken","Beslissen","Documenteren","Improviseren"];
+
+/* rolduur: maanden, daarna halve jaren, daarna hele jaren */
+const ROLDUUR = (function(){
+  const a = [];
+  for(let m=1;m<=11;m++) a.push(m===1?"1 maand":m+" maanden");
+  for(let j=1;j<=5;j+=0.5) a.push(j+" jaar");
+  for(let j=6;j<=20;j++) a.push(j+" jaar");
+  return a;
+})();
+
+const SECTIES = [
+  { id:"persoonlijk", naam:"Persoonlijk", kop:"Eerst even wie je bent",
+    intro:"Vier korte vragen. Geen naam nodig, geen mailadres.",
+    theorie:"Levensfase bepaalt hoeveel vrije ruimte je feitelijk hebt. We vragen het om je scenario's realistisch te houden, niet om je in een hokje te stoppen.",
+    stappen:[
+      {id:"leeftijd",type:"slider",vraag:"Hoe oud ben je?",min:20,max:65,def:31,unit:"jaar"},
+      {id:"opleiding",type:"choice",vraag:"Wat is je hoogst afgeronde opleiding?",opties:["Mbo","Hbo","Wo bachelor","Wo master of hoger","Anders"]},
+      {id:"thuis",type:"choice",vraag:"Hoe ziet je thuissituatie eruit?",hint:"Dit bepaalt hoeveel avonden en weekenden echt vrij zijn.",opties:["Alleenwonend","Samenwonend zonder kinderen","Samenwonend met kinderen","Anders"]},
+      {id:"avonden",type:"slider",vraag:"Hoeveel avonden per week zijn echt van jou?",hint:"Avonden zonder verplichtingen, zorg of afspraken die al vaststaan.",min:0,max:7,def:3,unit:"avonden"}
+    ]},
+
+  { id:"verleden", naam:"Verleden", kop:"Wat je tot hier heeft gebracht",
+    intro:"Drie vragen over je loopbaan, plus een optionele snelkoppeling.",
+    theorie:"Patronen herhalen zich. Als je in eerdere rollen na een paar maanden leegliep, zegt dat meer over de match tussen jouw tempo en de functie dan over de functie zelf.",
+    stappen:[
+      {id:"jaren",type:"slider",vraag:"Hoeveel jaar werk je in totaal?",min:0,max:45,def:8,unit:"jaar"},
+      {id:"werkgevers",type:"slider",vraag:"Bij hoeveel werkgevers heb je gewerkt?",min:1,max:15,def:3,unit:"werkgevers"},
+      {id:"patroon",type:"choice",vraag:"Herken je dat je werk na een tijd te ruim gaat zitten?",opties:["Ja, in vrijwel elke rol","Ja, in sommige rollen","Nee, dit is de eerste keer","Weet ik niet"]},
+      {id:"cv",type:"cv",vraag:"Wil je je cv of LinkedIn-tekst meegeven?",hint:"Optioneel. Het maakt je scenario's specifieker. Een pdf blijft in je browser en gaat alleen mee in de analyse."}
+    ]},
+
+  { id:"nu", naam:"Werk nu", kop:"Je huidige rol, feitelijk",
+    intro:"Vijf vragen. Nog geen oordeel, alleen de feiten.",
+    theorie:"Het job demands-resources model onderscheidt taakeisen van hulpbronnen. Te weinig taakeisen levert net zulke reële klachten op als te veel: verveling, cynisme, schuldgevoel.",
+    stappen:[
+      {id:"functie",type:"text",vraag:"Wat is je functietitel?",placeholder:"Bijvoorbeeld: adviseur bedrijfsvoering"},
+      {id:"sector",type:"text",vraag:"In welke sector werk je?",placeholder:"Bijvoorbeeld: zorgverzekeraar"},
+      {id:"contract",type:"slider",vraag:"Hoeveel uur staat er in je contract?",min:16,max:45,def:40,unit:"uur"},
+      {id:"kantoor",type:"slider",vraag:"Hoeveel dagen per week ben je op kantoor?",min:0,max:5,def:2,unit:"dagen"},
+      {id:"rolduur",type:"schaal",vraag:"Hoe lang ben je al {functie}?",schaal:ROLDUUR,def:14}
+    ]},
+
+  { id:"rol", naam:"Je rol", kop:"Wat je rol met je doet",
+    intro:"Vier vragen over de binnenkant van je werk.",
+    theorie:"Job crafting begint met weten welke onderdelen van je functie je zou uitbreiden en welke je zou inruilen. Zonder dat onderscheid wordt elke verandering een gok.",
+    stappen:[
+      {id:"leuk",type:"longtext",vraag:"Welk deel van je werk zou je uitbreiden als het mocht?",hint:"Het onderdeel waar je wel meer van zou willen."},
+      {id:"minder",type:"longtext",vraag:"En welk deel zou je morgen weggeven?"},
+      {id:"ontwikkelen",type:"longtext",vraag:"Wat wil je in dit vak nog leren?",hint:"Iets wat je nu net niet kunt, maar wel wilt kunnen."},
+      {id:"autonomie",type:"slider",vraag:"Hoeveel vrijheid heb je om je week zelf in te delen?",min:1,max:10,def:7,unit:"van 10",ends:["alles ligt vast","volledig vrij"]}
+    ]},
+
+  { id:"tijd",naam:"Tijd", kop:"Waar je uren echt heen gaan",
+    intro:"Denk aan de afgelopen vier weken. Eerlijk mag, er kijkt niemand mee.",
+    theorie:"Het verschil tussen contracturen en werkelijke taaktijd is de ruimte waar dit product over gaat. Bij hybride werk zonder harde begin- en eindtijd is dat verschil zelden zichtbaar.",
+    stappen:[
+      {id:"echturen",type:"slider",vraag:"Hoeveel uur per week ben je écht met taken bezig?",hint:"Exclusief overleg dat je zelf niet nodig vindt. Je contract is {contract} uur.",min:0,max:45,def:26,unit:"uur",pctVan:"contract"},
+      {id:"moment",type:"choice",vraag:"Wanneer ben je meestal klaar met je week?",opties:["Al op dinsdag","Woensdag","Donderdag","Vrijdagochtend","Ik ben nooit echt klaar"]},
+      {id:"invulling",type:"longtext",vraag:"Wat doe je in de uren dat je technisch werkt, maar niet aan werk denkt?",hint:"Er is geen fout antwoord. Iedereen heeft die uren."}
+    ]},
+
+  { id:"talent",naam:"Talent", kop:"Waar je goed in bent en wat je leuk vindt",
+    intro:"Twee sorteeroefeningen met kaartjes uit jouw eigen vak. Dit is het hart van de intake.",
+    theorie:"Kunnen en leuk vinden zijn niet hetzelfde. Waar je goed in bent maar geen plezier aan beleeft, wordt de taak die je toegeschoven krijgt. De overlap van allebei is waar het rendement zit.",
+    stappen:[
+      {id:"energie",type:"dual",vraag:"Hoeveel energie heb je aan het begin en aan het eind van een werkdag?",hint:"Cijfer van 1 tot 10 voor een gemiddelde dag.",a:{label:"Bij het begin",def:7},b:{label:"Aan het eind",def:5}},
+      {id:"skill",type:"strip",vraag:"Waar ben je goed in?",hint:"Kaartjes uit jouw werk als {functie}. Sleep ze naar links of rechts, alleen wat je herkent.",links:"hier ben ik niet goed in",rechts:"hier ben ik goed in",bron:"skill"},
+      {id:"energiekaart",type:"strip",vraag:"En wat doe je graag?",hint:"Dezelfde kaartjes, nu op plezier. Straks leg ik beide antwoorden over elkaar.",links:"doe ik met tegenzin",rechts:"doe ik graag, krijg er energie van",bron:"energie"},
+      {id:"benaderd",type:"longtext",vraag:"Waar benaderen collega's je spontaan voor, ook al hoort het niet bij je functie?",hint:"Geen idee? Schrijf dan gerust: geen idee."}
+    ]},
+
+  { id:"dromen",naam:"Dromen", kop:"Nu even zonder rem",
+    intro:"De laatste sectie. Eerst mag alles, daarna trekken we de grenzen.",
+    theorie:"De zelfdeterminatietheorie stelt dat motivatie ontstaat bij autonomie, competentie en verbondenheid. Vraag mensen wat ze zouden doen zonder risico, en die drie komen bijna altijd boven.",
+    stappen:[
+      {id:"nieuwsgierig",type:"longtext",vraag:"Waar ben je de afgelopen maand nieuwsgierig naar geweest, puur voor jezelf?"},
+      {id:"aldoet",type:"longtext",vraag:"Doe je nu al iets in je vrije werktijd dat geen officieel werk is?",hint:"Zonder oordeel. Dit is vaker regel dan uitzondering."},
+      {id:"droom",type:"longtext",vraag:"Geen geld nodig, geen risico, niemand die meekijkt. Wat ga je doen?",hint:"Mag groot. Mag onrealistisch. Schrijf op wat er als eerste opkomt."},
+      {id:"droom2",type:"longtext",vraag:"En over vijf jaar: waar wil je dan goed in zijn?",hint:"Niet welke functie. Welke vaardigheid of welk onderwerp."},
+      {id:"grenzen",type:"multi",vraag:"Wat wil je zeker niet?",hint:"Meerdere antwoorden mogelijk.",opties:["Risico op ontslag","Mijn avonden en weekenden kwijt","Iets dat raakt aan mijn werkgever of sector","Opvallen bij collega's"]},
+      {id:"rangorde",type:"rank",vraag:"Zet op volgorde wat het zwaarst telt",hint:"Nummer 1 telt het zwaarst. Gelijkspel bestaat hier niet.",items:["Leren","Extra inkomen","Erkenning","Minder verveling"]}
+    ]}
+];
+
+const S = { betaald:false, s:0, q:0, ant:{}, pos:{skill:{},energie:{}}, kaarten:[], cvNaam:"", cvB64:"", cvTekst:"", terug:false, transcript:"", scenarios:[], chosen:null, actMsgs:[] };
+const $ = i => document.getElementById(i);
+const show = i => $(i).classList.remove("hidden");
+const hide = i => $(i).classList.add("hidden");
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* dynamische tekst */
+function tpl(str){
+  return String(str||"").replace(/\{(\w+)\}/g, (m,k)=>{
+    const v = S.ant[k];
+    if(v===undefined||v===null||v==="") return k==="functie" ? "in deze rol" : "";
+    return esc(v);
+  });
+}
+
+async function bewaar(){
+  const d = {s:S.s,q:S.q,ant:S.ant,pos:S.pos,kaarten:S.kaarten,cvNaam:S.cvNaam,cvTekst:S.cvTekst};
+  try{ await window.storage.set(KEY, JSON.stringify(d)); $("saved").textContent="opgeslagen"; setTimeout(()=>$("saved").textContent="",1600); }catch(e){}
+}
+async function laad(){ try{ const r = await window.storage.get(KEY); return r?JSON.parse(r.value):null; }catch(e){ return null; } }
+async function wis(){ try{ await window.storage.delete(KEY); }catch(e){} }
+
+(function(){ const g=$("heroGrid"); for(let i=0;i<40;i++){ const c=document.createElement("div"); c.className="hr-cell"+(i>=26?" free":""); c.style.animationDelay=(i*20)+"ms"; g.appendChild(c);} })();
+
+function md(t){
+  let out="",list=false;
+  for(const raw of esc(t).split("\n")){
+    const l=raw.trim(), b=s=>s.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+    if(/^##+\s/.test(l)){ if(list){out+="</ul>";list=false;} out+=`<h3 style="margin:18px 0 6px">${b(l.replace(/^##+\s/,""))}</h3>`; }
+    else if(/^[-*]\s/.test(l)||/^\d+\.\s/.test(l)){ if(!list){out+="<ul>";list=true;} out+=`<li>${b(l.replace(/^[-*]\s|^\d+\.\s/,""))}</li>`; }
+    else if(!l){ if(list){out+="</ul>";list=false;} }
+    else { if(list){out+="</ul>";list=false;} out+=`<p>${b(l)}</p>`; }
+  }
+  return list?out+"</ul>":out;
+}
+
+function railTeken(){
+  $("rail").innerHTML = SECTIES.map((sec,i)=>
+    `<li class="${i<S.s?"done":i===S.s?"now":""}"><div class="bar"></div><div class="nm">${i+1}. ${sec.naam}</div></li>`).join("");
+}
+const stap = () => SECTIES[S.s].stappen[S.q];
+
+function toonStap(){
+  railTeken();
+  const sec = SECTIES[S.s], st = sec.stappen[S.q];
+  let html = "";
+  if(S.q === 0){
+    html += `<div class="opener"><div class="mono">Sectie ${S.s+1} van ${SECTIES.length} · ${sec.naam}</div>
+      <h2>${sec.kop}</h2><p>${sec.intro}</p><div class="theory">${sec.theorie}</div></div>`;
+  }
+  html += `<div class="step"><div class="qnum mono">Vraag ${S.q+1} van ${sec.stappen.length}</div>
+    <h3>${tpl(st.vraag)}</h3>${st.hint?`<p class="hint">${tpl(st.hint)}</p>`:'<div style="height:6px"></div>'}
+    <div id="veld"></div></div>`;
+  $("stage").innerHTML = html;
+  veldTeken(st);
+  const totaal = SECTIES.reduce((n,x)=>n+x.stappen.length,0);
+  let gedaan = 0; for(let i=0;i<S.s;i++) gedaan += SECTIES[i].stappen.length; gedaan += S.q;
+  const over = Math.max(1, Math.round((totaal-gedaan)*0.5));
+  const rest = document.getElementById("resttijd"); if(rest) rest.textContent = "nog ongeveer " + over + " min";
+  const tel = document.getElementById("railtel"); if(tel) tel.textContent = "Vraag " + (gedaan+1) + " van " + totaal;
+  const vul = document.getElementById("railvul"); if(vul) vul.style.width = Math.round(gedaan/totaal*100) + "%";
+  $("back").disabled = (S.s===0 && S.q===0);
+  $("next").textContent = (S.s===SECTIES.length-1 && S.q===sec.stappen.length-1) ? "Naar het overzicht" : "Volgende";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function veldTeken(st){
+  const v = $("veld"), cur = S.ant[st.id];
+
+  if(st.type==="text"){
+    v.innerHTML = `<input type="text" id="in" placeholder="${st.placeholder||""}" value="${cur?esc(cur).replace(/"/g,"&quot;"):""}">`;
+    $("in").focus();
+  }
+  else if(st.type==="longtext"){
+    v.innerHTML = `<textarea id="in" placeholder="Schrijf het op zoals je het zou zeggen. Ook als het rommelig is.">${cur?esc(cur):""}</textarea>
+      <div class="veilig" style="margin-top:10px"><i></i>Niemand leest mee · hoe eerlijker je bent, hoe scherper je uitkomst</div>
+      <p class="muted" style="font-size:13px;margin:8px 0 0">Enter gaat verder, Shift + Enter maakt een nieuwe regel.</p>`;
+  }
+  else if(st.type==="slider"){
+    const val = (cur===undefined||cur===null)?st.def:cur;
+    const ends = st.ends||[st.min,st.max];
+    v.innerHTML = `<div class="sl"><div class="sl-val"><span id="slv">${val}</span><small>${st.unit}</small></div>
+      <div class="sub" id="sub"></div>
+      <input type="range" id="in" min="${st.min}" max="${st.max}" step="${st.step||1}" value="${val}">
+      <div class="ends"><span>${ends[0]}</span><span>${ends[1]}</span></div></div>`;
+    const upd = x => {
+      $("slv").textContent = x;
+      if(st.pctVan && S.ant[st.pctVan]) $("sub").textContent = Math.round(x/S.ant[st.pctVan]*100) + "% van je contracturen";
+    };
+    upd(val);
+    $("in").addEventListener("input",e=>upd(e.target.value));
+  }
+  else if(st.type==="schaal"){
+    const idx = (cur!==undefined && st.schaal.indexOf(cur)>=0) ? st.schaal.indexOf(cur) : st.def;
+    v.innerHTML = `<div class="sl"><div class="sl-val" style="font-size:32px"><span id="slv">${st.schaal[idx]}</span></div>
+      <input type="range" id="in" min="0" max="${st.schaal.length-1}" step="1" value="${idx}">
+      <div class="ends"><span>${st.schaal[0]}</span><span>${st.schaal[st.schaal.length-1]}</span></div></div>`;
+    $("in").addEventListener("input",e=>$("slv").textContent = st.schaal[+e.target.value]);
+  }
+  else if(st.type==="dual"){
+    const a = (cur&&cur.a)||st.a.def, b = (cur&&cur.b)||st.b.def;
+    v.innerHTML = `<div class="dual">
+      <div><div class="mono">${st.a.label}</div><div class="sl-val"><span id="av">${a}</span><small>van 10</small></div>
+        <input type="range" id="ina" min="1" max="10" value="${a}"><div class="ends"><span>leeg</span><span>vol</span></div></div>
+      <div><div class="mono">${st.b.label}</div><div class="sl-val"><span id="bv">${b}</span><small>van 10</small></div>
+        <input type="range" id="inb" min="1" max="10" value="${b}"><div class="ends"><span>leeg</span><span>vol</span></div></div></div>`;
+    $("ina").addEventListener("input",e=>$("av").textContent=e.target.value);
+    $("inb").addEventListener("input",e=>$("bv").textContent=e.target.value);
+  }
+  else if(st.type==="choice"){
+    const gekozen = cur ? String(cur) : "";
+    const isAnders = gekozen.indexOf("Anders")===0;
+    v.innerHTML = st.opties.map(o=>{
+      const sel = (o==="Anders") ? isAnders : gekozen===o;
+      return `<label class="opt${sel?" sel":""}"><input type="radio" name="ch" value="${o}" ${sel?"checked":""}> <span>${o}</span></label>`;
+    }).join("") + `<div id="andersWrap" class="${isAnders?"":"hidden"}" style="margin-top:6px">
+        <input type="text" id="anders" placeholder="Vul zelf in" value="${isAnders?esc(gekozen.replace(/^Anders:?\s*/,"")).replace(/"/g,"&quot;"):""}"></div>`;
+    v.querySelectorAll(".opt").forEach(l=>l.onclick=()=>{
+      v.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel")); l.classList.add("sel");
+      const isA = l.querySelector("input").value==="Anders";
+      $("andersWrap").classList.toggle("hidden", !isA);
+      if(isA) setTimeout(()=>$("anders").focus(),0);
+    });
+  }
+  else if(st.type==="multi"){
+    const sel = cur||[];
+    v.innerHTML = st.opties.map(o=>`<label class="opt${sel.indexOf(o)>=0?" sel":""}"><input type="checkbox" value="${o}" ${sel.indexOf(o)>=0?"checked":""}> <span>${o}</span></label>`).join("");
+    v.querySelectorAll(".opt").forEach(l=>l.onclick=()=>setTimeout(()=>l.classList.toggle("sel", l.querySelector("input").checked),0));
+  }
+  else if(st.type==="rank"){
+    let items = cur ? cur.slice() : st.items.slice();
+    let dragIdx = null;
+    const onMove = e => {
+      if(dragIdx===null) return;
+      const lis = Array.prototype.slice.call(v.querySelectorAll(".rank li"));
+      let doel = dragIdx;
+      lis.forEach((li,i)=>{ const r=li.getBoundingClientRect(); if(e.clientY>r.top && e.clientY<r.bottom) doel=i; });
+      if(doel!==dragIdx){ const it=items.splice(dragIdx,1)[0]; items.splice(doel,0,it); dragIdx=doel; teken(true); }
+    };
+    const onUp = () => {
+      dragIdx = null;
+      document.removeEventListener("pointermove",onMove);
+      document.removeEventListener("pointerup",onUp);
+      teken();
+    };
+    const teken = (bezig) => {
+      v.innerHTML = `<ul class="rank">${items.map((it,i)=>`<li class="${bezig&&i===dragIdx?"dragging":""}">
+        <span class="grip" data-g="${i}" aria-hidden="true">&#8942;&#8942;</span>
+        <span class="num">${i+1}</span><span class="lbl">${it}</span>
+        <button class="mv" data-u="${i}" aria-label="omhoog">&#8593;</button><button class="mv" data-d="${i}" aria-label="omlaag">&#8595;</button></li>`).join("")}</ul>
+        <p class="muted" style="font-size:13px;margin:10px 0 0">Sleep aan de greep, of gebruik de pijltjes.</p>`;
+      v.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>{const i=+b.dataset.u; if(i>0){const t=items[i-1];items[i-1]=items[i];items[i]=t;teken();}});
+      v.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{const i=+b.dataset.d; if(i<items.length-1){const t=items[i+1];items[i+1]=items[i];items[i]=t;teken();}});
+      v.querySelectorAll("[data-g]").forEach(g=>g.addEventListener("pointerdown", e=>{
+        dragIdx = +g.dataset.g;
+        document.addEventListener("pointermove",onMove);
+        document.addEventListener("pointerup",onUp);
+        teken(true);
+        e.preventDefault();
+      }));
+      v._rank = items;
+    };
+    teken();
+  }
+  else if(st.type==="cv"){
+    v.innerHTML = `<div class="row"><label class="btn btn-ghost btn-sm" style="display:inline-block">Kies een pdf<input type="file" id="cvfile" accept="application/pdf" style="display:none"></label>
+      <span class="muted" id="cvnaam">${S.cvNaam||"Geen bestand gekozen"}</span></div>
+      <p class="hint" style="margin:16px 0 6px">Of plak de tekst van je LinkedIn-profiel.</p>
+      <textarea id="in" placeholder="Plakken mag ruw, opmaak maakt niet uit.">${S.cvTekst?esc(S.cvTekst):""}</textarea>
+      <p class="hint" style="margin-top:10px">Liever niet? Sla deze vraag gewoon over.</p>`;
+    $("cvfile").onchange = e => {
+      const f = e.target.files[0]; if(!f) return;
+      $("cvnaam").textContent = f.name + " wordt gelezen";
+      const r = new FileReader();
+      r.onload = () => { S.cvB64 = r.result.split(",")[1]; S.cvNaam = f.name; $("cvnaam").textContent = f.name; };
+      r.readAsDataURL(f);
+    };
+  }
+  else if(st.type==="strip"){ stripVeld(v, st); }
+}
+
+/* ---------- horizontale kaartsortering ---------- */
+/* ---------- kaartjes op maat van de rol ---------- */
+async function maakKaarten(){
+  const ctx = `Functie: ${S.ant.functie||"onbekend"}
+Sector: ${S.ant.sector||"onbekend"}
+Zou uitbreiden: ${S.ant.leuk||"onbekend"}
+Zou weggeven: ${S.ant.minder||"onbekend"}
+Wil leren: ${S.ant.ontwikkelen||"onbekend"}`;
+  try{
+    const raw = await ask(`Je maakt kaartjes voor een sorteeroefening. Op basis van de rol hieronder geef je veertien concrete taken die in deze functie echt voorkomen. Herkenbaar en specifiek, niet generiek. Twee tot vier woorden per kaartje, Nederlands, zonder lidwoord, geen dubbele. Meng leuke en vervelende taken door elkaar.
+Antwoord uitsluitend met geldige JSON: {"kaarten":["taak","taak"]}`,
+      [{role:"user",content:ctx}], null, 400);
+    const d = jsonUit(raw);
+    if(d.kaarten && d.kaarten.length>=8) S.kaarten = d.kaarten.slice(0,16);
+    else S.kaarten = KAARTEN.slice();
+  }catch(e){ S.kaarten = KAARTEN.slice(); }
+  bewaar();
+}
+
+async function stripVeld(v, st){
+  if(!S.kaarten.length){
+    v.innerHTML = `<div class="thinking">stelt kaartjes op uit jouw vak <b></b><b></b><b></b></div>`;
+    await maakKaarten();
+  }
+  const bron = st.bron;
+  v.innerHTML = `<div class="strip" id="strip">
+      <div class="half r"></div><div class="mid"></div>
+      <span class="stl l">${st.links}</span><span class="stl r">${st.rechts}</span>
+    </div>
+    <div class="schaalhint"><span>helemaal links</span><span>ertussenin mag ook</span><span>helemaal rechts</span></div>
+    <div class="mono" style="margin-top:12px">Nog te plaatsen</div>
+    <div class="tray" id="tray"></div>
+    <div class="addrow"><input type="text" id="eigen" placeholder="Eigen taak toevoegen"><button class="btn btn-ghost btn-sm" id="addc">Toevoegen</button></div>`;
+  const strip = $("strip"), tray = $("tray");
+
+  function lees(){
+    const pr = strip.getBoundingClientRect(); const out = {};
+    strip.querySelectorAll(".chip").forEach(c=>{
+      out[c.dataset.naam] = +((c.offsetLeft + c.offsetWidth/2)/pr.width).toFixed(3);
+    });
+    S.pos[bron] = out;
+  }
+  function sleepbaar(c){
+    let drag=false, ox=0, oy=0;
+    c.addEventListener("pointerdown", e=>{
+      drag=true; c.setPointerCapture(e.pointerId); c.classList.add("drag");
+      const r=c.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top;
+      if(c.parentElement===tray){
+        const pr=strip.getBoundingClientRect(); strip.appendChild(c);
+        c.style.left = Math.max(0,Math.min(pr.width-c.offsetWidth, r.left-pr.left))+"px";
+        c.style.top  = Math.max(24,Math.min(pr.height-34, r.top-pr.top))+"px";
+      }
+      e.preventDefault();
+    });
+    c.addEventListener("pointermove", e=>{
+      if(!drag) return;
+      const pr=strip.getBoundingClientRect();
+      let x=e.clientX-pr.left-ox, y=e.clientY-pr.top-oy;
+      x=Math.max(0,Math.min(pr.width-c.offsetWidth,x));
+      y=Math.max(24,Math.min(pr.height-c.offsetHeight-4,y));
+      c.style.left=x+"px"; c.style.top=y+"px";
+    });
+    c.addEventListener("pointerup", ()=>{ drag=false; c.classList.remove("drag"); lees(); });
+  }
+  function maak(naam, x, rij){
+    const c=document.createElement("div"); c.className="chip"; c.textContent=naam; c.dataset.naam=naam;
+    if(x!==undefined && x!==null){ strip.appendChild(c); c.style.left=(x*100)+"%"; c.style.top=(30+(rij%5)*32)+"px"; }
+    else tray.appendChild(c);
+    sleepbaar(c);
+  }
+  const eerder = S.pos[bron]||{};
+  const andere = bron==="energie" ? Object.keys(S.pos.skill||{}) : [];
+  const basis = S.kaarten.length ? S.kaarten : KAARTEN;
+  const alle = basis.concat(Object.keys(eerder).filter(k=>basis.indexOf(k)<0))
+                    .concat(andere.filter(k=>basis.indexOf(k)<0 && eerder[k]===undefined));
+  let rij=0;
+  alle.forEach(k=>{ const x=eerder[k]; maak(k, x, x!==undefined?rij++:0); });
+  $("addc").onclick = ()=>{ const n=$("eigen").value.trim(); if(n){ maak(n); $("eigen").value=""; } };
+  v._lees = lees;
+}
+
+/* ---------- lezen ---------- */
+function leesVeld(){
+  const st = stap(), v = $("veld");
+  if(st.type==="text"||st.type==="longtext") S.ant[st.id] = $("in").value.trim();
+  else if(st.type==="slider") S.ant[st.id] = +$("in").value;
+  else if(st.type==="schaal") S.ant[st.id] = st.schaal[+$("in").value];
+  else if(st.type==="dual") S.ant[st.id] = {a:+$("ina").value, b:+$("inb").value};
+  else if(st.type==="choice"){
+    const r = v.querySelector("input:checked");
+    if(!r) S.ant[st.id] = null;
+    else if(r.value==="Anders"){ const t=$("anders").value.trim(); S.ant[st.id] = t?("Anders: "+t):null; }
+    else S.ant[st.id] = r.value;
+  }
+  else if(st.type==="multi") S.ant[st.id] = Array.prototype.slice.call(v.querySelectorAll("input:checked")).map(x=>x.value);
+  else if(st.type==="rank") S.ant[st.id] = v._rank;
+  else if(st.type==="cv"){ S.cvTekst = $("in").value.trim(); S.ant.cv = (S.cvNaam?("pdf: "+S.cvNaam+" "):"") + (S.cvTekst?"(profieltekst meegegeven)":""); }
+  else if(st.type==="strip"){ if(v._lees) v._lees(); S.ant[st.id] = S.pos[st.bron]; }
+}
+function ingevuld(){
+  const st = stap();
+  if(st.type==="cv"||st.type==="longtext"||st.type==="multi") return true;
+  if(st.type==="strip") return Object.keys(S.pos[st.bron]||{}).length >= 3;
+  const a = S.ant[st.id];
+  return !(a===null || a===undefined || a==="");
+}
+
+$("next").onclick = async () => {
+  leesVeld();
+  if(!ingevuld()){
+    const st = stap();
+    $("err").innerHTML = `<div class="err">${st.type==="strip"?"Sleep minstens drie kaartjes in de balk.":st.type==="choice"?"Kies een optie, of vul zelf iets in.":"Vul dit nog even in."}</div>`;
+    return;
+  }
+  $("err").innerHTML = "";
+  if(S.terug){ S.terug=false; await bewaar(); return naarReview(); }
+  const sec = SECTIES[S.s];
+  if(S.q < sec.stappen.length-1) S.q++;
+  else if(S.s < SECTIES.length-1){ S.s++; S.q=0; }
+  else { await bewaar(); return naarReview(); }
+  await bewaar(); toonStap();
+};
+$("back").onclick = () => {
+  leesVeld();
+  if(S.q>0) S.q--; else if(S.s>0){ S.s--; S.q=SECTIES[S.s].stappen.length-1; }
+  toonStap();
+};
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Enter" || e.shiftKey) return;
+  if($("intake").classList.contains("hidden")) return;
+  const t = e.target.tagName;
+  if(t==="TEXTAREA" || t==="INPUT" || t==="BODY" || t==="DIV"){ e.preventDefault(); $("next").click(); }
+});
+
+$("start").onclick = async () => { await wis(); S.s=0; S.q=0; hide("landing"); show("intake"); toonStap(); };
+$("resume").onclick = async () => {
+  const d = await laad(); if(!d) return;
+  S.s=d.s; S.q=d.q; S.ant=d.ant||{}; S.pos=d.pos||{skill:{},energie:{}}; S.kaarten=d.kaarten||[]; S.cvNaam=d.cvNaam||""; S.cvTekst=d.cvTekst||"";
+  hide("landing"); show("intake"); toonStap();
+};
+(async ()=>{ const d = await laad(); if(d && (d.s>0||d.q>0)) show("resume"); })();
+
+/* herkenningslijst: zelf aantikken werkt sterker dan een lijst met vinkjes */
+(function(){
+  const lijst = document.getElementById("hlijst"); if(!lijst) return;
+  const items = Array.prototype.slice.call(lijst.querySelectorAll("[data-h]"));
+  const teksten = ["Herken je er twee of meer? Dan is dit voor jou geschreven.",
+                   "Eén herkenning is genoeg om te beginnen.",
+                   "Twee van de vier. Dit is precies waar dit voor gemaakt is.",
+                   "Drie van de vier. Je bent niet de enige, en er valt iets mee te doen.",
+                   "Alle vier. Dan wordt het tijd om te kijken wat er wél in zit."];
+  items.forEach(li=>li.onclick=()=>{
+    li.classList.toggle("aan");
+    const n = lijst.querySelectorAll(".aan").length;
+    document.getElementById("hscore").textContent = teksten[n];
+    document.getElementById("hscore").classList.toggle("sterk", n>=2);
+    if(n>=2) $("start").textContent = "Ja, laat maar zien wat erin zit";
+  });
+})();
+
+/* mobiele knop verschijnt zodra de eerste knop uit beeld is */
+(function(){
+  const bar = document.getElementById("mobielCta"), knop = document.getElementById("start");
+  if(!bar||!knop||!("IntersectionObserver" in window)) return;
+  new IntersectionObserver(e=>{
+    const uitBeeld = !e[0].isIntersecting && !$("landing").classList.contains("hidden");
+    bar.classList.toggle("hidden", !uitBeeld);
+  },{threshold:0}).observe(knop);
+})();
+
+/* ---------- testmodus ---------- */
+const DEMO = {
+  ant:{
+    leeftijd:33, opleiding:"Hbo", thuis:"Samenwonend zonder kinderen", avonden:4,
+    jaren:8, werkgevers:4, patroon:"Ja, in vrijwel elke rol",
+    cv:"(profieltekst meegegeven)",
+    functie:"Strategic Partner Manager", sector:"HR-dienstverlening en flexbranche",
+    contract:40, kantoor:2, rolduur:"2 jaar",
+    leuk:"Nieuwe partnerships opzetten. Het stuk waar nog niets ligt en ik het model zelf mag bedenken.",
+    minder:"Terugkerend accountbeheer en het bijhouden van rapportages die niemand leest.",
+    ontwikkelen:"De technische kant. Zelf iets kunnen bouwen in plaats van het altijd te laten bouwen.",
+    autonomie:8,
+    echturen:26, moment:"Donderdag",
+    invulling:"Ik werk eigen ideeën uit, doe marktonderzoek en bouw prototypes. Meestal in blokken van een uur tussen overleggen door.",
+    energie:{a:8,b:5},
+    benaderd:"Partnermodellen doorrekenen, presentaties scherp krijgen, sparren over hoe je een deal insteekt.",
+    nieuwsgierig:"AI-automatisering, workflows bouwen met n8n, en hoe kleine SaaS-producten distributie vinden.",
+    aldoet:"Ja. Ik bouw en valideer eigen productideeën, meestal in de uren dat de agenda leeg is.",
+    droom:"Een eigen product bouwen, klanten vinden en het uiteindelijk verkopen.",
+    droom2:"Iets van nul naar één zetten. Niet één vak, maar het bouwen zelf.",
+    grenzen:["Iets dat raakt aan mijn werkgever of sector"],
+    rangorde:["Extra inkomen","Leren","Minder verveling","Erkenning"]
+  },
+  pos:{
+    skill:{ "Analyseren":0.82,"Presenteren":0.86,"Overleggen":0.74,"Plannen":0.70,"Onderhandelen":0.78,
+            "Uitzoeken":0.88,"Bouwen of maken":0.58,"Anderen helpen":0.66,"Nieuwe mensen spreken":0.72,
+            "Beslissen":0.68,"Details controleren":0.24,"Documenteren":0.22,"Schrijven":0.62,"Improviseren":0.76 },
+    energie:{ "Analyseren":0.72,"Presenteren":0.66,"Overleggen":0.34,"Plannen":0.46,"Onderhandelen":0.74,
+              "Uitzoeken":0.90,"Bouwen of maken":0.94,"Anderen helpen":0.58,"Nieuwe mensen spreken":0.80,
+              "Beslissen":0.62,"Details controleren":0.14,"Documenteren":0.10,"Schrijven":0.52,"Improviseren":0.84 }
+  },
+  cvTekst:"Strategic Partner Manager. Ruim zeven jaar in channel partnerships, alliance management en partnerstrategie. Eerder Strategy en Planning Manager, en alliance manager voor een groot techpartnerschap. Sterk in het opzetten van nieuwe samenwerkingen, minder in het beheren ervan zodra het loopt."
+};
+function demoVul(){
+  S.ant = JSON.parse(JSON.stringify(DEMO.ant));
+  S.pos = JSON.parse(JSON.stringify(DEMO.pos));
+  S.cvTekst = DEMO.cvTekst; S.cvNaam = ""; S.kaarten = KAARTEN.slice();
+  S.ant.skill = S.pos.skill; S.ant.energiekaart = S.pos.energie;
+}
+$("demo").onclick = async () => { demoVul(); await bewaar(); hide("landing"); naarReview(); };
+$("demoLoop").onclick = async () => { demoVul(); S.s=0; S.q=0; await bewaar(); hide("landing"); show("intake"); toonStap(); };
+
+/* ---------- overzicht ---------- */
+function leesbaar(st){
+  if(st.type==="cv") return S.ant.cv || "overgeslagen";
+  const a = S.ant[st.id];
+  if(st.type==="dual" && a) return `${a.a} bij het begin, ${a.b} aan het eind`;
+  if(st.type==="strip"){
+    const p = S.pos[st.bron]||{}; const n = Object.keys(p);
+    if(!n.length) return "niets geplaatst";
+    return n.map(k=>`${k} (${p[k]>.5?st.rechts:st.links})`).join("; ");
+  }
+  if(Array.isArray(a)) return a.length? a.join(", ") : "niets aangevinkt";
+  if(a===""||a===null||a===undefined) return "overgeslagen";
+  return esc(a) + (st.unit&&st.type==="slider"?(" "+st.unit):"");
+}
+function naarReview(){
+  hide("intake"); show("review");
+  $("revBody").innerHTML = SECTIES.map((sec,si)=>
+    `<h3 style="margin:26px 0 4px">${sec.naam}</h3>` + sec.stappen.map((st,qi)=>
+      `<div class="rev"><div class="q"><div class="mono">${tpl(st.vraag)}</div><div class="a">${leesbaar(st)}</div></div>
+       <button class="pen" data-s="${si}" data-q="${qi}" aria-label="aanpassen">&#9998;</button></div>`).join("")).join("");
+  $("revBody").querySelectorAll(".pen").forEach(b=>b.onclick=()=>{
+    S.s=+b.dataset.s; S.q=+b.dataset.q; S.terug=true;
+    hide("review"); show("intake"); toonStap();
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("backToReview").onclick = () => { hide("summary"); naarReview(); };
+
+/* ---------- matrix ---------- */
+function matrixData(){
+  const sk = S.pos.skill||{}, en = S.pos.energie||{};
+  const namen = Object.keys(sk).concat(Object.keys(en).filter(k=>!sk[k]));
+  return namen.map(n=>({naam:n, x:(en[n]!==undefined?en[n]:0.5), y:1-(sk[n]!==undefined?sk[n]:0.5)}));
+}
+function matrixTeken(el){
+  const d = matrixData(); if(!d.length) return;
+  const sweet = d.filter(p=>p.x>.5 && p.y<.5).map(p=>p.naam);
+  el.innerHTML = `<div class="mono" style="margin-top:26px">Je twee sorteringen over elkaar</div>
+    <div class="plane" id="plane2">
+      <div class="q q-tr"></div>
+      <div class="axis v"></div><div class="axis h"></div>
+      <span class="qdlabel">goed in en leuk</span>
+      <span class="axl t">goed in</span><span class="axl b">niet goed in</span>
+      <span class="axl l">met tegenzin</span><span class="axl r">doe ik graag</span>
+      ${d.map(p=>`<span class="chip${p.x>.5&&p.y<.5?" hot":""}" style="left:${(p.x*100).toFixed(1)}%;top:${(p.y*100).toFixed(1)}%">${esc(p.naam)}</span>`).join("")}
+    </div>
+    <p class="muted" style="margin-top:8px;font-size:13px">De plek van elk kaartje is jouw eigen plaatsing. Alleen waar kaartjes elkaar overlapten, zijn ze binnen hetzelfde vak iets verschoven.</p>
+    <div class="basis">
+      <div class="mono" style="color:var(--limeL)">Hier bouwen de scenario's op</div>
+      <h3 style="color:var(--chalk);margin:8px 0 10px">Benut je sterkte en doe wat je leuk vindt</h3>
+      ${sweet.length ? `<div class="pills">${sweet.map(n=>`<span>${esc(n)}</span>`).join("")}</div>`
+                     : `<p style="margin:0;color:#DCE2D6">Er valt nu niets in dit vak. Dat is zelf ook een uitkomst.</p>`}
+    </div>`;
+  schikIn(document.getElementById("plane2"), d);
+}
+/* houdt de eigen coordinaten aan, maar duwt overlappende kaartjes uit elkaar
+   binnen hun eigen kwadrant, zodat beeld en analyse nooit uiteenlopen */
+function schikIn(plane, d){
+  if(!plane) return;
+  requestAnimationFrame(()=>{
+    const pr = plane.getBoundingClientRect(), W = pr.width, H = pr.height;
+    const pad = 7, kop = 24;
+    const chips = Array.prototype.slice.call(plane.querySelectorAll(".chip"));
+    const items = chips.map((c,i)=>({c:c, p:d[i], w:c.offsetWidth, h:c.offsetHeight}))
+                       .sort((a,b)=>a.p.y-b.p.y || a.p.x-b.p.x);
+    const gezet = [];
+    items.forEach(it=>{
+      const rechts = it.p.x > .5, boven = it.p.y < .5;
+      const x0 = rechts ? W/2+pad : pad;
+      const x1 = Math.max(x0, (rechts ? W-pad : W/2-pad) - it.w);
+      const y0 = boven ? kop : H/2+pad;
+      const y1 = Math.max(y0, (boven ? H/2-pad : H-pad) - it.h);
+      let x = Math.min(Math.max(it.p.x*W - it.w/2, x0), x1);
+      let y = Math.min(Math.max(it.p.y*H - it.h/2, y0), y1);
+      const botst = () => gezet.some(g => x < g.x+g.w+6 && x+it.w+6 > g.x && y < g.y+g.h+4 && y+it.h+4 > g.y);
+      let n = 0, kolom = 0;
+      while(botst() && n < 80){
+        y += it.h + 5;
+        if(y > y1){ kolom++; y = y0; x = Math.min(x1, x0 + kolom*(it.w*0.55)); }
+        n++;
+      }
+      it.c.style.left = x+"px"; it.c.style.top = y+"px"; it.c.style.transform = "none";
+      gezet.push({x:x, y:y, w:it.w, h:it.h});
+    });
+  });
+}
+
+/* ---------- API ---------- */
+async function ask(system, messages, tools, maxTokens){
+  const body = {model:MODEL, max_tokens:maxTokens||1000, system:system, messages:messages};
+  if(tools) body.tools = tools;
+  // Let op: dit roept ons EIGEN backend-endpoint aan (/api/chat), niet rechtstreeks Anthropic.
+  // De API-sleutel staat alleen server-side, zie /api/chat.js en README-DEPLOY.md.
+  const r = await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  if(!r.ok){
+    let msg = "De verbinding gaf een fout ("+r.status+").";
+    try{ const e = await r.json(); if(e && e.error) msg = e.error; }catch(ignored){}
+    throw new Error(msg);
+  }
+  const d = await r.json();
+  return (d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+}
+function bouwTranscript(){
+  let t = "";
+  SECTIES.forEach(sec=>{ t += `\n[${sec.naam.toUpperCase()}]\n`; sec.stappen.forEach(st=>{ t += `${tpl(st.vraag)}\n> ${leesbaar(st)}\n`; }); });
+  const d = matrixData();
+  const sweet = d.filter(p=>p.x>.5&&p.y<.5).map(p=>p.naam);
+  const val   = d.filter(p=>p.x<=.5&&p.y<.5).map(p=>p.naam);
+  t += `\n[OVERLAP UIT DE TWEE SORTERINGEN]\nGoed in en doet de gebruiker graag: ${sweet.join(", ")||"geen"}\nGoed in maar doet de gebruiker met tegenzin: ${val.join(", ")||"geen"}\n`;
+  if(S.cvTekst) t += `\n[PROFIELTEKST]\n${S.cvTekst.slice(0,4000)}\n`;
+  S.transcript = t;
+}
+function bericht(extra){
+  const content = [];
+  if(S.cvB64) content.push({type:"document",source:{type:"base64",media_type:"application/pdf",data:S.cvB64}});
+  content.push({type:"text",text:(extra||"")+"\n\nDit is de volledige intake:\n"+S.transcript});
+  return [{role:"user",content:content}];
+}
+function jsonUit(raw){
+  let s = raw.replace(/```json|```/g,"").trim();
+  const i = s.indexOf("{"); if(i>0) s = s.slice(i);
+  try{ return JSON.parse(s); }catch(e){}
+  // afgekapte JSON repareren: sluit open string, arrays en objecten
+  let t = s, q = false, esc2 = false, stack = [];
+  for(const ch of t){
+    if(esc2){ esc2=false; continue; }
+    if(ch==="\\"){ esc2=true; continue; }
+    if(ch==='"'){ q=!q; continue; }
+    if(q) continue;
+    if(ch==="{"||ch==="[") stack.push(ch==="{"?"}":"]");
+    else if(ch==="}"||ch==="]") stack.pop();
+  }
+  if(q) t += '"';
+  t = t.replace(/,\s*$/,"");
+  while(stack.length) t += stack.pop();
+  return JSON.parse(t);
+}
+
+const TOON = `Je bent een kritische, eerlijke gesprekspartner, geen life coach. Geen coach-jargon, geen slijmerij, geen uitroeptekens. Direct, een beetje droog, positief zonder te vleien. Nederlands, korte zinnen, geen gedachtestreepjes.
+Nooit suggereren dat iemand moet stoppen met zijn baan of iets drastisch moet veranderen. Nooit doen alsof deze gegevens gedeeld worden.
+Je kent het job demands-resources model, job crafting, de zelfdeterminatietheorie en flow, en gebruikt die kaders zonder ermee te pronken.
+Schrijf altijd in de je-vorm. Gebruik nooit hij, zij, hem of haar over de gebruiker, en gok nooit naar geslacht.
+Belangrijk over tijd: de uren die binnen de werkweek overblijven zijn geen vrije tijd. Het blijft betaalde tijd van de werkgever. Noem het ruimte in de werkweek, nooit vrije tijd, en stel binnen die uren alleen dingen voor die je aan je werkgever zou kunnen uitleggen, zoals leren, oefenen, verkennen of iets opbouwen dat de organisatie ook iets oplevert. Alles wat echt voor eigen rekening is, zoals een eigen project of iets met inkomsten, plan je in de eigen uren buiten werktijd.`;
+
+/* ---------- as-is schets als kaarten ---------- */
+$("toSummary").onclick = async () => {
+  bouwTranscript();
+  hide("review"); show("summary");
+  hide("sumRow");
+  $("sumBody").innerHTML = `<div class="thinking">stelt de schets op <b></b><b></b><b></b></div>`;
+  matrixTeken($("sumQuad"));
+  try{
+    const raw = await ask(TOON + `
+
+Vat de situatie van deze persoon samen als korte kaarten. Puur observerend, nul advies, geen scenario's, geen aanmoediging.
+Antwoord uitsluitend met geldige JSON, zonder markdown:
+{"kaarten":[{"label":"twee of drie woorden","tekst":"maximaal 18 woorden"}],"klap":"één zin van maximaal 20 woorden die het patroon benoemt"}
+Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 700);
+    const d = jsonUit(raw);
+    $("sumBody").innerHTML = `<div class="kaartjes">${(d.kaarten||[]).map(k=>
+      `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
+      ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}
+      <p class="muted" style="margin-top:14px">Klopt dit beeld?</p>`;
+    show("sumRow");
+  }catch(e){ $("sumBody").innerHTML = `<div class="err">${e.message}</div>`; show("sumRow"); }
+};
+
+$("toInsight").onclick = async () => {
+  hide("summary"); show("insight");
+  $("unlock").disabled = true;
+  $("insBody").innerHTML = `<div class="thinking">zoekt het patroon <b></b><b></b><b></b></div>`;
+  try{
+    const raw = await ask(TOON + `
+
+Geef het scherpste patroon uit deze intake. Geen advies, geen scenario's, geen aanmoediging. Benoem wat deze persoon zelf waarschijnlijk niet zo scherp had geformuleerd.
+Antwoord uitsluitend met geldige JSON:
+{"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden","spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"punten":[{"label":"twee of drie woorden","tekst":"maximaal 12 woorden"}]}
+Precies drie punten.`, bericht(), null, 600);
+    const d = jsonUit(raw);
+    $("insBody").innerHTML = inzichtHtml(d);
+  }catch(e){ $("insBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+  $("unlock").disabled = false;
+};
+
+function inzichtHtml(d){
+  const contract = S.ant.contract||40, echt = Math.min(S.ant.echturen||0, contract);
+  const en = S.ant.energie||{a:0,b:0};
+  const blokjes = Array.from({length:contract}, (_,i)=>
+    `<span class="uur${i<echt?"":" vrij"}"></span>`).join("");
+  return `<div class="urenkaart">
+      <div class="row spread" style="align-items:flex-end">
+        <div><div class="mono">Jouw week</div>
+          <div class="groot">${echt}<small>van ${contract} uur echt werk</small></div></div>
+        <div style="text-align:right"><div class="mono">Ruimte</div>
+          <div class="groot lime">${contract-echt}<small>uur ruimte in je werkweek</small></div></div>
+      </div>
+      <div class="urengrid">${blokjes}</div>
+    </div>
+    <h2 style="margin:26px 0 16px">${esc(d.kop||"")}</h2>
+    <div class="grootcitaat">${esc(d.citaat||"")}</div>
+    ${d.spanning ? `<div class="spanning">
+        <div class="kant">${esc(d.spanning.links||"")}</div>
+        <div class="vs mono">schuurt met</div>
+        <div class="kant">${esc(d.spanning.rechts||"")}</div>
+      </div>
+      <p class="spanningtekst">${esc(d.spanning.tekst||"")}</p>` : ""}
+    <div class="kaartjes" style="margin-top:22px">${(d.punten||[]).map(k=>
+      `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
+    <div class="facts" style="margin-top:18px">
+      <span><b>${en.a||"?"} naar ${en.b||"?"}</b>energie per dag</span>
+      <span><b>${esc(S.ant.moment||"?")}</b>klaar met je week</span>
+      <span><b>${S.ant.avonden||0} avonden</b>eigen tijd per week</span>
+    </div>`;
+}
+
+/* ---------- scenario's: profiel, kandidaten, weging, uitwerking ---------- */
+/* ---------- kalibratie ---------- */
+const KALIB = [
+  {id:"bewijs", vraag:"Wat wil je over zes maanden kunnen laten zien?", opties:[
+    {l:"Iets dat geld oplevert",v:"inkomen"},{l:"Iets dat ik geleerd heb",v:"leren"},
+    {l:"Interessanter werk in mijn huidige baan",v:"werk"},{l:"Iets dat mensen gebruiken",v:"erkenning"}]},
+  {id:"ritme", vraag:"Wat past beter bij jou?", opties:[
+    {l:"Vier uur per week, een jaar lang",v:"traag"},{l:"Vijftien uur per week, één maand",v:"sprint"}]},
+  {id:"spijt", vraag:"Als het misgaat, wat vind je het vervelendst?", opties:[
+    {l:"Dat het geld heeft gekost",v:"geld"},{l:"Dat het tijd heeft gekost",v:"tijd"},
+    {l:"Dat anderen het zagen mislukken",v:"gezicht"}]},
+  {id:"gezelschap", vraag:"Hoe wil je dit aanpakken?", opties:[
+    {l:"Alleen, in mijn eigen tempo",v:"alleen"},{l:"Met iemand die me scherp houdt",v:"samen"}]}
+];
+S.kalib = {};
+
+$("unlock").onclick = () => {
+  hide("insight"); show("kalib");
+  $("kalibBody").innerHTML = KALIB.map((k,i)=>`
+    <div class="step"><div class="qnum mono">Keuze ${i+1} van ${KALIB.length}</div><h3>${k.vraag}</h3>
+      <div style="margin-top:12px">${k.opties.map(o=>
+        `<label class="opt${S.kalib[k.id]===o.v?" sel":""}"><input type="radio" name="k${i}" value="${o.v}" ${S.kalib[k.id]===o.v?"checked":""}> <span>${o.l}</span></label>`).join("")}</div></div>`).join("");
+  $("kalibBody").querySelectorAll(".step").forEach(st=>{
+    st.querySelectorAll(".opt").forEach(l=>l.onclick=()=>{
+      st.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel")); l.classList.add("sel");
+    });
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+$("kalibKlaar").onclick = () => {
+  KALIB.forEach((k,i)=>{
+    const r = $("kalibBody").querySelector(`input[name=k${i}]:checked`);
+    if(r) S.kalib[k.id] = r.value;
+  });
+  if(Object.keys(S.kalib).length < KALIB.length){
+    $("kalibBody").insertAdjacentHTML("beforeend", `<div class="err">Maak alle vier de keuzes. Ze wegen allemaal mee.</div>`);
+    return;
+  }
+  hide("kalib"); show("scenarios"); draaien(); window.scrollTo({top:0,behavior:"smooth"});
+};
+function ontgrendel(){
+  S.betaald = true;
+  document.querySelectorAll(".slot,.slotzone").forEach(el=>el.classList.remove("slot","slotzone"));
+  const pw = document.getElementById("paywall"); if(pw) pw.remove();
+  const h = document.getElementById("herzien"); if(h) h.classList.remove("hidden");
+  const a = document.getElementById("afvallers"); if(a) a.classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* terugknoppen */
+document.querySelectorAll("[data-terug]").forEach(b=>b.onclick=()=>{
+  ["landing","intake","review","summary","insight","kalib","betaal","scenarios","action"].forEach(hide);
+  show(b.dataset.terug);
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* ---------- weging in code, niet door het model ---------- */
+function profielGetallen(){
+  const contract = S.ant.contract||40, echt = S.ant.echturen||contract;
+  const slack = Math.max(0, contract - echt);
+  const avonden = S.ant.avonden||0;
+  let ruimte = Math.round(slack*0.6);          // binnen werktijd, blijft tijd van de werkgever
+  let eigen  = Math.round(avonden*1.2);         // eigen uren buiten werk
+  if(S.kalib.ritme==="sprint"){ ruimte = Math.round(ruimte*1.3); eigen = Math.round(eigen*1.8); }
+  let beschikbaar = ruimte + eigen;
+  const g = S.ant.grenzen||[];
+  let risicoTol = 3;
+  if(g.indexOf("Risico op ontslag")>=0) risicoTol -= 1;
+  if(g.indexOf("Iets dat raakt aan mijn werkgever of sector")>=0) risicoTol -= 0.5;
+  if(S.kalib.spijt==="geld") risicoTol -= 0.5;
+  let zichtTol = g.indexOf("Opvallen bij collega's")>=0 ? 2 : 4;
+  if(S.kalib.spijt==="gezicht") zichtTol -= 1;
+  const rang = S.ant.rangorde||["Leren","Extra inkomen","Erkenning","Minder verveling"];
+  const sweet = matrixData().filter(p=>p.x>.5&&p.y<.5).map(p=>p.naam);
+  return {beschikbaar:Math.max(2,beschikbaar), ruimte:ruimte, eigen:eigen, risicoTol:Math.max(1,risicoTol), zichtTol:Math.max(1,zichtTol), rang:rang, sweet:sweet};
+}
+const DRIJF = {inkomen:"Extra inkomen", leren:"Leren", erkenning:"Erkenning", prikkel:"Minder verveling"};
+function scoreKandidaat(k, P){
+  const uren = +k.uren || 4;
+  const over = Math.max(0, uren - P.beschikbaar);
+  const onder = Math.max(0, P.beschikbaar - uren);
+  const tijd = Math.max(0, 100 - over*9 - Math.min(onder, 12)*1.5);
+  const risico = Math.max(0, 100 - Math.max(0,(+k.risico||3) - P.risicoTol)*30 - Math.max(0,(+k.zichtbaarheid||3) - P.zichtTol)*18);
+  const idx = P.rang.indexOf(DRIJF[k.levert]||"");
+  let drijf = idx<0 ? 50 : [100,76,52,32][idx];
+  if(S.kalib.bewijs==="inkomen" && k.levert==="inkomen") drijf = Math.min(100, drijf+14);
+  if(S.kalib.bewijs==="leren" && k.levert==="leren") drijf = Math.min(100, drijf+14);
+  if(S.kalib.bewijs==="werk" && k.type==="taakverrijking") drijf = Math.min(100, drijf+16);
+  if(S.kalib.bewijs==="erkenning" && k.levert==="erkenning") drijf = Math.min(100, drijf+14);
+  const st = k.sterktes||[];
+  const raak = st.filter(x=>P.sweet.some(s=>{
+    const a=s.toLowerCase(), b=String(x).toLowerCase();
+    return a.indexOf(b)>=0 || b.indexOf(a)>=0;
+  })).length;
+  const sterkte = st.length ? Math.round(Math.min(1, raak/Math.min(st.length,3))*100) : 50;
+  const bars = [
+    {label:"Past in je week", score:Math.round(tijd)},
+    {label:"Past bij je grenzen", score:Math.round(risico)},
+    {label:"Bedient je drijfveer", score:Math.round(drijf)},
+    {label:"Bouwt op je sterkte", score:Math.round(sterkte)}
+  ];
+  const totaal = Math.round((tijd*0.25 + risico*0.3 + drijf*0.25 + sterkte*0.2));
+  return {bars:bars, totaal:totaal};
+}
+function frameTeken(){
+  const el = document.getElementById("frame"); if(!el) return;
+  const map = {taakverrijking:"blijven", leren:"schuiven", zijproject:"switchen"};
+  const uitleg = {blijven:"Meer halen uit de baan die je hebt", schuiven:"Zelfde werkgever, ander zwaartepunt", switchen:"Iets eigen opbouwen naast je werk"};
+  const punten = {blijven:0, schuiven:0, switchen:0};
+  S.scenarios.forEach(s=>{ const k = map[s.id]; if(k) punten[k] = Math.max(punten[k], s.totaal||0); });
+  const som = Object.values(punten).reduce((a,b)=>a+b,0) || 1;
+  const rijen = Object.keys(punten).map(k=>{
+    const pct = Math.round(punten[k]/som*100);
+    return `<div class="frij"><div><b>${k}</b><span>${uitleg[k]}</span></div>
+      <span class="track"><span class="fill" style="width:${pct}%"></span></span><em>${pct}%</em></div>`;
+  }).join("");
+  const winnaar = Object.keys(punten).sort((a,b)=>punten[b]-punten[a])[0];
+  el.innerHTML = `<div class="framebox">
+      <div class="mono">Het beslisframework</div>
+      <h3 style="margin:8px 0 4px">Blijven, schuiven of switchen</h3>
+      <p class="muted" style="margin-bottom:14px">Waar je antwoorden op dit moment naartoe wijzen. Geen oordeel, een stand van zaken.</p>
+      ${rijen}
+      <p class="fadvies">Jouw antwoorden wijzen nu het sterkst naar <b>${winnaar}</b>.</p>
+    </div>`;
+}
+function barsHtml(bars){
+  return `<div class="bars">${bars.map(b=>`<div class="bar"><span>${b.label}</span>
+    <span class="track"><span class="fill${b.score<45?" laag":""}" style="width:${b.score}%"></span></span>
+    <span class="n">${b.score}</span></div>`).join("")}</div>`;
+}
+
+/* ---------- de vier stappen ---------- */
+const STAPPEN = ["Je profiel opbouwen","Richtingen bedenken","Afwegen tegen jouw grenzen","Toetsen en uitschrijven"];
+const SUBS = [
+  ["je antwoorden lezen","patronen zoeken","je eigen woorden wegen","de rem benoemen"],
+  ["richtingen aftasten","je sterktes koppelen","varianten verwerpen","zes overhouden"],
+  ["tijd en grenzen toetsen","drijfveer wegen","sterktes matchen","rangschikken"],
+  ["kijken wat er al bestaat","het plan uitschrijven","de eerste stap bepalen","het stopcriterium zetten"]
+];
+let gangState = ["","","",""], gangTimer = null, gangStart = 0, gangTick = 0;
+function gangTeken(){
+  const sec = Math.round((Date.now()-gangStart)/1000);
+  $("gang").innerHTML = `<ul class="gang">${STAPPEN.map((s,n)=>{
+    const st = gangState[n];
+    const sub = st==="bezig" ? SUBS[n][gangTick % SUBS[n].length] : "";
+    return `<li class="${st}"><b>${st==="bezig"?'<i class="spin"></i>':""}</b>
+      <span>${s}</span>${sub?`<em>${sub}</em>`:""}${st==="af"?'<em class="done">klaar</em>':""}</li>`;
+  }).join("")}</ul>
+  <p class="muted" style="font-size:13px;margin:-8px 0 22px">${sec} seconden bezig. Dit duurt meestal veertig tot zeventig seconden. Blijf gerust kijken.</p>`;
+}
+function gangStap(state){
+  gangState = state;
+  if(!gangTimer){
+    gangStart = Date.now();
+    gangTimer = setInterval(()=>{ gangTick++; gangTeken(); }, 2200);
+  }
+  gangTeken();
+}
+function gangStop(){ if(gangTimer){ clearInterval(gangTimer); gangTimer=null; } gangState=["af","af","af","af"]; gangTeken(); setTimeout(()=>{ $("gang").innerHTML=""; }, 900); }
+
+const P_ANALYSE = TOON + `
+
+Je werkt als loopbaancoach en vat deze persoon samen voor een eerste gesprek. Kijk naar het patroon achter de antwoorden en wees eerlijk over wat iemand tegenhoudt. Spreek over de persoon, niet over tools of techniek.
+
+Schrijf kort. Elke regel is een losse observatie van maximaal twaalf woorden, zonder bijzinnen en zonder alinea's.
+Antwoord uitsluitend met geldige JSON:
+{"archetype":"drie tot vijf woorden","punten":[{"label":"twee woorden","tekst":"maximaal 12 woorden, in de je-vorm"}],"bagage":["maximaal 6 woorden","nog een","nog een"]}
+Precies vier punten, met deze labels in deze volgorde: Wat je beweegt, Wat je tegenhoudt, Je patroon, Blinde vlek.`;
+
+function P_KANDIDATEN(P, feedback){
+  return TOON + `
+
+Je bent loopbaancoach. Bedenk zes richtingen voor de komende maanden: twee binnen zijn huidige baan, twee gericht leren of ontwikkelen, twee eigen initiatieven naast het werk.
+
+Belangrijk voor het niveau:
+- Denk in richtingen en thema's, niet in tools of techniek. Geen software, platformen of automatiseringspakketten noemen, tenzij de persoon ze zelf noemde als interesse.
+- Een richting beschrijft wat voor werk iemand gaat doen en wat het hem oplevert, bijvoorbeeld "intern begeleider worden voor nieuwe collega's" of "een tweede vakgebied opbouwen naast je huidige".
+- Sluit aan bij wat deze persoon goed kan en graag doet: ${P.sweet.join(", ")||"onbekend"}.
+- Elke richting moet binnen zes weken een eerste zichtbaar resultaat kunnen opleveren.
+- Er is ongeveer ${P.ruimte} uur per week ruimte binnen de werkweek, en ongeveer ${P.eigen} uur eigen tijd daarbuiten. Ruimte binnen de werkweek blijft tijd van de werkgever: daar past leren, verkennen of iets opbouwen dat het werk ook dient. Alles wat puur voor eigen rekening is, hoort in de eigen uren.
+${feedback?("\nDe gebruiker gaf deze correctie op een eerdere poging. Neem die zwaar mee en wijk echt af van de vorige richting: "+feedback):""}
+
+Antwoord uitsluitend met geldige JSON:
+{"kandidaten":[{"titel":"maximaal 5 woorden, geen jargon","type":"taakverrijking|leren|zijproject","pitch":"één zin, maximaal 16 woorden, in de je-vorm, wat je gaat doen en wat het oplevert","uren":getal uren per week,"risico":1 tot 5,"zichtbaarheid":1 tot 5,"levert":"inkomen|leren|erkenning|prikkel","sterktes":["taak die deze persoon goed kan en graag doet","nog een"],"horizonWeken":getal}]}
+Precies zes kandidaten, alle drie de types vertegenwoordigd.`;
+}
+
+function P_UITWERKING(P){
+  return TOON + `
+
+Je bent loopbaancoach en schrijft het eerste gespreksverslag. Drie richtingen zijn geselecteerd door een weging op tijd, grenzen, drijfveer en sterkte. Werk ze uit op het niveau van een coach: concreet, met een doel dat dichtbij ligt, in gewone taal. Geen tools of techniek noemen tenzij de persoon ze zelf noemde.
+
+Zoek per richting kort op wat er in de praktijk al bestaat: opleidingen, netwerken, vergelijkbare rollen, tarieven of wat mensen ervoor vragen. Noem wat je vond, verzin geen bronnen.
+
+Antwoord uitsluitend met geldige JSON:
+{"scenarios":[{"titel":"neem de titel over","id":"taakverrijking|leren|zijproject","pitch":"scherp de pitch aan","doel":"wat je over zes weken concreet bereikt hebt, één zin in de je-vorm","waarom":"één zin over waarom dit past","citaten":["letterlijk antwoord uit de intake","nog een"],"eersteStap":"wat je deze week doet, één concrete zin in de je-vorm","weken":"wat er in zes weken gebeurt, één zin","marktsignaal":"één zin over wat je vond in de praktijk","kosten":"één zin","kans":"de zwakke plek van dit pad, één zin","kill":"meetbaar criterium waarop je stopt","waaromNiet":"één zin"}]}`;
+}
+
+async function draaien(feedback){
+  $("profielBox").innerHTML=""; $("scenBody").innerHTML=""; $("afvallers").innerHTML=""; $("herzien").innerHTML="";
+  const P = profielGetallen();
+  try{
+    gangStap(["bezig","bezig","",""]);
+    const [profRaw, kandRaw] = await Promise.all([
+      ask(P_ANALYSE, bericht(), null, 600),
+      ask(P_KANDIDATEN(P, feedback), bericht(), null, 1600)
+    ]);
+    const prof = jsonUit(profRaw);
+    $("profielBox").innerHTML = `<div class="profiel">
+      <div class="mono" style="color:var(--limeL)">Wat de intake laat zien</div>
+      <h2>${esc(prof.archetype||"")}</h2>
+      <ul class="plijst">${(prof.punten||[]).map(k=>
+        `<li><span class="plabel">${esc(k.label)}</span><span>${esc(k.tekst)}</span></li>`).join("")}</ul>
+      <div class="pbagage"><span class="mono">Wat je al hebt liggen</span>
+        ${(prof.bagage||[]).map(b=>`<span class="btag">${esc(b)}</span>`).join("")}</div>
+      <div class="mono" style="margin-top:16px;color:#BBC3B7">Rekenbasis: ${P.ruimte} uur ruimte binnen je werkweek · ${P.eigen} uur eigen tijd · risicoruimte ${P.risicoTol} van 5 · drijfveer ${esc(P.rang[0])}</div>
+    </div>`;
+
+    gangStap(["af","af","bezig",""]);
+    const kand = jsonUit(kandRaw).kandidaten || [];
+    const gescoord = kand.map(k=>{ const s = scoreKandidaat(k,P); return Object.assign({},k,{bars:s.bars,totaal:s.totaal}); })
+                         .sort((a,b)=>b.totaal-a.totaal);
+    const top = gescoord.slice(0,3), rest = gescoord.slice(3);
+
+    gangStap(["af","af","af","bezig"]);
+    const uit = jsonUit(await ask(P_UITWERKING(P),
+      [{role:"user",content:"Intake:\n"+S.transcript+"\n\nGeselecteerde richtingen met scores:\n"+JSON.stringify(top.map(k=>({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})))}],
+      [{type:"web_search_20250305",name:"web_search"}], 3000));
+    S.scenarios = (uit.scenarios||[]).map((s,i)=>Object.assign({}, top[i]||{}, s));
+    gangStop();
+
+    const beste = S.scenarios[0]||{};
+    $("scenBody").innerHTML = `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
+      <p class="muted" style="margin-bottom:18px">De cijfers komen uit je eigen antwoorden, niet uit een oordeel over jou.</p>` +
+      S.scenarios.map((s,i)=>`
+      <div class="card${s.totaal<55?" weak":""}">
+        <div class="row spread" style="align-items:flex-start">
+          <h3 style="flex:1">${esc(s.titel)}</h3>
+          <div style="text-align:right"><div class="score">${s.totaal||"?"}</div><div class="mono">pasvorm</div></div>
+        </div>
+        <p style="margin:8px 0 6px;font-size:18px">${esc(s.pitch||"")}</p>
+        ${s.doel?`<p class="doel"><span class="mono">Over zes weken</span>${esc(s.doel)}</p>`:""}
+        <div>
+          ${barsHtml(s.bars||[])}
+          <div class="facts" style="margin-top:14px">
+            <span><b>${esc(s.uren||"?")} uur</b>per week</span>
+            <span><b>${esc(s.horizonWeken||"?")} weken</b>tot resultaat</span>
+            <span><b>${["","zeer laag","laag","gemiddeld","hoog","zeer hoog"][+s.risico||3]}</b>risico</span>
+          </div>
+          <div class="row" style="margin-top:14px">
+            <button class="btn btn-lime btn-sm" data-kies="${i}">Kies dit pad</button>
+            <button class="btn btn-ghost btn-sm" data-uit="${i}">Onderbouwing</button>
+          </div>
+          <div class="detail hidden" id="det${i}">
+            ${(s.citaten||[]).slice(0,1).map(c=>`<p class="quote" style="margin-top:14px">"${esc(c)}"</p>`).join("")}
+            <dl class="kv">
+              <dt>Zwakke plek</dt><dd>${esc(s.kans||"")}</dd>
+              <dt>Wanneer je stopt</dt><dd>${esc(s.kill||"")}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>`).join("") +
+      `<div id="frame"></div>`;
+
+    if(!S.betaald){
+      const zone = document.createElement("div");
+      zone.className = "slotzone";
+      while($("scenBody").firstChild) zone.appendChild($("scenBody").firstChild);
+      $("scenBody").appendChild(zone);
+      const top = S.scenarios[0]||{};
+      const regels = S.scenarios.map((x,n)=>
+        `<li><span class="lk"></span><span>Richting ${n+1}, met naam, doel en plan</span><em>pasvorm ${x.totaal||"?"}</em></li>`).join("");
+      $("scenBody").insertAdjacentHTML("afterbegin", `<div class="paywall" id="paywall">
+        <div class="mono" style="color:var(--limeL)">Je uitkomst is berekend</div>
+        <h2 style="margin:10px 0 10px">Je best passende richting scoort ${top.totaal||"?"} van 100</h2>
+        <p style="margin:0 0 6px">Gebaseerd op ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en de vier keuzes die je net maakte. Zes richtingen zijn tegen elkaar afgewogen, drie zijn overgebleven.</p>
+        <ul class="pwlijst">
+          ${regels}
+          <li><span class="lk"></span><span>De onderbouwing per richting, en waarom de andere afvielen</span></li>
+          <li><span class="lk"></span><span>Je eerste stap, uit te voeren deze week</span></li>
+          <li><span class="lk"></span><span>Een plan van zes weken als pdf in je mail</span></li>
+          <li><span class="lk"></span><span>Blijven, schuiven of switchen, met jouw stand van zaken</span></li>
+          <li><span class="lk"></span><span>Berichten die je meteen kunt versturen</span></li>
+        </ul>
+        <div class="pwslot">
+          <div><div class="price">€17</div>
+            <p class="muted" style="margin:2px 0 0">Eenmalig. Geen abonnement. Geen account. Direct in beeld.</p></div>
+          <button class="btn btn-lime" id="betaalKnop">Bekijk mijn uitkomst</button>
+        </div>
+        <p class="pwfomo">Je antwoorden staan alleen in dit venster. Sluit je dit tabblad, dan begin je straks opnieuw bij vraag één.</p>
+      </div>`);
+    }
+    if(!S.betaald){ const bk = $("betaalKnop"); if(bk) bk.onclick = ontgrendel; }
+    frameTeken();
+    $("scenBody").querySelectorAll("[data-uit]").forEach(b=>b.onclick=()=>{
+      const d = $("det"+b.dataset.uit); d.classList.toggle("hidden");
+      b.textContent = d.classList.contains("hidden") ? "Onderbouwing" : "Verberg onderbouwing";
+    });
+    $("scenBody").querySelectorAll("[data-kies]").forEach(b=>b.onclick=()=>kies(S.scenarios[+b.dataset.kies]));
+
+    $("afvallers").className = S.betaald ? "" : "hidden";
+    $("herzien").className = S.betaald ? "" : "hidden";
+    if(rest.length) $("afvallers").innerHTML = `<div class="afval"><div class="mono">Ook overwogen, afgevallen</div>
+      <ul style="margin:10px 0 0;padding-left:18px">${rest.map(k=>{
+        const zwak = (k.bars||[]).slice().sort((a,b)=>a.score-b.score)[0];
+        return `<li><b style="color:var(--ink)">${esc(k.titel)}</b> · ${esc(k.pitch||"")} · viel af op ${esc(zwak?zwak.label.toLowerCase():"pasvorm")} (${zwak?zwak.score:"?"})</li>`;
+      }).join("")}</ul></div>`;
+
+    $("herzien").innerHTML = `<div class="step" style="margin-top:24px">
+      <h3>Raakt dit je niet?</h3>
+      <p class="hint">Schrijf op wat er niet klopt. De richtingen worden opnieuw bedacht met jouw correctie erin.</p>
+      <textarea id="fb" placeholder="Bijvoorbeeld: te braaf, of juist te risicovol, of het gaat te veel over mijn huidige werk."></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn btn-ghost" id="fbBtn">Opnieuw, met deze correctie</button></div></div>`;
+    $("fbBtn").onclick = () => { const t = $("fb").value.trim(); if(t) draaien(t); };
+  }catch(e){
+    gangStop();
+    $("scenBody").innerHTML = `<div class="err">Er ging iets mis in deze stap: ${esc(e.message)}</div>
+      <div class="row"><button class="btn" id="opnieuw">Opnieuw proberen</button></div>`;
+    const o = $("opnieuw"); if(o) o.onclick = ()=>draaien(feedback);
+  }
+}
+
+/* ---------- actiepad ---------- */
+const P3 = TOON + `
+
+Je bent loopbaancoach en schrijft het plan voor het gekozen pad. Concreet, in gewone taal, op het niveau van een coach die iemand de komende zes weken begeleidt. Geen tools of software noemen tenzij de persoon ze zelf noemde.
+
+Zes weken, elke week met een eigen thema, twee tot vier acties en een resultaat dat aan het eind van die week klaar is. Acties moeten uitvoerbaar zijn in de uren die deze persoon heeft.
+
+Vul afhankelijk van het type ook het bijpassende blok:
+- taakverrijking: script, met een opening voor het gesprek met de leidinggevende en twee tegenwerpingen met antwoord
+- leren: bronnen, drie concrete plekken om te beginnen
+- zijproject: validatie, drie toetsen die het idee moet doorstaan, met per toets wanneer je stopt
+Vul altijd berichten: een of twee korte teksten die de gebruiker letterlijk kan versturen, bijvoorbeeld naar de leidinggevende, een oud-collega of iemand uit het netwerk.
+
+Antwoord uitsluitend met geldige JSON:
+{"doel":"wat er over zes weken ligt, één zin","waarom":"twee zinnen waarom dit doel bij deze persoon past","weken":[{"nr":1,"thema":"twee tot vier woorden","acties":["maximaal 14 woorden"],"resultaat":"wat er aan het eind van deze week klaar is"}],"meetpunt":"waaraan je ziet dat het werkt","kill":"wanneer je stopt","steun":"wie je erbij betrekt, of hoe je het alleen volhoudt","berichten":[{"titel":"waar dit bericht voor is","tekst":"kant-en-klaar bericht dat je kunt kopieren, maximaal 60 woorden"}],"script":{"opening":"","tegenwerpingen":[{"bezwaar":"","antwoord":""}]},"bronnen":[{"naam":"","wat":"","tijd":""}],"validatie":[{"toets":"","stop":""}]}
+Laat de blokken die niet van toepassing zijn helemaal weg. Zes weken, niet meer.`;
+
+function planHtml(p, s){
+  const wk = (p.weken||[]).map(w=>`
+    <div class="wk">
+      <div class="wknr"><span>week</span><b>${esc(w.nr||"")}</b></div>
+      <div class="wkin">
+        <h3>${esc(w.thema||"")}</h3>
+        <ul class="acties">${(w.acties||[]).map((a,i)=>
+          `<li><label><input type="checkbox" data-w="${w.nr}" data-i="${i}"> <span>${esc(a)}</span></label></li>`).join("")}</ul>
+        ${w.resultaat?`<p class="uitkomst"><span class="mono">Klaar aan het eind</span>${esc(w.resultaat)}</p>`:""}
+      </div>
+    </div>`).join("");
+
+  let extra = "";
+  if(p.script) extra += `<div class="blok"><div class="mono">Het gesprek met je leidinggevende</div>
+    <p style="margin-top:8px">${esc(p.script.opening||"")}</p>
+    ${(p.script.tegenwerpingen||[]).map(t=>`<div class="tw"><b>"${esc(t.bezwaar)}"</b><p>${esc(t.antwoord)}</p></div>`).join("")}</div>`;
+  if(p.bronnen) extra += `<div class="blok"><div class="mono">Waar je begint</div>
+    <ul style="margin:10px 0 0;padding-left:18px">${p.bronnen.map(b=>`<li><b>${esc(b.naam)}</b> · ${esc(b.wat||"")}${b.tijd?` · ${esc(b.tijd)}`:""}</li>`).join("")}</ul></div>`;
+  if(p.berichten) extra += `<div class="blok"><div class="mono">Klaar om te versturen</div>
+    ${p.berichten.map((b,i)=>`<div class="bericht"><div class="row spread"><b>${esc(b.titel)}</b>
+      <button class="btn btn-ghost btn-sm" data-kopie="${i}">Kopieer</button></div>
+      <p id="ber${i}">${esc(b.tekst)}</p></div>`).join("")}</div>`;
+  if(p.validatie) extra += `<div class="blok"><div class="mono">Toetsen voordat je doorgaat</div>
+    ${p.validatie.map((v,i)=>`<div class="tw"><b>${i+1}. ${esc(v.toets)}</b><p>Stoppen als: ${esc(v.stop)}</p></div>`).join("")}</div>`;
+
+  return `<div class="doelblok">
+      <div class="mono" style="color:var(--limeL)">Je doel over zes weken</div>
+      <h2 style="color:var(--chalk);margin:8px 0 10px">${esc(p.doel||s.titel)}</h2>
+      <p style="margin:0;color:#DCE2D6">${esc(p.waarom||"")}</p>
+    </div>
+    <div class="facts" style="margin:18px 0 6px">
+      <span><b>${esc(s.uren||"?")} uur</b>per week</span>
+      <span><b>6 weken</b>looptijd</span>
+      <span><b>${esc((p.weken||[]).reduce((n,w)=>n+((w.acties||[]).length),0))}</b>acties</span>
+    </div>
+    <div class="voortbalk"><span id="voortgang"></span></div>
+    <div class="mono" id="voortgangN" style="margin:6px 0 0">0 van ${(p.weken||[]).reduce((n,w)=>n+((w.acties||[]).length),0)} gedaan</div>
+    <div class="tijdlijn">${wk}</div>
+    ${extra}
+    <div class="blok laatste">
+      <div class="mono">Zo weet je of het werkt</div><p style="margin:8px 0 14px">${esc(p.meetpunt||"")}</p>
+      <div class="mono">Wanneer je stopt</div><p style="margin:8px 0 14px">${esc(p.kill||s.kill||"")}</p>
+      <div class="mono">Wie je erbij betrekt</div><p style="margin:8px 0 0">${esc(p.steun||"")}</p>
+    </div>`;
+}
+
+async function kies(s){
+  S.chosen = s; hide("scenarios"); show("action");
+  $("actTitle").textContent = s.titel;
+  $("actBody").innerHTML = `<div class="thinking">schrijft je plan van zes weken <b></b><b></b><b></b></div>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+  const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
+  try{
+    const raw = await ask(P3, msgs, s.id==="zijproject"?[{type:"web_search_20250305",name:"web_search"}]:null, 3000);
+    S.plan = jsonUit(raw);
+    $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Vrije Uren · jouw plan van zes weken</div>
+      <h1 style="font-size:30px;margin:10px 0 4px">${esc(s.titel)}</h1></div>` + planHtml(S.plan, s);
+    $("actBody").innerHTML = aflevering(S.plan, s) + `
+      <div class="planstart">
+        <div class="mono">Alvast in beeld</div>
+        <h2 style="margin:8px 0 4px">Je zes weken</h2>
+        <p class="muted" style="margin-bottom:18px">Precies dit staat straks in de pdf. Vink gerust alvast af, dat blijft in dit venster.</p>
+      </div>` + planHtml(S.plan, s);
+    $("actBody").querySelectorAll("[data-kopie]").forEach(b=>b.onclick=()=>{
+      const t = document.getElementById("ber"+b.dataset.kopie);
+      navigator.clipboard.writeText(t.textContent).then(()=>{ b.textContent="Gekopieerd"; setTimeout(()=>b.textContent="Kopieer",1600); });
+    });
+    $("actBody").querySelectorAll(".acties input[type=checkbox]").forEach(c=>c.onchange=()=>{
+      c.closest("li").classList.toggle("af", c.checked);
+      const alle = $("actBody").querySelectorAll(".acties input[type=checkbox]");
+      const af = $("actBody").querySelectorAll(".acties input[type=checkbox]:checked").length;
+      const t = $("voortgang"); if(t){ t.style.width = Math.round(af/alle.length*100)+"%"; }
+      const n = $("voortgangN"); if(n){ n.textContent = af+" van "+alle.length+" gedaan"; }
+    });
+    $("mailKnop").onclick = () => {
+      const m = $("mail").value.trim();
+      if(!/.+@.+\..+/.test(m)){ $("mailStatus").innerHTML = `<div class="err">Vul een geldig mailadres in.</div>`; return; }
+      $("mailStatus").innerHTML = `<div class="klaar"><b>Onderweg.</b> Je plan gaat naar ${esc(m)}. Je mailadres wordt alleen gebruikt om dit plan te versturen en daarna verwijderd.</div>`;
+      $("mailKnop").disabled = true;
+    };
+    $("pdfKnop").onclick = () => window.print();
+  }catch(e){ $("actBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+}
+
+function aflevering(p, s){
+  const acties = (p.weken||[]).reduce((n,w)=>n+((w.acties||[]).length),0);
+  return `<div class="doelblok">
+      <div class="mono" style="color:var(--limeL)">Je doel over zes weken</div>
+      <h2 style="color:var(--chalk);margin:8px 0 10px">${esc(p.doel||s.titel)}</h2>
+      <p style="margin:0;color:#DCE2D6">${esc(p.waarom||"")}</p>
+    </div>
+    <div class="facts" style="margin:18px 0 0">
+      <span><b>6 weken</b>looptijd</span>
+      <span><b>${acties}</b>acties</span>
+      <span><b>${esc(s.uren||"?")} uur</b>per week</span>
+    </div>
+    <div class="step" style="margin-top:22px">
+      <div class="mono">Klaar om te versturen</div>
+      <h3 style="margin:8px 0 8px">Je plan komt als pdf naar je toe</h3>
+      <p class="hint">Week voor week, met de acties, het resultaat per week en je stopcriterium. Zo staat het niet in een tabblad dat je straks sluit, maar in je mail.</p>
+      <div class="row" style="margin-top:6px">
+        <input type="text" id="mail" placeholder="jouw@mail.nl" style="flex:1;min-width:220px">
+        <button class="btn" id="mailKnop">Stuur mij het plan</button>
+      </div>
+      <div class="veilig" style="margin-top:12px"><i></i>Alleen voor de verzending · geen nieuwsbrief · geen account</div>
+      <div id="mailStatus"></div>
+      <hr style="margin:22px 0 18px">
+      <div class="row"><button class="btn btn-ghost" id="pdfKnop">Liever direct downloaden</button>
+        <span class="muted" style="font-size:13px">Kies in het printvenster voor opslaan als pdf.</span></div>
+    </div>`;
+}
+</script>
