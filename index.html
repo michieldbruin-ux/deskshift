@@ -869,7 +869,8 @@
   .week.on .week-day:nth-child(3) .week-fill{animation-delay:1.5s}
   .week.on .week-day:nth-child(4) .week-fill{animation-delay:1.65s}
   .week.on .week-day:nth-child(5) .week-fill{animation-delay:1.8s}
-  @keyframes weekBob{0%,100%{transform:translateY(0) scaleY(var(--h))}50%{transform:translateY(-4px) scaleY(var(--h))}}
+  /* alleen de bovenkant ademt: scaleY pulseert vanaf de onderkant (origin bottom) */
+  @keyframes weekBob{0%,100%{transform:scaleY(var(--h))}50%{transform:scaleY(calc(var(--h) * 1.045))}}
   @media (prefers-reduced-motion:reduce){.week.on .week-fill{animation:none}}
 
   /* 'Deskshift' vetgedrukt met highlight die bij het landen inzweeft */
