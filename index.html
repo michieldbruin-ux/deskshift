@@ -856,7 +856,10 @@
   .mnote{color:#9FB295;font-size:12.5px;margin:14px 0 0}
   @media (prefers-reduced-motion:reduce){.machine-dot,.mpuls,.mstap-t em{animation:none}}
   .mprog{height:6px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden;margin:0 0 18px}
-  .mprog span{display:block;height:100%;background:var(--lime);border-radius:4px;transition:width 2.2s linear}
+  .mprog span{display:block;height:100%;width:0;background:var(--lime);border-radius:4px;position:relative;overflow:hidden}
+  .mprog span::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:translateX(-100%);animation:mprogSheen 1.9s ease-in-out infinite}
+  @keyframes mprogSheen{to{transform:translateX(100%)}}
+  @media (prefers-reduced-motion:reduce){.mprog span::after{animation:none}}
 
   /* Alleen de donkere staaf-delen deinen zacht na het laden (niet de hele sectie).
      translateY staat vóór scaleY zodat de vulhoogte gelijk blijft. */
@@ -1079,7 +1082,7 @@
   <div class="slot-cta rv">
     <div class="slot-cta-in">
       <h2>Vijftien minuten. Eén eerlijk inzicht. Gratis.</h2>
-      <p>Daarna beslis jij of het €25 waard is.</p>
+      <p>Wil je daarna je drie richtingen en je plan, dan is dat eenmalig €25.</p>
       <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
       <p class="slot-nieuw">Nieuw. Je bent er vroeg bij.</p>
     </div>
@@ -2103,36 +2106,60 @@ const SUBS = [
   ["tijd en grenzen toetsen","drijfveer wegen","sterktes matchen","rangschikken"],
   ["kijken wat er al bestaat","het plan uitschrijven","de eerste stap bepalen","het stopcriterium zetten"]
 ];
-let gangState = ["","","",""], gangTimer = null, gangStart = 0, gangTick = 0;
-function gangTeken(){
-  const sec = Math.round((Date.now()-gangStart)/1000);
-  const alleAf = gangState.every(s=>s==="af");
-  // Psychologische curve: eerste twee derde snel, daarna trager; nadert 95% en
-  // springt pas naar 100% als alles klaar is.
-  const prog = alleAf ? 100 : Math.min(95, Math.round(97*(1-Math.exp(-sec/13))));
-  $("gang").innerHTML = `<div class="machine">
+let gangState = ["","","",""], gangTimer = null, gangStart = 0, gangTick = 0, gangRaf = null;
+function gangBouw(){
+  // Skelet één keer bouwen; daarna alleen delen bijwerken, zodat de
+  // voortgangsbalk nooit opnieuw start en vloeiend blijft lopen.
+  if(document.getElementById("machineBox")) return;
+  $("gang").innerHTML = `<div class="machine" id="machineBox">
     <div class="machine-kop"><span class="machine-dot"></span><span class="mono">Deskshift bouwt jouw richtingen</span></div>
-    <div class="mprog"><span style="width:${prog}%"></span></div>
-    <ul class="mstappen">${STAPPEN.map((s,n)=>{
-      const st = gangState[n];
-      const sub = st==="bezig" ? SUBS[n][gangTick % SUBS[n].length] : "";
-      return `<li class="${st}">
-        <span class="mstap-ic">${st==="af"?"&#10003;":st==="bezig"?'<i class="mpuls"></i>':""}</span>
-        <span class="mstap-t"><b>${s}</b>${sub?`<em>${sub}…</em>`:""}${st==="af"?'<em class="mdone">klaar</em>':""}</span>
-      </li>`;
-    }).join("")}</ul>
-    <p class="mnote">${sec}s bezig. Meestal veertig tot zeventig seconden. Je hoeft niets te doen.</p>
+    <div class="mprog"><span id="mprogFill"></span></div>
+    <ul class="mstappen" id="mstappenUl"></ul>
+    <p class="mnote" id="mnote"></p>
   </div>`;
+}
+function gangTeken(){
+  gangBouw();
+  const ul = document.getElementById("mstappenUl");
+  if(ul) ul.innerHTML = STAPPEN.map((s,n)=>{
+    const st = gangState[n];
+    const sub = st==="bezig" ? SUBS[n][gangTick % SUBS[n].length] : "";
+    return `<li class="${st}">
+      <span class="mstap-ic">${st==="af"?"&#10003;":st==="bezig"?'<i class="mpuls"></i>':""}</span>
+      <span class="mstap-t"><b>${s}</b>${sub?`<em>${sub}…</em>`:""}${st==="af"?'<em class="mdone">klaar</em>':""}</span>
+    </li>`;
+  }).join("");
+  const note = document.getElementById("mnote");
+  if(note) note.textContent = Math.round((Date.now()-gangStart)/1000) + "s bezig. Meestal veertig tot zeventig seconden. Je hoeft niets te doen.";
+}
+function gangProg(){
+  // Psychologische curve, per frame bijgewerkt: eerste twee derde snel,
+  // daarna trager; nadert 95% en springt pas naar 100% als alles klaar is.
+  const fill = document.getElementById("mprogFill");
+  if(fill){
+    const ms = Date.now()-gangStart;
+    const p = Math.min(95, 97*(1-Math.exp(-ms/13000)));
+    fill.style.width = p.toFixed(2)+"%";
+  }
+  if(gangRaf !== null) gangRaf = requestAnimationFrame(gangProg);
 }
 function gangStap(state){
   gangState = state;
   if(!gangTimer){
     gangStart = Date.now();
     gangTimer = setInterval(()=>{ gangTick++; gangTeken(); }, 2200);
+    gangRaf = requestAnimationFrame(gangProg);
   }
   gangTeken();
 }
-function gangStop(){ if(gangTimer){ clearInterval(gangTimer); gangTimer=null; } gangState=["af","af","af","af"]; gangTeken(); setTimeout(()=>{ $("gang").innerHTML=""; }, 900); }
+function gangStop(){
+  if(gangTimer){ clearInterval(gangTimer); gangTimer=null; }
+  if(gangRaf !== null){ cancelAnimationFrame(gangRaf); gangRaf = null; }
+  gangState=["af","af","af","af"]; gangTeken();
+  const fill = document.getElementById("mprogFill");
+  if(fill){ fill.style.transition = "width .5s cubic-bezier(.22,.61,.36,1)"; fill.style.width = "100%"; }
+  setTimeout(()=>{ $("gang").innerHTML=""; }, 900);
+}
 
 const P_ANALYSE = TOON + `
 
