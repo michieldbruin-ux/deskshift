@@ -39,7 +39,7 @@ export default async function handler(req, res) {
   const veiligeMaxTokens = Math.min(Number(max_tokens) || 1000, 4096);
 
   const upstreamBody = {
-    model: model || "claude-sonnet-4-6",
+    model: "claude-sonnet-5",
     max_tokens: veiligeMaxTokens,
     system: system,
     messages: messages,
