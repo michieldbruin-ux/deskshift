@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Deskshift</title>
 <meta name="description" content="Een korte, zelfstandige online intake voor wie vastloopt op te weinig uitdaging in het werk. Zeven secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
-<meta name="theme-color" content="#E6E6E6">
+<meta name="theme-color" content="#ECEEE6">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Deskshift">
 <meta property="og:title" content="Deskshift">
@@ -458,25 +458,155 @@
     .reveal{opacity:1!important;transform:none!important}
     .hr-cell{opacity:1!important;transform:none!important}
   }
+
+  /* ============================================================
+     Deskshift v2 — state-of-the-art pass over landing én flow.
+     Diep bosgroen + electric lime accent; latere regels winnen.
+     ============================================================ */
+  :root{
+    --ink:#152A1C; --petrol:#3E5546; --paper:#ECEEE6; --veld:#F4F6EE;
+    --slate:#5D6C5D; --line:rgba(21,42,28,.13);
+    --lime:#BFE35F; --limeE:#8FB23A; --limeL:#D6EBA8; --limeT:#18240F;
+  }
+  body{background:var(--paper)}
+
+  /* Landing is geen formulier-kaart maar een echte pagina */
+  .wrap > section#landing{background:transparent;box-shadow:none;padding:6px 0 0}
+
+  .dsnav{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 22px}
+  .brand{display:inline-flex;align-items:center;gap:9px;font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:18px;letter-spacing:-.01em;color:var(--ink)}
+  .brand .mark{border-radius:6px;flex:0 0 auto}
+  .brand.small{font-size:15px}
+  .nav-cta{min-height:40px;padding:9px 16px}
+
+  .hero{padding:16px 2px 28px}
+  .eyebrow{margin-bottom:14px}
+  .hero h1{font-size:clamp(35px,10vw,66px);line-height:1.02;letter-spacing:-.03em}
+  .hero h1 em{font-style:normal;box-shadow:inset 0 -0.16em 0 0 var(--lime)}
+  .hero .lead{margin:18px 0 24px;max-width:34em}
+  .btn-hero{font-size:17px;padding:16px 26px;border-radius:12px;box-shadow:var(--sh-2)}
+  @media(max-width:560px){.btn-hero{width:100%}}
+  .micro{font-size:13px;color:var(--slate);margin:10px 0 0}
+
+  .weekcard{background:var(--chalk);border-radius:var(--r-lg);box-shadow:var(--sh-2),inset 0 0 0 1px var(--line-2);padding:22px 20px;margin:0 0 14px}
+  .weekcard .grid-hours{margin:16px 0 12px}
+  .weekcap{font-size:14px;color:var(--slate);margin:12px 0 0}
+  .dot-werk{background:var(--petrol)}
+  .dot-vrij{background:var(--lime);box-shadow:inset 0 0 0 1px var(--limeE)}
+  .legend{margin:0}
+
+  .herken{margin:14px 0;border-radius:var(--r-lg)}
+  .herken h3{font-size:clamp(20px,5.4vw,24px)}
+  .herken-sub{color:#B9C9AE;font-size:14px;margin:0 0 10px}
+
+  .hoe{padding:18px 2px 8px}
+  .bloktitel{margin:8px 0 18px}
+  .stagtag{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--limeE);margin-bottom:10px}
+  .stap3 h3{font-size:18px}
+
+  .preview{background:var(--ink);color:var(--chalk);border-radius:var(--r-lg);padding:26px 22px;margin:14px 0;box-shadow:var(--sh-ink);background-image:radial-gradient(120% 120% at 0% 0%,rgba(255,255,255,.05),transparent 60%)}
+  .preview .mono{color:var(--limeL)}
+  .pv-kop{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:clamp(24px,6.4vw,34px);line-height:1.12;letter-spacing:-.015em;margin:12px 0 18px}
+  .pv-spanning{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .pv-spanning span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:10px 14px;font-weight:600;font-size:15px;color:#EAF1E4}
+  .pv-spanning em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--limeL)}
+  .pv-cap{color:#AFC2A4;font-size:13.5px;margin:16px 0 0}
+
+  .trust{background:var(--chalk);border-radius:var(--r-lg);box-shadow:var(--sh-1),inset 0 0 0 1px var(--line-2);padding:24px 20px;margin:14px 0}
+  .trustlijst{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+  @media(min-width:620px){.trustlijst{grid-template-columns:1fr 1fr}}
+  .trustlijst li{background:var(--veld);border-radius:14px;padding:14px 16px;font-size:15px;color:var(--petrol)}
+  .trustlijst b{display:block;color:var(--ink);margin-bottom:2px}
+
+  .prijs{background:var(--chalk);border-radius:var(--r-lg);box-shadow:var(--sh-2),inset 0 0 0 1px var(--line-2);padding:26px 20px;margin:14px 0}
+  .prijs .price{font-size:52px;margin-top:6px}
+  .prijs-sub{color:var(--slate);font-size:14px;margin:6px 0 0;max-width:26em}
+  .prijs-kop{display:grid;gap:18px;margin-bottom:20px}
+  @media(min-width:640px){.prijs-kop{grid-template-columns:auto 1fr;align-items:start;gap:38px}}
+  .prijslijst{list-style:none;margin:4px 0 0;padding:0}
+  .prijslijst li{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2);font-size:15px}
+  .prijslijst li:last-child{border-bottom:0}
+  .prijslijst em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--limeE);white-space:nowrap}
+  .prijslijst li:last-child em{color:var(--ink);font-weight:600}
+
+  .maker{margin:26px 2px 8px}
+  .faq{background:var(--chalk);border-radius:var(--r-lg);box-shadow:var(--sh-1),inset 0 0 0 1px var(--line-2);padding:20px 20px 10px;margin:14px 0}
+  .foot{text-align:center;padding:30px 0 4px}
+  .foot .brand{justify-content:center}
+  .foot p{margin:8px 0 0}
+  .devrow{opacity:.75}
+
+  /* ---------- intake & vervolg: weg van het formulier-gevoel ---------- */
+  #stage > *{animation:stepIn .38s var(--ease) both}
+  @keyframes stepIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .rail{border-bottom:0;padding:10px 0 8px}
+  .railbalk{height:4px;border:0;background:rgba(21,42,28,.08)}
+  .railbalk span{background:var(--ink)}
+  .rail .bar{height:3px;background:rgba(21,42,28,.10)}
+  .rail li.done .bar{background:var(--ink)}
+  .rail li.now .bar{background:var(--limeE);box-shadow:none}
+  .step{border:0;box-shadow:var(--sh-1),inset 0 0 0 1px var(--line-2);border-radius:18px;padding:26px 20px;background:var(--chalk)}
+  @media(min-width:760px){.step{padding:30px 28px}}
+  .step h3{font-size:clamp(21px,5.6vw,27px);line-height:1.15;letter-spacing:-.015em}
+  .hint{font-size:15px}
+  .opener{border-radius:20px;padding:30px 24px;box-shadow:var(--sh-ink);background-image:radial-gradient(130% 130% at 0% 0%,rgba(255,255,255,.06),transparent 58%)}
+  .opener h2{font-size:clamp(26px,6.8vw,34px)}
+  textarea,input[type=text]{background:var(--chalk);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  textarea:focus,input[type=text]:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(191,227,95,.35)}
+  .opt{background:var(--chalk);border:1px solid var(--line);border-radius:12px;padding:13px 15px;min-height:52px;transition:border-color .15s var(--ease),background .15s var(--ease),transform .12s var(--ease)}
+  .opt:active{transform:scale(.99)}
+  .opt.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+  .rank li{background:var(--chalk);border-radius:12px}
+  .sl-val{font-size:46px}
+  input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:44px}
+  input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:rgba(21,42,28,.14)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--ink);border:3px solid #fff;box-shadow:0 1px 4px rgba(21,42,28,.35);margin-top:-11px}
+  input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba(21,42,28,.14)}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--ink);border:3px solid #fff;box-shadow:0 1px 4px rgba(21,42,28,.35)}
+  .btn-lime{background:var(--lime);color:var(--limeT);border:0;font-weight:700}
+  .btn-lime:hover{background:#AFD64C}
+  .kaartje{border-radius:14px;border:1px solid var(--line-2);border-left:3px solid var(--lime)}
+  .klap,.profiel,.paywall,.doelblok,.gratisstap,.basis{border-radius:18px;box-shadow:var(--sh-ink)}
+  .urenkaart,.framebox,.coach,.blok{border-radius:16px}
+  .card{border-radius:14px}
+  @media (prefers-reduced-motion:reduce){#stage > *{animation:none!important}}
+  /* id-specificiteit versloeg .hidden, waardoor de balk ook in de intake bleef staan */
+  #mobielCta.hidden{display:none!important}
 </style>
 
 <div class="wrap">
 
 <section id="landing">
-  <div class="mono">Deskshift</div>
-  <h1 style="margin:14px 0 18px">Je bent niet lui.<br>Je bent gewoon heel efficiënt.</h1>
-  <p class="lead">En niemand heeft je verteld wat je met de rest moet doen.</p>
+  <nav class="dsnav" aria-label="Deskshift">
+    <span class="brand"><svg class="mark" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#152A1C"/><rect x="7" y="7" width="8" height="8" rx="2" fill="#D6EBA8"/><rect x="17" y="7" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="7" y="17" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="17" y="17" width="8" height="8" rx="2" fill="#D6EBA8"/></svg>Deskshift</span>
+    <button class="btn btn-sm nav-cta" onclick="document.getElementById('start').click()">Start gratis</button>
+  </nav>
 
-  <div class="grid-hours" id="heroGrid" aria-hidden="true"></div>
-  <div class="legend">
-    <span><i class="dot" style="background:var(--petrol)"></i> werk dat er echt is</span>
-    <span><i class="dot" style="background:var(--lime)"></i> ruimte die er in je week zit</span>
+  <header class="hero">
+    <div class="mono eyebrow">Voor professionals die te snel klaar zijn</div>
+    <h1>Je bent niet lui.<br>Je bent gewoon <em>heel efficiënt</em>.</h1>
+    <p class="lead">Je werk past in drie dagen en niemand vertelt je wat je met de rest moet. Deskshift wel: één scherpe intake, één eerlijk inzicht, drie gewogen paden.</p>
+    <div class="row cta-row">
+      <button class="btn btn-hero" id="start">Start, het eerste inzicht is gratis</button>
+      <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
+    </div>
+    <p class="micro">±15 minuten · geen account · stoppen en later verder kan altijd</p>
+  </header>
+
+  <div class="weekcard rv">
+    <div class="mono">Een werkweek, eerlijk gemeten</div>
+    <div class="grid-hours" id="heroGrid" aria-hidden="true"></div>
+    <div class="legend">
+      <span><i class="dot dot-werk"></i> werk dat er echt is</span>
+      <span><i class="dot dot-vrij"></i> ruimte die niemand benoemt</span>
+    </div>
+    <p class="weekcap">26 van de 40 uur gevuld. De rest is geen luiheid — het is capaciteit waar je niets mee mag.</p>
   </div>
 
-  <div class="herken">
+  <div class="herken rv">
     <div class="mono">Voor wie is dit</div>
     <h3 style="margin:8px 0 6px">Tik aan wat je herkent</h3>
-    <p style="color:#BBC3B7;font-size:14px;margin:0 0 10px">Niemand ziet dit, ook wij niet.</p>
+    <p class="herken-sub">Niemand ziet dit, ook wij niet.</p>
     <ul class="hlijst" id="hlijst">
       <li data-h><span class="vink"></span> Je bent op donderdag al klaar met je werk voor die week</li>
       <li data-h><span class="vink"></span> Je hebt wel eens gedacht: hier zit meer in dan ik er nu mee doe</li>
@@ -486,60 +616,75 @@
     <p class="hscore" id="hscore">Herken je er twee of meer? Dan is dit voor jou geschreven.</p>
   </div>
 
-  <div class="stappen3">
-    <div class="stap3"><b>1</b><h3>Zeven korte secties</h3><p>Sliders en sleepkaartjes, geen open vragenlijst. Ongeveer 15 minuten.</p></div>
-    <div class="stap3"><b>2</b><h3>Eén gratis inzicht</h3><p>Direct een scherp patroon uit je eigen antwoorden, voordat je iets betaalt.</p></div>
-    <div class="stap3"><b>3</b><h3>Drie gewogen paden</h3><p>Met een plan van zes weken, geen open einde.</p></div>
+  <div class="hoe rv" id="hoe">
+    <div class="mono">Hoe het werkt</div>
+    <h2 class="bloktitel">Van vage onvrede naar een concreet plan</h2>
+    <div class="stappen3">
+      <div class="stap3"><span class="stagtag">01 · Intake</span><h3>Zeven korte secties</h3><p>Sliders en sleepkaartjes, geen open vragenlijst. Vijftien minuten, gewoon op je telefoon.</p></div>
+      <div class="stap3"><span class="stagtag">02 · Inzicht</span><h3>Eén gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden — voordat je iets betaalt.</p></div>
+      <div class="stap3"><span class="stagtag">03 · Plan</span><h3>Drie gewogen paden</h3><p>Doorgerekend op wat jij belangrijk vindt, met een plan van zes weken. Geen open einde.</p></div>
+    </div>
   </div>
 
-  <div class="step">
+  <div class="preview rv">
+    <div class="mono">Zo ziet je inzicht eruit</div>
+    <div class="pv-kop">“Je vak is niet te zwaar. Het is te klein.”</div>
+    <div class="pv-spanning"><span>Snel klaar</span><em>schuurt met</em><span>Nergens heen</span></div>
+    <p class="pv-cap">Voorbeeld — jouw inzicht wordt opgebouwd uit jouw eigen antwoorden, met een letterlijk citaat als bewijs.</p>
+  </div>
+
+  <div class="trust rv">
     <div class="mono">Jouw data is jouw data</div>
-    <h3 style="margin:8px 0 8px">Niets van wat je invult verlaat dit scherm</h3>
-    <ul>
-      <li>Geen account, geen mailadres, geen registratie om te beginnen.</li>
-      <li>Je antwoorden worden alleen op dit apparaat bewaard, zodat je later verder kunt.</li>
-      <li>Niets gaat naar je werkgever, je collega's of wie dan ook. Nooit.</li>
-      <li>Eén knop wist alles definitief, ook halverwege.</li>
+    <h2 class="bloktitel">Gemaakt om niets over je te onthouden</h2>
+    <ul class="trustlijst">
+      <li><b>Geen account.</b> Geen mailadres, geen registratie, geen tracking.</li>
+      <li><b>Alleen op dit apparaat.</b> Je antwoorden blijven hier, en worden alleen anoniem verwerkt om jouw inzicht te maken.</li>
+      <li><b>Niets naar je werkgever.</b> Of je collega’s, of wie dan ook. Nooit.</li>
+      <li><b>Eén knop wist alles.</b> Ook halverwege.</li>
     </ul>
   </div>
 
-  <details class="uitklap">
+  <details class="uitklap rv">
     <summary><span class="mono">Waar dit op gebaseerd is</span><span class="pijl">▾</span></summary>
     <p class="muted" style="font-size:15px;margin-top:10px">De intake volgt vier lijnen uit de arbeids- en organisatiepsychologie: het job demands-resources model van Bakker en Demerouti, waarin te weinig taakeisen net zulke klachten geven als te veel; job crafting van Wrzesniewski en Dutton, over het zelf verbouwen van je functie; de zelfdeterminatietheorie van Deci en Ryan, met autonomie, competentie en verbondenheid als brandstof; en Csikszentmihalyi's flow, waarin verveling ontstaat zodra je kunde je uitdaging voorbijstreeft. Daar komen twee lijnen over vrije tijd bij: vrije tijd die alleen herstel is voegt weinig toe, terwijl vrije tijd met betekenis wel telt. En er bestaat zoiets als een optimaal tijdsbudget: te weinig vrije tijd geeft stress, te veel geeft leegte. Dat laatste is precies de klacht die deze test in kaart brengt.</p>
   </details>
 
-  <div class="step">
-    <div class="row spread">
-      <div><div class="mono">Wat het kost</div><div class="price" style="font-size:34px;margin-top:6px">€25</div></div>
-      <div style="max-width:380px"><p style="margin:0" class="muted">Eenmalig, geen abonnement. De intake en je eerste inzicht zijn gratis. Je ziet je patroon voordat je iets betaalt.</p></div>
+  <div class="prijs rv">
+    <div class="prijs-kop">
+      <div>
+        <div class="mono">Wat het kost</div>
+        <div class="price">€25</div>
+        <p class="prijs-sub">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
+      </div>
+      <ul class="prijslijst">
+        <li><span>De volledige intake</span><em>gratis</em></li>
+        <li><span>Je eerste inzicht</span><em>gratis</em></li>
+        <li><span>Drie paden + plan van zes weken</span><em>€25</em></li>
+      </ul>
     </div>
+    <button class="btn btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
+    <p class="micro" style="margin:10px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
   </div>
 
-  <div class="row" style="margin-top:8px">
-    <button class="btn" id="start">Start, het eerste inzicht is gratis</button>
-    <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
-  </div>
-  <p class="muted" style="margin-top:8px">Ongeveer 15 minuten. Geen account. Stoppen en later verder kan altijd.</p>
-
-  <div class="maker">
+  <div class="maker rv">
     <div class="mono">Waarom dit bestaat</div>
     <p style="margin:10px 0 0">Ik merkte in vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger. Niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Ik heb er lang schuldig over gedaan in plaats van er iets mee te doen. Dit is het gesprek dat ik toen had willen voeren.</p>
-    <p class="muted" style="margin:12px 0 0;font-size:14px">Gemaakt door één iemand, niet door een bureau. Vervang deze tekst door je eigen woorden en zet er je naam en foto bij, dat verhoogt het vertrouwen meer dan welke claim ook.</p>
   </div>
 
-  <div class="faq">
+  <div class="faq rv">
     <div class="mono" style="margin-bottom:10px">Voor de zekerheid</div>
     <details><summary>Is dit een cursus of coaching-traject?</summary><p>Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen.</p></details>
-    <details><summary>Wat als de uitkomst niet bij me past?</summary><p>Je kunt elk antwoord aanpassen voor je verdergaat, en na de scenario's een correctie geven waarmee de richtingen opnieuw worden bedacht.</p></details>
-    <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Nee. Ze worden alleen op dit apparaat bewaard en gaan nergens anders naartoe dan naar het maken van jouw eigen plan.</p></details>
-    <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de scenario's.</p></details>
+    <details><summary>Wat als de uitkomst niet bij me past?</summary><p>Je kunt elk antwoord aanpassen voor je verdergaat, en na de scenario’s een correctie geven waarmee de richtingen opnieuw worden bedacht.</p></details>
+    <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Geen mens, nee. Je antwoorden blijven op dit apparaat en worden alleen geautomatiseerd en anoniem verwerkt om jouw inzicht en plan te maken.</p></details>
+    <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie paden.</p></details>
   </div>
 
-  <div class="row" style="margin-top:26px">
-    <button class="btn" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
+  <div class="foot rv">
+    <span class="brand small"><svg class="mark" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#152A1C"/><rect x="7" y="7" width="8" height="8" rx="2" fill="#D6EBA8"/><rect x="17" y="7" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="7" y="17" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="17" y="17" width="8" height="8" rx="2" fill="#D6EBA8"/></svg>Deskshift</span>
+    <p class="muted">Voor mensen van wie het werk te klein is geworden. Geen cookies, geen tracking.</p>
   </div>
 
-  <div class="row" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
+  <div class="row devrow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
     <button class="btn btn-ghost btn-sm" id="demo">Testmodus: vul mijn antwoorden in</button>
     <button class="btn btn-ghost btn-sm" id="demoLoop">Testmodus: door de intake lopen</button>
     <span class="muted" style="font-size:13px">Alleen voor jezelf tijdens het bouwen.</span>
@@ -1783,7 +1928,7 @@ function aflevering(p, s){
 (function(){
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
   if(reduce || !("IntersectionObserver" in window)) return; // laat alles gewoon zichtbaar
-  var els = [].slice.call(document.querySelectorAll("#landing .herken, #landing .stappen3, #landing .step, #landing .uitklap, #landing .maker, #landing .faq"));
+  var els = [].slice.call(document.querySelectorAll("#landing .rv"));
   if(!els.length) return;
   els.forEach(function(el){ el.classList.add("reveal"); });
   var io = new IntersectionObserver(function(ent){
