@@ -572,6 +572,52 @@
   @media (prefers-reduced-motion:reduce){#stage > *{animation:none!important}}
   /* id-specificiteit versloeg .hidden, waardoor de balk ook in de intake bleef staan */
   #mobielCta.hidden{display:none!important}
+
+  /* ============================================================
+     Deskshift v3 — leesbaarheid, intake-navigatie, capaciteit-visual
+     ============================================================ */
+  h1,h2,h3,.bloktitel{color:var(--ink)}
+  .preview .pv-kop{color:var(--chalk)}
+  .mono{color:rgba(21,42,28,.66)}
+  .stagtag{color:#4A6B1E}
+  .eyebrow{color:rgba(21,42,28,.66)}
+
+  .hero{padding-bottom:34px}
+  .capaciteit{background:var(--chalk);border-radius:var(--r-lg);box-shadow:var(--sh-2),inset 0 0 0 1px var(--line-2);padding:24px 20px;margin:12px 0 22px}
+  @media(min-width:760px){.capaciteit{margin:16px 0 30px;padding:30px 28px}}
+  .capbar{display:flex;height:54px;border-radius:14px;overflow:hidden;margin:16px 0 12px;box-shadow:inset 0 0 0 1px var(--line-2)}
+  .cap-benut{width:52%;background:var(--ink);animation:capBenut 1.5s var(--ease)}
+  .cap-rest{flex:1;background:var(--lime);animation:capPuls 3.4s ease-in-out infinite}
+  @keyframes capBenut{from{width:0}}
+  @keyframes capPuls{0%,100%{background:var(--lime)}50%{background:#CFEA7C}}
+  .caplegend{margin:0 0 12px}
+  .capcap{font-size:15px;color:var(--petrol);margin:0}
+  .capcap b{color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){.cap-benut{width:52%;animation:none}.cap-rest{animation:none}}
+
+  .prijs-sub{color:var(--petrol);font-size:15px;margin:0 0 18px;max-width:40em}
+  .prijsgrid{display:grid;gap:14px;margin:0 0 22px}
+  @media(min-width:640px){.prijsgrid{grid-template-columns:1fr 1fr;gap:18px}}
+  .prijskol{background:var(--veld);border-radius:14px;padding:18px;box-shadow:inset 0 0 0 1px var(--line-2)}
+  .prijstag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;padding:5px 11px;border-radius:999px;margin-bottom:12px}
+  .prijstag.gratis{background:var(--lime);color:var(--limeT)}
+  .prijstag.betaald{background:var(--ink);color:#EAF1E4}
+  .prijskol ul{list-style:none;margin:0;padding:0}
+  .prijskol li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--petrol)}
+  .prijskol li::before{content:"";position:absolute;left:2px;top:12px;width:8px;height:8px;border-radius:50%;background:var(--limeE)}
+
+  .railtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px}
+  .homebtn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease),transform .12s var(--ease)}
+  .homebtn:active{transform:scale(.97)}
+  @media(hover:hover){.homebtn:hover{border-color:var(--ink);background:var(--veld)}}
+  .railmeta{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
+  .railmeta .mono{font-size:10.5px}
+  #railsectie{color:var(--ink)}
+
+  #scrollcue{position:fixed;left:50%;bottom:calc(20px + var(--safe-b));z-index:14;width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--lime);border:0;box-shadow:0 8px 22px rgba(21,42,28,.30);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transform:translate(-50%,6px);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+  #scrollcue.aan{opacity:1;pointer-events:auto;transform:translate(-50%,0);animation:cueBounce 1.9s var(--ease) infinite}
+  @keyframes cueBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,5px)}}
+  @media (prefers-reduced-motion:reduce){#scrollcue.aan{animation:none;transform:translate(-50%,0)}}
 </style>
 
 <div class="wrap">
@@ -593,14 +639,14 @@
     <p class="micro">±15 minuten · geen account · stoppen en later verder kan altijd</p>
   </header>
 
-  <div class="weekcard rv">
-    <div class="mono">Een werkweek, eerlijk gemeten</div>
-    <div class="grid-hours" id="heroGrid" aria-hidden="true"></div>
-    <div class="legend">
-      <span><i class="dot dot-werk"></i> werk dat er echt is</span>
-      <span><i class="dot dot-vrij"></i> ruimte die niemand benoemt</span>
+  <div class="capaciteit rv">
+    <div class="mono">Waar dit over gaat</div>
+    <div class="capbar" aria-hidden="true"><span class="cap-benut"></span><span class="cap-rest"></span></div>
+    <div class="legend caplegend">
+      <span><i class="dot dot-werk"></i> wat je rol van je vraagt</span>
+      <span><i class="dot dot-vrij"></i> ruimte die je overhoudt</span>
     </div>
-    <p class="weekcap">26 van de 40 uur gevuld. De rest is geen luiheid — het is capaciteit waar je niets mee mag.</p>
+    <p class="capcap"><b>Je kunt meer aan dan je rol vraagt.</b> Die ruimte is geen luiheid en geen motivatieprobleem — het is een tekort aan uitdaging. Deskshift laat zien wat je ermee kunt.</p>
   </div>
 
   <div class="herken rv">
@@ -620,7 +666,7 @@
     <div class="mono">Hoe het werkt</div>
     <h2 class="bloktitel">Van vage onvrede naar een concreet plan</h2>
     <div class="stappen3">
-      <div class="stap3"><span class="stagtag">01 · Intake</span><h3>Zeven korte secties</h3><p>Sliders en sleepkaartjes, geen open vragenlijst. Vijftien minuten, gewoon op je telefoon.</p></div>
+      <div class="stap3"><span class="stagtag">01 · Intake</span><h3>Zeven korte secties</h3><p>Schuiven, aantikken en sorteren — geen eindeloze vragenlijst. Vijftien minuten, gewoon op je telefoon.</p></div>
       <div class="stap3"><span class="stagtag">02 · Inzicht</span><h3>Eén gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden — voordat je iets betaalt.</p></div>
       <div class="stap3"><span class="stagtag">03 · Plan</span><h3>Drie gewogen paden</h3><p>Doorgerekend op wat jij belangrijk vindt, met een plan van zes weken. Geen open einde.</p></div>
     </div>
@@ -650,20 +696,28 @@
   </details>
 
   <div class="prijs rv">
-    <div class="prijs-kop">
-      <div>
-        <div class="mono">Wat het kost</div>
-        <div class="price">€25</div>
-        <p class="prijs-sub">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
+    <div class="mono">Wat het kost</div>
+    <h2 class="bloktitel" style="margin:8px 0 4px">Gratis beginnen, €25 als je verder wilt</h2>
+    <p class="prijs-sub">Je doet de hele intake en ziet je eerste inzicht zonder te betalen. Pas als je de scenario's en het plan wilt, reken je eenmalig af.</p>
+    <div class="prijsgrid">
+      <div class="prijskol">
+        <span class="prijstag gratis">Gratis</span>
+        <ul>
+          <li>De volledige intake van zeven secties</li>
+          <li>Je persoonlijke inzicht: het patroon uit je eigen antwoorden</li>
+        </ul>
       </div>
-      <ul class="prijslijst">
-        <li><span>De volledige intake</span><em>gratis</em></li>
-        <li><span>Je eerste inzicht</span><em>gratis</em></li>
-        <li><span>Drie paden + plan van zes weken</span><em>€25</em></li>
-      </ul>
+      <div class="prijskol">
+        <span class="prijstag betaald">€25 eenmalig</span>
+        <ul>
+          <li>Drie richtingen, gewogen op wat jij belangrijk vindt</li>
+          <li>Een concreet plan van zes weken, als pdf in je mail</li>
+          <li>De onderbouwing per richting, en waarom de rest afviel</li>
+        </ul>
+      </div>
     </div>
     <button class="btn btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
-    <p class="micro" style="margin:10px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
+    <p class="micro" style="margin:10px 0 0">Geen abonnement, geen account. Je ziet je patroon voordat je iets betaalt.</p>
   </div>
 
   <div class="maker rv">
@@ -698,10 +752,12 @@
 
 <section id="intake" class="hidden">
   <div class="rail">
-    <div class="railkop"><span class="mono" id="railtel"></span><span class="mono" id="resttijd"></span></div>
+    <div class="railtop">
+      <button class="homebtn" id="homeBtn" type="button" aria-label="Terug naar de startpagina"><span aria-hidden="true">‹</span> Terug naar start</button>
+      <span class="mono" id="resttijd"></span>
+    </div>
     <div class="railbalk"><span id="railvul"></span></div>
-    <ol id="rail"></ol>
-    <div class="veilig"><i></i>Alleen jij ziet dit, niets wordt verstuurd of gedeeld</div>
+    <div class="railmeta"><span class="mono" id="railsectie"></span><span class="mono" id="railtel"></span></div>
   </div>
   <div id="stage"></div>
   <div id="err"></div>
@@ -774,12 +830,16 @@
   <div class="row" style="margin-top:20px"><button class="btn btn-ghost" data-terug="scenarios">Terug naar de richtingen</button></div>
 </section>
 
+<button id="scrollcue" class="hidden" type="button" aria-label="Scroll naar beneden">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
 <div id="printGebied" aria-hidden="true"></div>
 
 </div>
 
 <script>
-const MODEL = "claude-sonnet-4-6";
+const MODEL = "claude-sonnet-5";
 const KEY = "deskshift:draft";
 const KAARTEN = ["Analyseren","Presenteren","Schrijven","Overleggen","Plannen","Onderhandelen","Uitzoeken","Bouwen of maken","Anderen helpen","Details controleren","Nieuwe mensen spreken","Beslissen","Documenteren","Improviseren"];
 
@@ -838,7 +898,7 @@ const SECTIES = [
     intro:"Denk aan de afgelopen vier weken. Eerlijk mag, er kijkt niemand mee.",
     theorie:"Het verschil tussen contracturen en werkelijke taaktijd is de ruimte waar dit product over gaat. Bij hybride werk zonder harde begin- en eindtijd is dat verschil zelden zichtbaar.",
     stappen:[
-      {id:"echturen",type:"slider",vraag:"Hoeveel uur per week ben je écht met taken bezig?",hint:"Exclusief overleg dat je zelf niet nodig vindt. Je contract is {contract} uur.",min:0,max:45,def:26,unit:"uur",pctVan:"contract"},
+      {id:"echturen",type:"slider",vraag:"Hoeveel uur per week ben je écht met taken bezig?",hint:"Een ruwe schatting van een gemiddelde week is genoeg — exclusief overleg dat je zelf niet nodig vindt. Je contract is {contract} uur.",min:0,max:45,def:26,unit:"uur",pctVan:"contract"},
       {id:"moment",type:"choice",vraag:"Wanneer ben je meestal klaar met je week?",opties:["Al op dinsdag","Woensdag","Donderdag","Vrijdagochtend","Ik ben nooit echt klaar"]},
       {id:"invulling",type:"longtext",vraag:"Wat doe je in de uren dat je technisch werkt, maar niet aan werk denkt?",hint:"Er is geen fout antwoord. Iedereen heeft die uren."}
     ]},
@@ -903,8 +963,8 @@ function md(t){
 }
 
 function railTeken(){
-  $("rail").innerHTML = SECTIES.map((sec,i)=>
-    `<li class="${i<S.s?"done":i===S.s?"now":""}"><div class="bar"></div><div class="nm">${i+1}. ${sec.naam}</div></li>`).join("");
+  const el = document.getElementById("railsectie");
+  if(el) el.textContent = "Sectie " + (S.s+1) + "/" + SECTIES.length + " · " + SECTIES[S.s].naam;
 }
 const stap = () => SECTIES[S.s].stappen[S.q];
 
@@ -1056,10 +1116,9 @@ Zou uitbreiden: ${S.ant.leuk||"onbekend"}
 Zou weggeven: ${S.ant.minder||"onbekend"}
 Wil leren: ${S.ant.ontwikkelen||"onbekend"}`;
   try{
-    const raw = await ask(`Je maakt kaartjes voor een sorteeroefening. Op basis van de rol hieronder geef je veertien concrete taken die in deze functie echt voorkomen. Herkenbaar en specifiek, niet generiek. Twee tot vier woorden per kaartje, Nederlands, zonder lidwoord, geen dubbele. Meng leuke en vervelende taken door elkaar.
+    const d = await askJSON(`Je maakt kaartjes voor een sorteeroefening. Op basis van de rol hieronder geef je veertien concrete taken die in deze functie echt voorkomen. Herkenbaar en specifiek, niet generiek. Twee tot vier woorden per kaartje, Nederlands, zonder lidwoord, geen dubbele. Meng leuke en vervelende taken door elkaar.
 Antwoord uitsluitend met geldige JSON: {"kaarten":["taak","taak"]}`,
       [{role:"user",content:ctx}], null, 400);
-    const d = jsonUit(raw);
     if(d.kaarten && d.kaarten.length>=8) S.kaarten = d.kaarten.slice(0,16);
     else S.kaarten = KAARTEN.slice();
   }catch(e){ S.kaarten = KAARTEN.slice(); }
@@ -1177,15 +1236,30 @@ $("back").onclick = () => {
 document.addEventListener("keydown", e=>{
   if(e.key!=="Enter" || e.shiftKey) return;
   if($("intake").classList.contains("hidden")) return;
+  // In de sorteer-stap voegt Enter een eigen kaartje toe zolang er iets staat;
+  // is het veld leeg, dan gaat Enter pas verder naar de volgende vraag.
+  if(e.target && e.target.id==="eigen"){
+    e.preventDefault();
+    if(e.target.value.trim()){ const b=document.getElementById("addc"); if(b) b.click(); }
+    else $("next").click();
+    return;
+  }
   const t = e.target.tagName;
   if(t==="TEXTAREA" || t==="INPUT" || t==="BODY" || t==="DIV"){ e.preventDefault(); $("next").click(); }
 });
 
-$("start").onclick = async () => { await wis(); S.s=0; S.q=0; hide("landing"); show("intake"); toonStap(); };
+$("start").onclick = async () => { await wis(); S.s=0; S.q=0; S.ant={}; S.pos={skill:{},energie:{}}; S.kaarten=[]; hide("landing"); show("intake"); toonStap(); };
 $("resume").onclick = async () => {
-  const d = await laad(); if(!d) return;
-  S.s=d.s; S.q=d.q; S.ant=d.ant||{}; S.pos=d.pos||{skill:{},energie:{}}; S.kaarten=d.kaarten||[]; S.cvNaam=d.cvNaam||""; S.cvTekst=d.cvTekst||"";
-  hide("landing"); show("intake"); toonStap();
+  const d = await laad();
+  if(d){ S.s=d.s; S.q=d.q; S.ant=d.ant||{}; S.pos=d.pos||{skill:{},energie:{}}; S.kaarten=d.kaarten||[]; S.cvNaam=d.cvNaam||""; S.cvTekst=d.cvTekst||""; }
+  hide("landing"); show("intake"); toonStap(); // zonder opslag: verder waar je in het geheugen was
+};
+if($("homeBtn")) $("homeBtn").onclick = () => {
+  try{ leesVeld(); }catch(e){}
+  bewaar();
+  ["intake","review","summary","insight","kalib","scenarios","action"].forEach(hide);
+  show("landing"); show("resume");
+  window.scrollTo({top:0,behavior:"smooth"});
 };
 (async ()=>{ const d = await laad(); if(d && (d.s>0||d.q>0)) show("resume"); })();
 
@@ -1377,9 +1451,47 @@ function bericht(extra){
   content.push({type:"text",text:(extra||"")+"\n\nDit is de volledige intake:\n"+S.transcript});
   return [{role:"user",content:content}];
 }
+// rauwe control-tekens binnen strings escapen (meest voorkomende oorzaak van
+// "Expected ',' or ']'": een letterlijke newline of tab in een tekstveld)
+function escapeControls(s){
+  let out="", q=false, e2=false;
+  for(const ch of s){
+    if(e2){ out+=ch; e2=false; continue; }
+    if(ch==="\\"){ out+=ch; e2=true; continue; }
+    if(ch==='"'){ q=!q; out+=ch; continue; }
+    if(q && ch==="\n"){ out+="\\n"; continue; }
+    if(q && ch==="\r"){ out+="\\r"; continue; }
+    if(q && ch==="\t"){ out+="\\t"; continue; }
+    out+=ch;
+  }
+  return out;
+}
+// ontbrekende komma's tussen elementen invoegen, string-bewust (bijv. `}{` of `"a" "b"`)
+function herstelKommas(s){
+  let out="", q=false, e2=false, last="";
+  for(let n=0;n<s.length;n++){
+    const ch=s[n];
+    if(e2){ out+=ch; e2=false; continue; }
+    if(q && ch==="\\"){ out+=ch; e2=true; continue; }
+    if(ch==='"'){
+      if(!q && /[}\]"0-9a-z]/i.test(last)) out+=",";
+      q=!q; out+=ch; if(!q) last='"'; continue;
+    }
+    if(q){ out+=ch; continue; }
+    if(ch==="{"||ch==="["){ if(/[}\]"0-9a-z]/i.test(last)) out+=","; out+=ch; last=ch; continue; }
+    if(/\s/.test(ch)){ out+=ch; continue; }
+    out+=ch; last=ch;
+  }
+  return out;
+}
 function jsonUit(raw){
-  let s = raw.replace(/```json|```/g,"").trim();
+  let s = String(raw||"").replace(/```json|```/g,"").trim();
   const i = s.indexOf("{"); if(i>0) s = s.slice(i);
+  const j = s.lastIndexOf("}"); if(j>=0 && j<s.length-1) s = s.slice(0,j+1); // prose na de JSON afknippen
+  try{ return JSON.parse(s); }catch(e){}
+  s = escapeControls(s);
+  try{ return JSON.parse(s); }catch(e){}
+  s = herstelKommas(s);
   try{ return JSON.parse(s); }catch(e){}
   // afgekapte JSON repareren: sluit open string, arrays en objecten
   let t = s, q = false, esc2 = false, stack = [];
@@ -1392,9 +1504,20 @@ function jsonUit(raw){
     else if(ch==="}"||ch==="]") stack.pop();
   }
   if(q) t += '"';
-  t = t.replace(/,\s*$/,"");
+  t = t.replace(/,\s*$/,"").replace(/,\s*([}\]])/g,"$1");
   while(stack.length) t += stack.pop();
   return JSON.parse(t);
+}
+// vraagt de AI om JSON en probeert het nog één keer strenger als het niet parse-t
+async function askJSON(system, messages, tools, maxTokens){
+  let laatste;
+  for(let k=0;k<2;k++){
+    const sys = k===0 ? system
+      : system + "\n\nLET OP: je vorige antwoord was geen geldige JSON. Antwoord nu UITSLUITEND met één geldig, volledig JSON-object — geen tekst ervoor of erna, geen markdown, met een komma tussen elk element.";
+    const raw = await ask(sys, messages, tools, maxTokens);
+    try{ return jsonUit(raw); }catch(e){ laatste = e; }
+  }
+  throw laatste || new Error("onleesbare uitvoer");
 }
 
 const TOON = `Je bent een kritische, eerlijke gesprekspartner, geen life coach. Geen coach-jargon, geen slijmerij, geen uitroeptekens. Direct, een beetje droog, positief zonder te vleien. Nederlands, korte zinnen, geen gedachtestreepjes.
@@ -1407,17 +1530,17 @@ Belangrijk over tijd: de uren die binnen de werkweek overblijven zijn geen vrije
 $("toSummary").onclick = async () => {
   bouwTranscript();
   hide("review"); show("summary");
+  window.scrollTo({top:0,behavior:"smooth"});
   hide("sumRow");
   $("sumBody").innerHTML = `<div class="thinking">stelt de schets op <b></b><b></b><b></b></div>`;
   matrixTeken($("sumQuad"));
   try{
-    const raw = await ask(TOON + `
+    const d = await askJSON(TOON + `
 
 Vat de situatie van deze persoon samen als korte kaarten. Puur observerend, nul advies, geen scenario's, geen aanmoediging.
 Antwoord uitsluitend met geldige JSON, zonder markdown:
 {"kaarten":[{"label":"twee of drie woorden","tekst":"maximaal 18 woorden"}],"klap":"één zin van maximaal 20 woorden die het patroon benoemt"}
 Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 700);
-    const d = jsonUit(raw);
     $("sumBody").innerHTML = `<div class="kaartjes">${(d.kaarten||[]).map(k=>
       `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
       ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}
@@ -1428,16 +1551,16 @@ Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), 
 
 $("toInsight").onclick = async () => {
   hide("summary"); show("insight");
+  window.scrollTo({top:0,behavior:"smooth"});
   $("unlock").disabled = true;
   $("insBody").innerHTML = `<div class="thinking">zoekt het patroon <b></b><b></b><b></b></div>`;
   try{
-    const raw = await ask(TOON + `
+    const d = await askJSON(TOON + `
 
 Geef het scherpste patroon uit deze intake. Geen advies, geen scenario's, geen aanmoediging. Benoem wat deze persoon zelf waarschijnlijk niet zo scherp had geformuleerd.
 Antwoord uitsluitend met geldige JSON:
 {"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden","spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"punten":[{"label":"twee of drie woorden","tekst":"maximaal 12 woorden"}]}
 Precies drie punten.`, bericht(), null, 600);
-    const d = jsonUit(raw);
     $("insBody").innerHTML = inzichtHtml(d);
   }catch(e){ $("insBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; }
   $("unlock").disabled = false;
@@ -1699,9 +1822,9 @@ async function draaien(feedback){
     const top = gescoord.slice(0,3), rest = gescoord.slice(3);
 
     gangStap(["af","af","af","bezig"]);
-    const uit = jsonUit(await ask(P_UITWERKING(P),
+    const uit = await askJSON(P_UITWERKING(P),
       [{role:"user",content:"Intake:\n"+S.transcript+"\n\nGeselecteerde richtingen met scores:\n"+JSON.stringify(top.map(k=>({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})))}],
-      [{type:"web_search_20250305",name:"web_search"}], 3000));
+      [{type:"web_search_20250305",name:"web_search"}], 3000);
     S.scenarios = (uit.scenarios||[]).map((s,i)=>Object.assign({}, top[i]||{}, s));
     gangStop();
 
@@ -1866,8 +1989,7 @@ async function kies(s){
   window.scrollTo({top:0,behavior:"smooth"});
   const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
   try{
-    const raw = await ask(P3, msgs, s.id==="zijproject"?[{type:"web_search_20250305",name:"web_search"}]:null, 3000);
-    S.plan = jsonUit(raw);
+    S.plan = await askJSON(P3, msgs, s.id==="zijproject"?[{type:"web_search_20250305",name:"web_search"}]:null, 3000);
     $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Deskshift · jouw plan van zes weken</div>
       <h1 style="font-size:30px;margin:10px 0 4px">${esc(s.titel)}</h1></div>` + planHtml(S.plan, s);
     $("actBody").innerHTML = aflevering(S.plan, s) + `
@@ -1924,6 +2046,27 @@ function aflevering(p, s){
         <span class="muted" style="font-size:13px">Kies in het printvenster voor opslaan als pdf.</span></div>
     </div>`;
 }
+/* ---------- Deskshift: scroll-cue op de flow-pagina's ---------- */
+(function(){
+  var cue = document.getElementById("scrollcue"); if(!cue) return;
+  cue.classList.remove("hidden");
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function upd(){
+    var landing = document.getElementById("landing");
+    var inFlow = landing && landing.classList.contains("hidden");
+    var doc = document.documentElement;
+    var meer = (doc.scrollHeight - window.innerHeight - (window.scrollY||window.pageYOffset)) > 150;
+    cue.classList.toggle("aan", !!(inFlow && meer));
+  }
+  cue.addEventListener("click", function(){
+    window.scrollBy({ top: Math.round(window.innerHeight*0.82), behavior: reduce?"auto":"smooth" });
+  });
+  window.addEventListener("scroll", upd, {passive:true});
+  window.addEventListener("resize", upd);
+  setInterval(upd, 700); // content in de flow groeit async; goedkoop bijhouden
+  upd();
+})();
+
 /* ---------- Deskshift: fade-up per blok in de landing (mobiel-first) ---------- */
 (function(){
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
