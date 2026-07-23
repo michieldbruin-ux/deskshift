@@ -197,9 +197,9 @@
   .paywall .muted{color:#BBC3B7}
   .price{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:44px;letter-spacing:-.02em}
 
-  .thinking{display:flex;gap:9px;align-items:center;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
-    background:var(--veld);border:1px solid var(--line);border-left:3px solid var(--lime);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
-  .thinking::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:35%;background:var(--lime);animation:loop 1.4s ease-in-out infinite}
+  .thinking{display:flex;gap:11px;align-items:center;color:var(--ink);font-family:"IBM Plex Sans",sans-serif;font-size:15px;font-weight:500;letter-spacing:0;text-transform:none;
+    background:var(--veld);border:0;box-shadow:inset 0 0 0 1px rgba(21,42,28,.07);border-left:3px solid var(--lime);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+  .thinking::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:42%;background:linear-gradient(90deg,transparent,var(--lime),transparent);animation:loop 1.3s ease-in-out infinite}
   @keyframes loop{0%{left:-35%}100%{left:100%}}
   .thinking b{width:6px;height:6px;background:var(--slate);border-radius:50%;animation:blink 1.1s infinite}
   .thinking b:nth-child(2){animation-delay:.2s}
@@ -809,6 +809,48 @@
   .slot-cta p{color:#AFC2A4;margin:0 0 20px}
   .foot{text-align:center;padding:30px 0 4px}
   .foot .brand{justify-content:center}
+
+  /* Gratis inzicht: één scherp inzicht i.p.v. een verzameling vormen */
+  .insight-kop{font-size:clamp(26px,7vw,40px);line-height:1.12;letter-spacing:-.02em;color:var(--ink);margin:10px 0 14px}
+  .insight-cit{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:clamp(17px,4.6vw,21px);line-height:1.4;color:var(--petrol);border-left:3px solid var(--lime);padding-left:16px;margin:0}
+  .insight-span{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin:24px 0 10px}
+  .insight-span .isp-kant{flex:1;min-width:130px;background:var(--ink);color:#EAF1E4;border-radius:12px;padding:15px 14px;text-align:center;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .insight-span .isp-vs{flex:0 0 auto;align-self:center;color:var(--slate)}
+  .insight-spt{color:var(--petrol);margin:0}
+  .insight-week{background:var(--veld);border-radius:16px;padding:18px;margin:24px 0;box-shadow:inset 0 0 0 1px rgba(21,42,28,.07)}
+  .iw-top{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--petrol);margin-bottom:11px}
+  .iw-top b{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:27px;color:var(--ink);display:block;line-height:1}
+  .iw-top .iw-r{text-align:right}
+  .iw-top .iw-r b{color:#4A6B1E}
+  .iw-bar{height:14px;border-radius:8px;background:rgba(191,227,95,.32);overflow:hidden}
+  .iw-fill{display:block;height:100%;width:var(--p);background:var(--ink);border-radius:8px;animation:iwFill 1.1s var(--ease) both}
+  @keyframes iwFill{from{width:0}}
+  .iw-cap{font-size:13.5px;color:var(--slate);margin:12px 0 0}
+  .insight-nudge{background:var(--ink);border-radius:16px;padding:18px 20px;margin-top:8px}
+  .insight-nudge p{margin:0;color:#E7EEDF;font-size:15px;line-height:1.5}
+  .insight-nudge b{color:#fff}
+  @media (prefers-reduced-motion:reduce){.iw-fill{animation:none}}
+
+  /* Scenario-loader als 'machine' die stap voor stap denkt */
+  .machine{background:var(--ink);color:#fff;border-radius:18px;padding:22px 20px;box-shadow:0 14px 36px rgba(21,42,28,.20);margin-bottom:22px}
+  .machine-kop{display:flex;align-items:center;gap:9px;margin-bottom:16px}
+  .machine-kop .mono{color:var(--limeL)}
+  .machine-dot{width:9px;height:9px;border-radius:50%;background:var(--lime);animation:mdotPuls 1.2s ease-in-out infinite}
+  @keyframes mdotPuls{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+  .mstappen{list-style:none;margin:0;padding:0}
+  .mstappen li{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;padding:10px 0;opacity:.4;transition:opacity .4s ease}
+  .mstappen li.bezig{opacity:1}
+  .mstappen li.af{opacity:.72}
+  .mstap-ic{display:flex;align-items:center;justify-content:center;height:22px;color:var(--lime);font-weight:700}
+  .mpuls{width:10px;height:10px;border-radius:50%;background:var(--lime);animation:mpulsRing 1.4s ease-out infinite}
+  @keyframes mpulsRing{0%{box-shadow:0 0 0 0 rgba(191,227,95,.5)}100%{box-shadow:0 0 0 12px rgba(191,227,95,0)}}
+  .mstap-t b{display:block;font-weight:600;font-size:15px;color:#fff}
+  .mstappen li:not(.bezig):not(.af) .mstap-t b{color:#9FB295}
+  .mstap-t em{display:block;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--limeL);margin-top:3px;animation:subCycle 2.2s ease both}
+  .mstap-t em.mdone{color:#9FB295;animation:none}
+  @keyframes subCycle{0%{opacity:0;transform:translateY(5px)}14%{opacity:1;transform:none}80%{opacity:1}100%{opacity:.12;transform:translateY(-3px)}}
+  .mnote{color:#9FB295;font-size:12.5px;margin:14px 0 0}
+  @media (prefers-reduced-motion:reduce){.machine-dot,.mpuls,.mstap-t em{animation:none}}
 </style>
 
 <div class="wrap">
@@ -1355,7 +1397,7 @@ Antwoord uitsluitend met geldige JSON: {"kaarten":["taak","taak"]}`,
 
 async function stripVeld(v, st){
   if(!S.kaarten.length){
-    v.innerHTML = `<div class="thinking">stelt kaartjes op uit jouw vak <b></b><b></b><b></b></div>`;
+    v.innerHTML = `<div class="thinking">Stelt kaartjes op uit jouw vak… <b></b><b></b><b></b></div>`;
     await maakKaarten();
   }
   const bron = st.bron;
@@ -1661,7 +1703,9 @@ async function ask(system, messages, tools, maxTokens){
     throw new Error(msg);
   }
   const d = await r.json();
-  return (d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+  const text = (d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+  if(!text) throw new Error("lege uitvoer van de AI"); // laat askJSON opnieuw proberen i.p.v. JSON.parse("")
+  return text;
 }
 function bouwTranscript(){
   let t = "";
@@ -1760,7 +1804,7 @@ $("toSummary").onclick = async () => {
   hide("review"); show("summary");
   window.scrollTo({top:0,behavior:"smooth"});
   hide("sumRow");
-  $("sumBody").innerHTML = `<div class="thinking">stelt de schets op <b></b><b></b><b></b></div>`;
+  $("sumBody").innerHTML = `<div class="thinking">Stelt je schets op… <b></b><b></b><b></b></div>`;
   matrixTeken($("sumQuad"));
   try{
     const d = await askJSON(TOON + `
@@ -1781,7 +1825,7 @@ $("toInsight").onclick = async () => {
   hide("summary"); show("insight");
   window.scrollTo({top:0,behavior:"smooth"});
   $("unlock").disabled = true;
-  $("insBody").innerHTML = `<div class="thinking">zoekt het patroon <b></b><b></b><b></b></div>`;
+  $("insBody").innerHTML = `<div class="thinking">Zoekt het patroon in je antwoorden… <b></b><b></b><b></b></div>`;
   try{
     const d = await askJSON(TOON + `
 
@@ -1796,32 +1840,30 @@ Precies drie punten.`, bericht(), null, 600);
 
 function inzichtHtml(d){
   const contract = S.ant.contract||40, echt = Math.min(S.ant.echturen||0, contract);
-  const en = S.ant.energie||{a:0,b:0};
-  const blokjes = Array.from({length:contract}, (_,i)=>
-    `<span class="uur${i<echt?"":" vrij"}"></span>`).join("");
-  return `<div class="urenkaart">
-      <div class="row spread" style="align-items:flex-end">
-        <div><div class="mono">Jouw week</div>
-          <div class="groot">${echt}<small>van ${contract} uur echt werk</small></div></div>
-        <div style="text-align:right"><div class="mono">Ruimte</div>
-          <div class="groot lime">${contract-echt}<small>uur ruimte in je werkweek</small></div></div>
-      </div>
-      <div class="urengrid">${blokjes}</div>
+  const ruimte = Math.max(0, contract-echt);
+  const pct = contract ? Math.round(echt/contract*100) : 0;
+  const sp = d.spanning||null;
+  return `
+    <div class="insight-lead">
+      <div class="mono">Jouw patroon, in één zin</div>
+      <h2 class="insight-kop">${esc(d.kop||"")}</h2>
+      ${d.citaat?`<p class="insight-cit">"${esc(d.citaat)}"</p>`:""}
     </div>
-    <h2 style="margin:26px 0 16px">${esc(d.kop||"")}</h2>
-    <div class="grootcitaat">${esc(d.citaat||"")}</div>
-    ${d.spanning ? `<div class="spanning">
-        <div class="kant">${esc(d.spanning.links||"")}</div>
-        <div class="vs mono">schuurt met</div>
-        <div class="kant">${esc(d.spanning.rechts||"")}</div>
+    ${sp?`<div class="insight-span">
+      <span class="isp-kant">${esc(sp.links||"")}</span>
+      <span class="isp-vs mono">schuurt met</span>
+      <span class="isp-kant">${esc(sp.rechts||"")}</span>
+    </div>${sp.tekst?`<p class="insight-spt">${esc(sp.tekst)}</p>`:""}`:""}
+    <div class="insight-week">
+      <div class="iw-top">
+        <span><b>${echt}</b> van ${contract} uur echt werk</span>
+        <span class="iw-r"><b>${ruimte}</b> uur ruimte in je week</span>
       </div>
-      <p class="spanningtekst">${esc(d.spanning.tekst||"")}</p>` : ""}
-    <div class="kaartjes" style="margin-top:22px">${(d.punten||[]).map(k=>
-      `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
-    <div class="facts" style="margin-top:18px">
-      <span><b>${en.a||"?"} naar ${en.b||"?"}</b>energie per dag</span>
-      <span><b>${esc(S.ant.moment||"?")}</b>klaar met je week</span>
-      <span><b>${S.ant.avonden||0} avonden</b>eigen tijd per week</span>
+      <div class="iw-bar" aria-hidden="true"><span class="iw-fill" style="--p:${pct}%"></span></div>
+      <p class="iw-cap">Die ${ruimte} uur zijn geen luiheid. Dat is de ruimte waar je plan straks op bouwt.</p>
+    </div>
+    <div class="insight-nudge">
+      <p><b>Dit is nog maar het patroon.</b> De volgende stap zet het om in drie richtingen die hier precies op passen, elk met een pasvorm-score en een plan van zes weken.</p>
     </div>`;
 }
 
@@ -1967,13 +2009,18 @@ const SUBS = [
 let gangState = ["","","",""], gangTimer = null, gangStart = 0, gangTick = 0;
 function gangTeken(){
   const sec = Math.round((Date.now()-gangStart)/1000);
-  $("gang").innerHTML = `<ul class="gang">${STAPPEN.map((s,n)=>{
-    const st = gangState[n];
-    const sub = st==="bezig" ? SUBS[n][gangTick % SUBS[n].length] : "";
-    return `<li class="${st}"><b>${st==="bezig"?'<i class="spin"></i>':""}</b>
-      <span>${s}</span>${sub?`<em>${sub}</em>`:""}${st==="af"?'<em class="done">klaar</em>':""}</li>`;
-  }).join("")}</ul>
-  <p class="muted" style="font-size:13px;margin:-8px 0 22px">${sec} seconden bezig. Dit duurt meestal veertig tot zeventig seconden. Blijf gerust kijken.</p>`;
+  $("gang").innerHTML = `<div class="machine">
+    <div class="machine-kop"><span class="machine-dot"></span><span class="mono">Deskshift bouwt jouw richtingen</span></div>
+    <ul class="mstappen">${STAPPEN.map((s,n)=>{
+      const st = gangState[n];
+      const sub = st==="bezig" ? SUBS[n][gangTick % SUBS[n].length] : "";
+      return `<li class="${st}">
+        <span class="mstap-ic">${st==="af"?"&#10003;":st==="bezig"?'<i class="mpuls"></i>':""}</span>
+        <span class="mstap-t"><b>${s}</b>${sub?`<em>${sub}…</em>`:""}${st==="af"?'<em class="mdone">klaar</em>':""}</span>
+      </li>`;
+    }).join("")}</ul>
+    <p class="mnote">${sec}s bezig. Meestal veertig tot zeventig seconden. Je hoeft niets te doen.</p>
+  </div>`;
 }
 function gangStap(state){
   gangState = state;
@@ -2028,11 +2075,10 @@ async function draaien(feedback){
   const P = profielGetallen();
   try{
     gangStap(["bezig","bezig","",""]);
-    const [profRaw, kandRaw] = await Promise.all([
-      ask(P_ANALYSE, bericht(), null, 600),
-      ask(P_KANDIDATEN(P, feedback), bericht(), null, 1600)
+    const [prof, kandData] = await Promise.all([
+      askJSON(P_ANALYSE, bericht(), null, 600),
+      askJSON(P_KANDIDATEN(P, feedback), bericht(), null, 1600)
     ]);
-    const prof = jsonUit(profRaw);
     $("profielBox").innerHTML = `<div class="profiel">
       <div class="mono" style="color:var(--limeL)">Wat de intake laat zien</div>
       <h2>${esc(prof.archetype||"")}</h2>
@@ -2040,11 +2086,11 @@ async function draaien(feedback){
         `<li><span class="plabel">${esc(k.label)}</span><span>${esc(k.tekst)}</span></li>`).join("")}</ul>
       <div class="pbagage"><span class="mono">Wat je al hebt liggen</span>
         ${(prof.bagage||[]).map(b=>`<span class="btag">${esc(b)}</span>`).join("")}</div>
-      <div class="mono" style="margin-top:16px;color:#BBC3B7">Rekenbasis: ${P.ruimte} uur ruimte binnen je werkweek · ${P.eigen} uur eigen tijd · risicoruimte ${P.risicoTol} van 5 · drijfveer ${esc(P.rang[0])}</div>
+      <div class="mono" style="margin-top:16px;color:#BBC3B7;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${P.ruimte} uur ruimte in je werkweek en ${P.eigen} uur eigen tijd per week. Je sterkste drijfveer is ${esc(P.rang[0])}.</div>
     </div>`;
 
     gangStap(["af","af","bezig",""]);
-    const kand = jsonUit(kandRaw).kandidaten || [];
+    const kand = (kandData.kandidaten) || [];
     const gescoord = kand.map(k=>{ const s = scoreKandidaat(k,P); return Object.assign({},k,{bars:s.bars,totaal:s.totaal}); })
                          .sort((a,b)=>b.totaal-a.totaal);
     const top = gescoord.slice(0,3), rest = gescoord.slice(3);
@@ -2052,7 +2098,7 @@ async function draaien(feedback){
     gangStap(["af","af","af","bezig"]);
     const uit = await askJSON(P_UITWERKING(P),
       [{role:"user",content:"Intake:\n"+S.transcript+"\n\nGeselecteerde richtingen met scores:\n"+JSON.stringify(top.map(k=>({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})))}],
-      [{type:"web_search_20250305",name:"web_search"}], 3000);
+      null, 3000);
     S.scenarios = (uit.scenarios||[]).map((s,i)=>Object.assign({}, top[i]||{}, s));
     gangStop();
 
@@ -2213,11 +2259,11 @@ function planHtml(p, s){
 async function kies(s){
   S.chosen = s; hide("scenarios"); show("action");
   $("actTitle").textContent = s.titel;
-  $("actBody").innerHTML = `<div class="thinking">schrijft je plan van zes weken <b></b><b></b><b></b></div>`;
+  $("actBody").innerHTML = `<div class="thinking">Schrijft je plan van zes weken… <b></b><b></b><b></b></div>`;
   window.scrollTo({top:0,behavior:"smooth"});
   const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
   try{
-    S.plan = await askJSON(P3, msgs, s.id==="zijproject"?[{type:"web_search_20250305",name:"web_search"}]:null, 3000);
+    S.plan = await askJSON(P3, msgs, null, 3000);
     $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Deskshift · jouw plan van zes weken</div>
       <h1 style="font-size:30px;margin:10px 0 4px">${esc(s.titel)}</h1></div>` + planHtml(S.plan, s);
     $("actBody").innerHTML = aflevering(S.plan, s) + `
