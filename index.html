@@ -883,6 +883,61 @@
     .citaat-in,.slot-cta-in{max-width:760px}
   }
 
+  /* ============================================================
+     Deskshift v8 - editorial polish: entree-choreografie, ademruimte,
+     ritmischer weekgrid, natuurlijke easing op micro-interacties
+     ============================================================ */
+  :root{--spring:cubic-bezier(.34,1.25,.5,1)}
+
+  /* Hero-entree: de pagina komt even op adem voor hij spreekt */
+  .hero h1{font-size:clamp(29px,8vw,56px)}
+  .hero-tekst > *{opacity:0;transform:translateY(22px);animation:heroIn .75s var(--spring) both}
+  .hero-tekst .eyebrow{animation-delay:.12s}
+  .hero-tekst h1{animation-delay:.26s}
+  .hero-tekst .lead{animation-delay:.44s}
+  .hero-tekst .cta-row{animation-delay:.58s}
+  .hero-tekst .micro{animation-delay:.7s}
+  @keyframes heroIn{to{opacity:1;transform:none}}
+  .mock{animation-delay:.5s}
+  .mock-tag{animation-delay:1.25s}
+  .mb-t i{animation-delay:1.4s}
+  .mb:nth-child(2) i{animation-delay:1.56s}.mb:nth-child(3) i{animation-delay:1.72s}.mb:nth-child(4) i{animation-delay:1.88s}
+  @media (prefers-reduced-motion:reduce){.hero-tekst > *{animation:none;opacity:1;transform:none}}
+
+  /* Weekgrid: iets trager en ritmischer, met labels ONDER de balken */
+  .week{margin:22px 0 8px}
+  .week-fill{transition:transform .9s var(--spring)}
+  .week-day:nth-child(1) .week-fill{transition-delay:.08s}
+  .week-day:nth-child(2) .week-fill{transition-delay:.26s}
+  .week-day:nth-child(3) .week-fill{transition-delay:.44s}
+  .week-day:nth-child(4) .week-fill{transition-delay:.68s}
+  .week-day:nth-child(5) .week-fill{transition-delay:.86s}
+  .week-labels{display:flex;gap:8px;margin:10px 0 22px}
+  .week-labels span{flex:1;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+
+  /* Ademruimte tussen de blokken, mobiel en desktop */
+  .week-sectie,.hoe,.trust,.maker{padding-top:34px;padding-bottom:26px}
+  .citaat,.prijs-dark{margin-top:44px;margin-bottom:44px}
+  .slot-cta{margin-top:44px}
+  @media(min-width:920px){
+    .week-sectie,.hoe,.trust,.maker{padding-top:56px;padding-bottom:40px}
+    .citaat,.prijs-dark{margin-top:64px;margin-bottom:64px}
+    .slot-cta{margin-top:64px}
+  }
+
+  /* Micro-interacties: natuurlijke veer-easing overal gelijk */
+  .btn,.btn-ghost,.btn-lime,.homebtn{transition:transform .22s var(--spring),box-shadow .25s var(--spring),background .2s ease,border-color .2s ease}
+  @media(hover:hover){
+    .trustkaart{transition:transform .25s var(--spring),box-shadow .25s var(--spring)}
+    .trustkaart:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--line-2),0 10px 24px rgba(21,42,28,.10)}
+    .bon-kaart{transition:transform .3s var(--spring)}
+    .bon-kaart:hover{transform:translateY(-3px)}
+  }
+  .reveal{transform:translateY(16px);transition:opacity .65s var(--ease),transform .7s var(--spring)}
+
+  /* Slot-CTA: droge nieuw-regel */
+  .slot-nieuw{color:#9FB295;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:16px 0 0}
+
   /* Trust-sectie: geen dubbele kaart-in-kaart meer, schonere blokjes met lime-stip */
   .trust{background:transparent;box-shadow:none;border-radius:0;padding:20px 2px;margin:14px 0}
   @media(min-width:920px){.trust{max-width:900px}}
@@ -901,13 +956,13 @@
   <header class="hero">
     <div class="hero-tekst">
       <div class="mono eyebrow">Voor professionals die te snel klaar zijn</div>
-      <h1>Je bent niet lui.<br>Je bent gewoon <em>heel efficiënt</em>.</h1>
-      <p class="lead">Je werk past in drie dagen en niemand vertelt je wat je met de rest moet. <strong class="ds-pop">Deskshift</strong> bouwt uit jóuw antwoorden een persoonlijk plan, in vijftien minuten.</p>
+      <h1>Je werk past in drie dagen.<br>Niemand vraagt wat je met <em>de rest</em> doet.</h1>
+      <p class="lead"><strong class="ds-pop">Deskshift</strong> bouwt uit jóuw antwoorden een persoonlijk plan voor die ruimte, in vijftien minuten.</p>
       <div class="row cta-row">
         <button class="btn btn-hero" id="start">Start, het eerste inzicht is gratis</button>
         <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
       </div>
-      <p class="micro">Gratis inzicht, geen account. De €25 komt pas ná je gratis inzicht, als je verder wilt.</p>
+      <p class="micro">Gratis: je patroon in één zin, plus je profiel. €25: drie richtingen met een plan. Geen account.</p>
     </div>
 
     <figure class="hero-mock" data-para="0.09" aria-hidden="true">
@@ -916,7 +971,7 @@
         <div class="mock-label mono">Voorbeeld · echt resultaat uit een testrun</div>
         <div class="mock-quote">"Je vak is niet te zwaar. Het is te klein."</div>
         <div class="mock-card">
-          <div class="mock-cardtop"><b>Nieuwe partnercategorie intern opzetten</b><span class="mono">pasvorm 91/100</span></div>
+          <div class="mock-cardtop"><b>Een tweede vakgebied opbouwen naast je werk</b><span class="mono">jouw pasvorm</span></div>
           <div class="mock-bars">
             <div class="mb"><span class="mb-l">je week</span><span class="mb-t"><i style="--w:88%"></i></span></div>
             <div class="mb"><span class="mb-l">je grenzen</span><span class="mb-t"><i style="--w:74%"></i></span></div>
@@ -926,7 +981,7 @@
         </div>
         <div class="mock-deze">
           <div class="mono">Deze week</div>
-          <p>Schrijf in één A4 welke partnercategorie ontbreekt bij je werkgever, en wat jij nodig hebt om dat intern te pitchen.</p>
+          <p>Schrijf in één A4 welk vakgebied je wilt opbouwen, en wat je nodig hebt om er deze maand mee te beginnen.</p>
         </div>
       </div>
     </figure>
@@ -935,13 +990,14 @@
   <div class="week-sectie rv">
     <div class="mono">Een werkweek, eerlijk gemeten</div>
     <div class="week" id="weekViz" data-para="0.05" aria-hidden="true">
-      <div class="week-day" style="--h:.62"><span class="week-fill"></span><em>ma</em></div>
-      <div class="week-day" style="--h:.8"><span class="week-fill"></span><em>di</em></div>
-      <div class="week-day mid" style="--h:.95"><span class="week-fill"></span><em>wo</em></div>
-      <div class="week-day zak" style="--h:.34"><span class="week-fill"></span><em>do</em></div>
-      <div class="week-day zak" style="--h:.16"><span class="week-fill"></span><em>vr</em></div>
+      <div class="week-day" style="--h:.62"><span class="week-fill"></span></div>
+      <div class="week-day" style="--h:.8"><span class="week-fill"></span></div>
+      <div class="week-day mid" style="--h:.95"><span class="week-fill"></span></div>
+      <div class="week-day zak" style="--h:.34"><span class="week-fill"></span></div>
+      <div class="week-day zak" style="--h:.16"><span class="week-fill"></span></div>
       <span class="week-lijn"><b>hier zakt het in</b></span>
     </div>
+    <div class="week-labels" aria-hidden="true"><span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span></div>
     <p class="week-cap"><b>Rond donderdag is je week vaak al af.</b> Die inzakking is geen luiheid. Het is ruimte die niemand voor je invult, en precies waar dit over gaat.</p>
   </div>
 
@@ -951,17 +1007,16 @@
     <p class="muted" style="margin:0 0 6px">Alles wordt opgebouwd uit jóuw antwoorden. Hoe eerlijker je bent, hoe scherper en waardevoller je plan.</p>
     <ol class="stepper" id="stepper">
       <li><span class="step-n">01</span><div class="step-b"><h3>Intake voor jouw situatie</h3><p>Een korte intake die helemaal over jou gaat. Geen eindeloze vragenlijst. Vijftien minuten op je telefoon.</p></div></li>
-      <li><span class="step-n">02</span><div class="step-b"><h3>Je gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden, met een letterlijk citaat als bewijs. Voordat je iets betaalt.</p></div></li>
+      <li><span class="step-n">02</span><div class="step-b"><h3>Je gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden, in jouw eigen woorden terug. Voordat je iets betaalt.</p></div></li>
       <li><span class="step-n">03</span><div class="step-b"><h3>Jouw drie richtingen</h3><p>Elk met een pasvorm-score en een plan van zes weken, doorgerekend op wat jij belangrijk vindt. Geen open einde.</p></div></li>
     </ol>
   </div>
 
   <div class="citaat rv">
     <div class="citaat-in">
-      <div class="mono">Zo ziet je inzicht eruit</div>
-      <p class="citaat-tekst">"Je vak is niet te zwaar. Het is te klein."</p>
-      <div class="citaat-span"><span>Snel klaar</span><i>schuurt met</i><span>Nergens heen</span></div>
-      <p class="citaat-note">Een voorbeeld. Jouw inzicht wordt opgebouwd uit jouw eigen antwoorden, met een letterlijk citaat uit wat jij hebt ingevuld.</p>
+      <div class="mono">De kern</div>
+      <p class="citaat-tekst">Je capaciteit groeit door. Je opdracht niet. Dat gat is geen luiheid, het is een tekort aan uitdaging.</p>
+      <p class="citaat-note">Deskshift maakt dat gat zichtbaar en zet er een plan op, uit jouw eigen antwoorden.</p>
     </div>
   </div>
 
@@ -969,9 +1024,9 @@
     <div class="mono">Jouw data is jouw data</div>
     <h2 class="bloktitel" style="margin:8px 0 18px">Gemaakt om niets over je te onthouden</h2>
     <div class="trustgrid">
-      <div class="trustkaart"><b>Geen account.</b><span>Geen mailadres, geen registratie, geen tracking.</span></div>
-      <div class="trustkaart"><b>Alleen op dit apparaat.</b><span>Je antwoorden blijven hier en worden alleen anoniem verwerkt om jouw inzicht te maken.</span></div>
-      <div class="trustkaart"><b>Niets naar je werkgever.</b><span>Of je collega's, of wie dan ook. Nooit.</span></div>
+      <div class="trustkaart"><b>Geen account.</b><span>Geen mailadres, geen registratie, geen tracking. Je begint meteen.</span></div>
+      <div class="trustkaart"><b>Op je eigen toestel.</b><span>Je antwoorden worden alleen op dit toestel bewaard, zodat je later verder kunt. Wij houden geen profiel over je bij.</span></div>
+      <div class="trustkaart"><b>Alleen voor je analyse.</b><span>Om je inzicht te maken gaan je antwoorden naar een AI-dienst (Anthropic) en worden daar alleen daarvoor gebruikt. Niet naar je werkgever of collega's.</span></div>
       <div class="trustkaart"><b>Eén knop wist alles.</b><span>Ook halverwege, definitief.</span></div>
     </div>
   </div>
@@ -988,11 +1043,11 @@
       <div class="bon-kaart">
         <div class="mono" style="color:var(--slate)">Na betaling zie je direct</div>
         <ul class="bon2">
-          <li><span>Drie richtingen, elk met een pasvorm-score uit jouw antwoorden</span><em>91/100</em></li>
+          <li><span>Drie richtingen, elk met een pasvorm-score uit jouw antwoorden</span></li>
           <li><span>Waarom de andere richtingen afvielen, per richting</span></li>
           <li><span>Eén actie die je deze week al kunt doen</span></li>
           <li><span>Een plan van zes weken, week voor week</span><em>pdf</em></li>
-          <li><span>Kant-en-klare berichten die je meteen kunt versturen</span></li>
+          <li><span>Kant-en-klare berichten om je richting intern voor te stellen</span></li>
         </ul>
       </div>
     </div>
@@ -1001,7 +1056,7 @@
   <div class="maker rv">
     <div class="maker-quote">
       <div class="mono">Waarom dit bestaat</div>
-      <p>Ik merkte in vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger. Niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Ik heb er lang schuldig over gedaan in plaats van er iets mee te doen. Dit is het gesprek dat ik toen had willen voeren.</p>
+      <p>Ik heb me er lang schuldig over gevoeld. In vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Dit is het gesprek dat ik toen had willen voeren.</p>
     </div>
   </div>
 
@@ -1013,9 +1068,11 @@
   <div class="faq rv">
     <div class="mono" style="margin-bottom:10px">Voor de zekerheid</div>
     <details><summary>Is dit een cursus of coaching-traject?</summary><p>Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen.</p></details>
-    <details><summary>Is dit niet gewoon een quiz of gimmick?</summary><p>Nee. Je vult een echte intake in en krijgt direct een inzicht uit je eigen antwoorden, met een citaat als bewijs. Daarna een plan dat je zelf uitvoert.</p></details>
+    <details><summary>Zit hier AI achter?</summary><p>Ja. Deskshift gebruikt AI om alleen jóuw antwoorden te analyseren. Geen mens leest ze. Het is geen kale chatbot: de intake en het plan zijn er strak omheen gebouwd, zodat de uitkomst over jou gaat en niet over iemand in het algemeen.</p></details>
+    <details><summary>Is dit niet gewoon een quiz of gimmick?</summary><p>Nee. Je vult een echte intake in en krijgt direct een inzicht uit je eigen antwoorden, in je eigen woorden terug. Daarna een plan dat je zelf uitvoert.</p></details>
+    <details><summary>Wat als het antwoord is dat ik moet blijven waar ik zit?</summary><p>Dan zeggen we dat, en laten we zien hóe. Soms zit de scherpste richting in je huidige baan: een taak eruit, een tweede vakgebied erbij. Ook dat wordt een concreet plan van zes weken, geen "ga netwerken en praat met je manager".</p></details>
     <details><summary>Wat krijg ik precies voor €25?</summary><p>Drie richtingen met een pasvorm-score, waarom de andere afvielen, je eerste stap voor deze week, en een plan van zes weken als pdf. De intake en het inzicht daarvoor zijn gratis.</p></details>
-    <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Geen mens, nee. Je antwoorden blijven op dit apparaat en worden alleen geautomatiseerd en anoniem verwerkt om jouw inzicht en plan te maken.</p></details>
+    <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Geen mens, nee. Je antwoorden staan op je eigen toestel en gaan alleen naar een AI-dienst die ze verwerkt om jouw inzicht en plan te maken. Verder nergens heen, ook niet naar je werkgever.</p></details>
     <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie richtingen.</p></details>
   </div>
 
@@ -1024,6 +1081,7 @@
       <h2>Vijftien minuten. Eén eerlijk inzicht. Gratis.</h2>
       <p>Daarna beslis jij of het €25 waard is.</p>
       <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
+      <p class="slot-nieuw">Nieuw. Je bent er vroeg bij.</p>
     </div>
   </div>
 
