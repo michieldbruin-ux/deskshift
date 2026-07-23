@@ -1111,6 +1111,14 @@
 <script>
 const MODEL = "claude-sonnet-5";
 const KEY = "deskshift:draft";
+// Lokale opslag zodat 'ga verder' werkt. Blijft op dit toestel (localStorage), gaat nergens heen.
+if(!window.storage){
+  window.storage = {
+    get: async k => { try{ const v = localStorage.getItem(k); return v ? {value:v} : null; }catch(e){ return null; } },
+    set: async (k,v) => { try{ localStorage.setItem(k, v); }catch(e){} },
+    delete: async k => { try{ localStorage.removeItem(k); }catch(e){} }
+  };
+}
 const KAARTEN = ["Analyseren","Presenteren","Schrijven","Overleggen","Plannen","Onderhandelen","Uitzoeken","Bouwen of maken","Anderen helpen","Details controleren","Nieuwe mensen spreken","Beslissen","Documenteren","Improviseren"];
 
 /* rolduur: maanden, daarna halve jaren, daarna hele jaren */
@@ -1818,7 +1826,7 @@ Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), 
       ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}
       <p class="muted" style="margin-top:14px">Klopt dit beeld?</p>`;
     show("sumRow");
-  }catch(e){ $("sumBody").innerHTML = `<div class="err">${e.message}</div>`; show("sumRow"); }
+  }catch(e){ $("sumBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; show("sumRow"); }
 };
 
 $("toInsight").onclick = async () => {
@@ -2283,12 +2291,6 @@ async function kies(s){
       const t = $("voortgang"); if(t){ t.style.width = Math.round(af/alle.length*100)+"%"; }
       const n = $("voortgangN"); if(n){ n.textContent = af+" van "+alle.length+" gedaan"; }
     });
-    $("mailKnop").onclick = () => {
-      const m = $("mail").value.trim();
-      if(!/.+@.+\..+/.test(m)){ $("mailStatus").innerHTML = `<div class="err">Vul een geldig mailadres in.</div>`; return; }
-      $("mailStatus").innerHTML = `<div class="klaar"><b>Onderweg.</b> Je plan gaat naar ${esc(m)}. Je mailadres wordt alleen gebruikt om dit plan te versturen en daarna verwijderd.</div>`;
-      $("mailKnop").disabled = true;
-    };
     $("pdfKnop").onclick = () => window.print();
   }catch(e){ $("actBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; }
 }
@@ -2306,17 +2308,10 @@ function aflevering(p, s){
       <span><b>${esc(s.uren||"?")} uur</b>per week</span>
     </div>
     <div class="step" style="margin-top:22px">
-      <div class="mono">Klaar om te versturen</div>
-      <h3 style="margin:8px 0 8px">Je plan komt als pdf naar je toe</h3>
-      <p class="hint">Week voor week, met de acties, het resultaat per week en je stopcriterium. Zo staat het niet in een tabblad dat je straks sluit, maar in je mail.</p>
-      <div class="row" style="margin-top:6px">
-        <input type="text" id="mail" placeholder="jouw@mail.nl" style="flex:1;min-width:220px">
-        <button class="btn" id="mailKnop">Stuur mij het plan</button>
-      </div>
-      <div class="veilig" style="margin-top:12px"><i></i>Alleen voor de verzending · geen nieuwsbrief · geen account</div>
-      <div id="mailStatus"></div>
-      <hr style="margin:22px 0 18px">
-      <div class="row"><button class="btn btn-ghost" id="pdfKnop">Liever direct downloaden</button>
+      <div class="mono">Bewaar je plan</div>
+      <h3 style="margin:8px 0 8px">Download je plan als pdf</h3>
+      <p class="hint">Week voor week, met de acties, het resultaat per week en je stopcriterium. Zo bewaar je het buiten dit tabblad, zonder account en zonder mailadres.</p>
+      <div class="row" style="margin-top:6px"><button class="btn" id="pdfKnop">Download als pdf</button>
         <span class="muted" style="font-size:13px">Kies in het printvenster voor opslaan als pdf.</span></div>
     </div>`;
 }
