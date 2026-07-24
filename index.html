@@ -886,9 +886,6 @@
   .maker{padding:16px 2px;border-left:0}
   .maker-quote{border-left:3px solid var(--lime);padding:4px 0 4px 18px}
   .maker-quote p{margin:8px 0 0;font-size:16px;line-height:1.6;color:var(--ink)}
-  .maker-sig{margin-top:14px!important;font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.02em;color:var(--slate)!important}
-  .maker-sig a{color:var(--petrol);text-decoration:none;border-bottom:1px solid var(--line)}
-  .maker-sig a:hover{color:var(--ink);border-bottom-color:var(--ink)}
 
   /* Slot-CTA band (full-bleed donker) */
   .slot-cta{position:relative;left:50%;margin-left:-50vw;width:100vw;background:var(--ink);color:#fff;padding:56px 20px;margin-top:26px;text-align:center;background-image:radial-gradient(100% 140% at 50% 0%,rgba(191,227,95,.10),transparent 62%)}
@@ -1165,10 +1162,8 @@
   <div class="maker rv">
     <div class="maker-quote">
       <div class="mono">Waarom dit bestaat</div>
-      <p>In vier banen achter elkaar ging het hetzelfde. Na een paar maanden liep het werk terug en werd mijn agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Ik heb me daar jaren schuldig over gevoeld en er met vrijwel niemand over gepraat. Je klaagt niet over te weinig werk.</p>
-      <p>Toen ik er eindelijk over begon, bleek het overal te zitten. Alleen is er nauwelijks iets voor. Voor te veel werk bestaat hulp, voor te weinig uitdaging vrijwel niet, terwijl het net zo hard aan je vreet.</p>
-      <p>Dus bouwde ik het gesprek dat ik toen zelf had willen voeren. Onderbouwd met de arbeids- en organisatiepsychologie, niet met onderbuikgevoel. Geen coachtraject, geen abonnement, geen diagnose. Eén eerlijke intake en een plan dat je zelf uitvoert. Werkt het niet voor je, dan hoor ik dat liever dan dat je ermee blijft zitten.</p>
-      <p class="maker-sig">Michiel, maker van Deskshift &middot; <a href="mailto:info@deskshift.pro">info@deskshift.pro</a></p>
+      <p>In vier banen achter elkaar ging het hetzelfde. Na een paar maanden liep het werk terug en werd mijn agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Je klaagt niet over te weinig werk, dus zei ik jarenlang niets.</p>
+      <p>Dit is het gesprek dat ik toen zelf had willen voeren. Geen coachtraject, geen abonnement, geen diagnose. Eén eerlijke intake en een plan dat je zelf uitvoert.</p>
     </div>
   </div>
 
@@ -1233,7 +1228,7 @@
   </div>
 
   <div class="row devrow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
-    <button class="btn btn-ghost btn-sm" id="demo">Testmodus: vul mijn antwoorden in</button>
+    <button class="btn btn-ghost btn-sm" id="demo">Testmodus: direct naar de uitkomst</button>
     <button class="btn btn-ghost btn-sm" id="demoLoop">Testmodus: door de intake lopen</button>
     <span class="muted" style="font-size:13px">Alleen voor jezelf tijdens het bouwen.</span>
   </div>
@@ -1955,7 +1950,9 @@ const DEMO = {
               "Uitzoeken":0.90,"Bouwen of maken":0.94,"Anderen helpen":0.58,"Nieuwe mensen spreken":0.80,
               "Beslissen":0.62,"Details controleren":0.14,"Documenteren":0.10,"Schrijven":0.52,"Improviseren":0.84 }
   },
-  cvTekst:"Strategic Partner Manager. Ruim zeven jaar in channel partnerships, alliance management en partnerstrategie. Eerder Strategy en Planning Manager, en alliance manager voor een groot techpartnerschap. Sterk in het opzetten van nieuwe samenwerkingen, minder in het beheren ervan zodra het loopt."
+  cvTekst:"Strategic Partner Manager. Ruim zeven jaar in channel partnerships, alliance management en partnerstrategie. Eerder Strategy en Planning Manager, en alliance manager voor een groot techpartnerschap. Sterk in het opzetten van nieuwe samenwerkingen, minder in het beheren ervan zodra het loopt.",
+  // De vier kalibratie-keuzes, zodat de testmodus tot en met de uitkomst kan doorlopen.
+  kalib:{ bewijs:"leren", ritme:"sprint", spijt:"tijd", gezelschap:"alleen" }
 };
 function demoVul(){
   S.ant = JSON.parse(JSON.stringify(DEMO.ant));
@@ -1963,7 +1960,19 @@ function demoVul(){
   S.cvTekst = DEMO.cvTekst; S.cvNaam = ""; S.kaarten = KAARTEN.slice();
   S.ant.skill = S.pos.skill; S.ant.energiekaart = S.pos.energie;
 }
-$("demo").onclick = async () => { demoVul(); await bewaar(); hide("landing"); naarReview(); };
+// Testmodus: vult de antwoorden in en loopt meteen door naar de uitkomst, tot
+// aan het paywall-moment. Scheelt bij het testen het hele intake-pad.
+$("demo").onclick = async () => {
+  demoVul();
+  S.kalib = JSON.parse(JSON.stringify(DEMO.kalib));
+  S.betaald = false; // altijd bij de paywall uitkomen, ook na een eerdere testronde
+  bouwTranscript();
+  await bewaar();
+  ["landing","intake","review","summary","insight","kalib","action"].forEach(hide);
+  show("scenarios");
+  window.scrollTo({top:0,behavior:"smooth"});
+  draaien();
+};
 $("demoLoop").onclick = async () => { demoVul(); S.s=0; S.q=0; await bewaar(); hide("landing"); show("intake"); toonStap(); };
 
 /* ---------- overzicht ---------- */
