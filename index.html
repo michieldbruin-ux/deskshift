@@ -650,10 +650,13 @@
   .prijskol li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--petrol)}
   .prijskol li::before{content:"";position:absolute;left:2px;top:12px;width:8px;height:8px;border-radius:50%;background:var(--limeE)}
 
-  .railtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px}
+  .railtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
   .homebtn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease),transform .12s var(--ease)}
   .homebtn:active{transform:scale(.97)}
   @media(hover:hover){.homebtn:hover{border-color:var(--ink);background:var(--veld)}}
+  .wisbtn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 13px;min-height:40px;font-size:12.5px;font-weight:600;color:var(--slate);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:border-color .15s var(--ease),color .15s var(--ease),transform .12s var(--ease)}
+  .wisbtn:active{transform:scale(.97)}
+  @media(hover:hover){.wisbtn:hover{border-color:var(--warn);color:var(--warn)}}
   .railmeta{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
   .railmeta .mono{font-size:10.5px}
   #railsectie{color:var(--ink)}
@@ -1229,14 +1232,25 @@
   </div>
 </div>
 
+<div id="exitPop" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="exitPopTitel">
+  <div class="pop-kaart">
+    <div class="pop-badge" style="background:#F3C9C2" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7M10 11v6M14 11v6" stroke="#8A2B21" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="mono">Stoppen en wissen</div>
+    <h2 id="exitPopTitel">Al je antwoorden verwijderen?</h2>
+    <p class="pop-slot" style="margin-bottom:22px">Dit wist alles wat je op dit toestel hebt ingevuld en sluit de intake. Dit kan niet ongedaan worden gemaakt.</p>
+    <button class="btn btn-hero" id="exitJa" style="width:100%;background:#B23A2C;color:#fff;margin-bottom:10px">Ja, verwijder alles</button>
+    <button class="btn btn-ghost" id="exitNee" style="width:100%">Nee, ik ga door</button>
+  </div>
+</div>
+
 <section id="intake" class="hidden">
   <div class="rail">
     <div class="railtop">
       <button class="homebtn" id="homeBtn" type="button" aria-label="Terug naar de startpagina"><span aria-hidden="true">‹</span> Terug naar start</button>
-      <span class="mono" id="resttijd"></span>
+      <button class="wisbtn" id="exitBtn" type="button" aria-label="Verwijder mijn data en stop"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Verwijder mijn data</button>
     </div>
     <div class="railbalk"><span id="railvul"></span></div>
-    <div class="railmeta"><span class="mono" id="railsectie"></span><span class="mono" id="railtel"></span></div>
+    <div class="railmeta"><span class="mono" id="railsectie"></span><span class="mono" id="resttijd"></span><span class="mono" id="railtel"></span></div>
   </div>
   <div id="stage"></div>
   <div id="err"></div>
@@ -1767,6 +1781,34 @@ if($("homeBtn")) $("homeBtn").onclick = () => {
   ["intake","review","summary","insight","kalib","scenarios","action"].forEach(hide);
   show("landing"); show("resume");
   window.scrollTo({top:0,behavior:"smooth"});
+};
+// "Verwijder mijn data": wist alles op dit toestel en sluit de intake. Dit is de
+// knop achter de belofte in de privacy-pop-up. Met bevestiging, want het is
+// onomkeerbaar.
+if($("exitBtn")) $("exitBtn").onclick = () => {
+  const pop = $("exitPop"), ja = $("exitJa"), nee = $("exitNee");
+  if(!pop || !ja || !nee) return;
+  pop.classList.remove("hidden");
+  requestAnimationFrame(()=> pop.classList.add("aan"));
+  const sluit = () => {
+    ja.removeEventListener("click", opJa); nee.removeEventListener("click", sluit);
+    document.removeEventListener("keydown", opToets);
+    pop.classList.remove("aan"); setTimeout(()=> pop.classList.add("hidden"), 320);
+  };
+  const opJa = async () => {
+    sluit();
+    S.gangAf = true; if(typeof gangStop === "function") gangStop();
+    await wis();
+    S.s=0; S.q=0; S.ant={}; S.pos={skill:{},energie:{}}; S.kaarten=[]; S.kalib={}; S.scenarios=[]; S.betaald=false; S.sortUitlegGezien=false;
+    ["intake","review","summary","insight","kalib","scenarios","action"].forEach(hide);
+    show("landing"); hide("resume");
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+  const opToets = e => { if(e.key==="Escape"){ e.preventDefault(); sluit(); } };
+  ja.addEventListener("click", opJa);
+  nee.addEventListener("click", sluit);
+  document.addEventListener("keydown", opToets);
+  requestAnimationFrame(()=> nee.focus());
 };
 (async ()=>{ const d = await laad(); if(d && (d.s>0||d.q>0)) show("resume"); })();
 
