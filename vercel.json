@@ -3,6 +3,9 @@
   "functions": {
     "api/chat.js": {
       "maxDuration": 60
+    },
+    "api/mail.js": {
+      "maxDuration": 15
     }
   },
   "headers": [
