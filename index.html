@@ -340,6 +340,12 @@
   .mailrij input::placeholder{color:#8FA285}
   .mailrij .btn{min-height:50px;white-space:nowrap}
   .mailstatus{margin:10px 0 0;font-size:14px;min-height:18px;color:#CBD6C2}
+  /* Dezelfde mailrij, maar dan op de lichte pop-up-kaart. */
+  #mailPop .mailrij input{background:var(--veld);border:1px solid var(--line);color:var(--ink)}
+  #mailPop .mailrij input::placeholder{color:var(--slate)}
+  #mailPop .mailrij .btn{width:auto}
+  #mailPop .mailstatus{color:var(--petrol)}
+  #mailPop .pop-slot{margin-bottom:16px}
   .slotcap{display:flex;gap:8px;align-items:center;justify-content:center;margin:18px 0 2px;color:var(--slate);font-size:13.5px;text-align:center}
   .slotcap svg{flex:0 0 15px;color:var(--slate)}
   /* Bevestiging bovenaan na een geslaagde betaling */
@@ -375,6 +381,16 @@
   #mobielCta span{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
   #mobielCta .btn{flex:1}
   @media(min-width:760px){#mobielCta{display:none!important}}
+  /* Zwevende terugknop op het actiepad: op mobiel is die pagina lang, en dan
+     staat de gewone terugknop alleen helemaal onderaan. Zit in #action, dus hij
+     verdwijnt vanzelf zodra die sectie verborgen is. */
+  .zweefterug{position:fixed;left:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;display:none;align-items:center;gap:7px;
+    background:var(--ink);color:var(--chalk);border:0;border-radius:999px;padding:11px 17px 11px 13px;
+    font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-weight:600;cursor:pointer;
+    box-shadow:0 10px 26px rgba(64,78,59,.32)}
+  .zweefterug:active{transform:translateY(1px)}
+  @media(max-width:759px){.zweefterug{display:inline-flex}}
+  @media print{.zweefterug{display:none!important}}
   /* Intake voelt als een app: op mobiel plakt de Vorige/Volgende-balk onderaan
      het scherm, zodat je nooit hoeft te scrollen om verder te kunnen. */
   @media(max-width:759px){
@@ -1287,6 +1303,21 @@
   </div>
 </div>
 
+<div id="mailPop" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="mailPopTitel">
+  <div class="pop-kaart">
+    <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="2.5" stroke="#152A1C" stroke-width="1.8"/><path d="m3.5 7 8.5 6 8.5-6" stroke="#152A1C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="mono">Bewaar het</div>
+    <h2 id="mailPopTitel">Stuur dit plan naar je mail</h2>
+    <p class="pop-slot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. Handig om terug te vinden, en als reminder.</p>
+    <div class="mailrij" style="margin-bottom:6px">
+      <input type="email" id="mailAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
+      <button class="btn btn-lime" id="mailKnop">Versturen</button>
+    </div>
+    <p id="mailStatus" class="mailstatus"></p>
+    <button class="btn btn-ghost" id="mailPopSluit" style="width:100%;margin-top:12px">Sluiten</button>
+  </div>
+</div>
+
 <div id="mailOk" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="mailOkTitel">
   <div class="pop-kaart" style="text-align:center;max-width:420px">
     <div class="okvink" aria-hidden="true">
@@ -1390,17 +1421,11 @@
   <div class="mono">Jouw actiepad</div>
   <h2 style="margin:12px 0 18px" id="actTitle"></h2>
   <div id="actBody" class="body"></div>
-  <div id="mailBlok" class="mailblok hidden">
-    <div class="mono" style="color:var(--limeL)">Bewaar het</div>
-    <h3 style="color:var(--chalk);margin:8px 0 4px">Stuur dit plan naar je mail</h3>
-    <p style="color:#CBD6C2;margin:0 0 14px;font-size:15px">Netjes opgemaakt in je inbox, zodat je het terugvindt wanneer je het nodig hebt. Ook handig als reminder.</p>
-    <div class="mailrij">
-      <input type="email" id="mailAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
-      <button class="btn btn-lime" id="mailKnop">Stuur naar mijn mail</button>
-    </div>
-    <p id="mailStatus" class="mailstatus"></p>
-  </div>
   <div class="row" style="margin-top:20px"><button class="btn btn-ghost" data-terug="scenarios">Terug naar de richtingen</button></div>
+  <button class="zweefterug" data-terug="scenarios" type="button" aria-label="Terug naar de richtingen">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Richtingen</span>
+  </button>
 </section>
 
 <button id="scrollcue" class="hidden" type="button" aria-label="Scroll naar beneden">
@@ -1847,6 +1872,24 @@ function openPop(popId, knopId, next){
 // Privacy-pop-up bij de start van de intake; korte uitleg vóór de eerste sortering.
 function openPrivacy(next){ openPop("privacyPop", "popStart", next); }
 function toonSortUitleg(){ openPop("sortPop", "sortPopOk"); }
+// Mailfunctie als pop-up, geopend vanaf de knop naast "Download als pdf".
+function openMailPop(){
+  const pop = $("mailPop"); if(!pop) return;
+  const st = $("mailStatus"); if(st){ st.textContent = ""; }
+  const mk = $("mailKnop"); if(mk){ mk.textContent = "Versturen"; mk.disabled = false; mk.onclick = mailPlan; }
+  pop.classList.remove("hidden");
+  requestAnimationFrame(()=> pop.classList.add("aan"));
+  const sluit = () => {
+    document.removeEventListener("keydown", opToets);
+    pop.classList.remove("aan");
+    setTimeout(()=> pop.classList.add("hidden"), 320);
+  };
+  const opToets = e => { if(e.key==="Escape"){ e.preventDefault(); sluit(); } };
+  const sk = $("mailPopSluit"); if(sk) sk.onclick = sluit;
+  pop.onclick = e => { if(e.target === pop) sluit(); }; // klik naast de kaart sluit ook
+  document.addEventListener("keydown", opToets);
+  const inp = $("mailAdres"); if(inp) requestAnimationFrame(()=> inp.focus());
+}
 // Prominente bevestiging na het versturen van een mail, met getekende vink.
 function toonMailOk(tekst){
   const t = document.getElementById("mailOkTekst");
@@ -2353,6 +2396,49 @@ function toonBetaalBanner(){
   </div>`);
 }
 
+// Werkt de richtingen volledig uit en voegt dat samen met wat er al was.
+// Elke richting apart, zodat één mislukte call de andere twee niet meesleept.
+// Geeft terug of alle richtingen nu een uitwerking hebben.
+async function uitwerkingOphalen(){
+  try{
+    const P = S.pg || profielGetallen();
+    // Kandidaat-payload voor de API-call; het renderen gebeurt op de volledige
+    // S.scenarios (die o.a. horizonWeken en risico bewaart).
+    const bron = (S.topKand && S.topKand.length === S.scenarios.length) ? S.topKand : S.scenarios;
+    const uits = await Promise.all(bron.map((k,i) =>
+      heeftUitwerking(S.scenarios[i]) ? Promise.resolve(null) :
+      askJSON(P_UITWERKING(P),
+        [{role:"user",content:"Intake:\n"+S.transcript+"\n\nDe geselecteerde richting om uit te werken:\n"+JSON.stringify({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})}],
+        null, 1600).catch(()=>null)
+    ));
+    S.scenarios = S.scenarios.map((k,i)=>{
+      const u = uits[i];
+      if(!u) return k; // al uitgewerkt, of deze richting is mislukt
+      const s = u.scenario || (Array.isArray(u.scenarios) ? u.scenarios[0] : u) || {};
+      return Object.assign({}, k, s);
+    });
+  }catch(e){ /* hieronder wordt gemeld wat er ontbreekt */ }
+  return (S.scenarios||[]).every(heeftUitwerking);
+}
+// Is deze richting daadwerkelijk uitgewerkt, of staat alleen de kandidaat er?
+function heeftUitwerking(s){
+  return !!(s && (s.doel || s.kans || s.kill || (s.citaten||[]).length));
+}
+function toonUitwerkingHerstel(){
+  const body = $("scenBody"); if(!body) return;
+  body.insertAdjacentHTML("afterbegin", `<div class="err" id="uitwerkFout" style="margin-bottom:16px">
+    De onderbouwing bij je richtingen kon niet volledig worden opgehaald. Je toegang blijft gewoon staan.
+    <div class="row" style="margin-top:10px"><button class="btn btn-sm" id="uitwerkOpnieuw">Opnieuw proberen</button></div>
+  </div>`);
+  const knop = $("uitwerkOpnieuw");
+  if(knop) knop.onclick = async () => {
+    knop.disabled = true; knop.textContent = "Bezig…";
+    const compleet = await uitwerkingOphalen();
+    toonRichtingen();
+    if(!compleet) toonUitwerkingHerstel();
+  };
+}
+
 // Ná de betaling: werk de drie richtingen nu volledig uit (dat sparen we bij
 // niet-betalers uit), toon ze zichtbaar en zet de mail- en herzien-opties aan.
 async function ontgrendel(){
@@ -2362,26 +2448,11 @@ async function ontgrendel(){
   document.querySelectorAll(".slot,.slotzone").forEach(el=>el.classList.remove("slot","slotzone"));
   $("scenBody").innerHTML = `<div class="thinking">Je richtingen worden helemaal uitgeschreven, een paar tellen. <b></b><b></b><b></b><b></b></div>`;
   window.scrollTo({top:0,behavior:"smooth"});
-  try{
-    const P = S.pg || profielGetallen();
-    // Kandidaat-payload voor de API-call; het renderen gebeurt op de volledige
-    // S.scenarios (die o.a. horizonWeken en risico bewaart).
-    const bron = (S.topKand && S.topKand.length === S.scenarios.length) ? S.topKand : S.scenarios;
-    const uits = await Promise.all(bron.map(k =>
-      askJSON(P_UITWERKING(P),
-        [{role:"user",content:"Intake:\n"+S.transcript+"\n\nDe geselecteerde richting om uit te werken:\n"+JSON.stringify({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})}],
-        null, 1600)
-    ));
-    S.scenarios = S.scenarios.map((k,i)=>{
-      const u = uits[i] || {};
-      const s = u.scenario || (Array.isArray(u.scenarios) ? u.scenarios[0] : u) || {};
-      return Object.assign({}, k, s);
-    });
-  }catch(e){
-    // Uitwerking mislukt: toon de richtingen toch. Het plan zelf komt los via
-    // kies() en is dus niet afhankelijk van deze stap.
-  }
+  const compleet = await uitwerkingOphalen();
   toonRichtingen();
+  // Mislukte de uitwerking, zeg dat dan eerlijk met een knop om het opnieuw te
+  // proberen. Stil doorgaan gaf lege onderbouwingen zonder uitleg.
+  if(!compleet) toonUitwerkingHerstel();
   // Duidelijke "je bent er"-banner: dit is de betaalde waarde.
   if($("scenBody")) $("scenBody").insertAdjacentHTML("afterbegin", `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Ontgrendeld.</b> Dit is waar je voor betaalde: je drie richtingen, helemaal uitgewerkt en van jou. Bekijk ze rustig, kies wanneer je wilt, en stuur alles naar je mail zodat je het houdt.</div></div>`);
   const mb = document.getElementById("mailAlles"); if(mb){ mb.classList.remove("hidden"); const mk=document.getElementById("mailAllesKnop"); if(mk) mk.onclick = mailAlles; }
@@ -2733,6 +2804,16 @@ async function draaien(feedback){
 // Rendert de richtingen in scenBody. Vóór de betaling: kandidaat-niveau, vervaagd
 // achter de paywall. Ná de betaling: volledig uitgewerkt en zichtbaar. Wordt
 // zowel door draaien() als door ontgrendel() aangeroepen.
+// De onderbouwing van één richting. Toont alleen de regels die er echt zijn,
+// zodat er nooit een kop als "Zwakke plek" met een lege waarde onder staat.
+function onderbouwingHtml(s){
+  const citaat = (s.citaten||[]).filter(Boolean)[0];
+  const rijen = [["Waarom dit past", s.waarom], ["Zwakke plek", s.kans], ["Wanneer je stopt", s.kill]]
+    .filter(r => r[1] && String(r[1]).trim());
+  if(!citaat && !rijen.length) return "";
+  return (citaat ? `<p class="quote" style="margin-top:14px">"${esc(citaat)}"</p>` : "")
+    + (rijen.length ? `<dl class="kv">${rijen.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join("")}</dl>` : "");
+}
 function toonRichtingen(){
   const rest = S.rest || [];
   $("scenBody").innerHTML = `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
@@ -2754,15 +2835,9 @@ function toonRichtingen(){
           </div>
           <div class="row" style="margin-top:14px">
             <button class="btn btn-lime btn-sm" data-kies="${i}">Bekijk het plan</button>
-            <button class="btn btn-ghost btn-sm" data-uit="${i}">Onderbouwing</button>
+            ${onderbouwingHtml(s) ? `<button class="btn btn-ghost btn-sm" data-uit="${i}">Onderbouwing</button>` : ""}
           </div>
-          <div class="detail hidden" id="det${i}">
-            ${(s.citaten||[]).slice(0,1).map(c=>`<p class="quote" style="margin-top:14px">"${esc(c)}"</p>`).join("")}
-            <dl class="kv">
-              <dt>Zwakke plek</dt><dd>${esc(s.kans||"")}</dd>
-              <dt>Wanneer je stopt</dt><dd>${esc(s.kill||"")}</dd>
-            </dl>
-          </div>
+          ${onderbouwingHtml(s) ? `<div class="detail hidden" id="det${i}">${onderbouwingHtml(s)}</div>` : ""}
         </div>
       </div>`).join("") +
       `<div id="frame"></div>`;
@@ -3017,19 +3092,22 @@ async function mailPlan(){
   const inp = $("mailAdres"), knop = $("mailKnop"), status = $("mailStatus");
   if(!inp || !knop || !status) return;
   const email = (inp.value||"").trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ status.style.color="#F3C9C2"; status.textContent="Vul een geldig e-mailadres in."; return; }
-  if(!S.plan || !S.chosen){ status.style.color="#F3C9C2"; status.textContent="Open eerst een plan."; return; }
-  knop.disabled = true; status.style.color="#CBD6C2"; status.textContent="Versturen…";
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ status.style.color="#8A2B21"; status.textContent="Vul een geldig e-mailadres in."; return; }
+  if(!S.plan || !S.chosen){ status.style.color="#8A2B21"; status.textContent="Open eerst een plan."; return; }
+  knop.disabled = true; status.style.color="var(--slate)"; status.textContent="Versturen…";
   try{
     const html = mailHtmlBouw(S.plan, S.chosen);
     const r = await fetch("/api/mail",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({ email, onderwerp:"Je Deskshift-plan: "+((S.chosen&&S.chosen.titel)||""), html })});
     const d = await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
-    status.style.color="#D6EBA8"; status.textContent="Verstuurd naar "+email+".";
+    status.style.color="#4A6B1E"; status.textContent="Verstuurd naar "+email+".";
     knop.textContent = "Nog een keer sturen";
-    toonMailOk("Je rapport en plan zijn onderweg naar "+email+". Kijk in je inbox, en anders even in de spam.");
-  }catch(e){ status.style.color="#F3C9C2"; status.textContent = e.message; }
+    // Eerst de invoer-pop-up sluiten, anders staan er twee over elkaar.
+    const mp = $("mailPop");
+    if(mp && mp.classList.contains("aan")){ mp.classList.remove("aan"); setTimeout(()=> mp.classList.add("hidden"), 320); }
+    setTimeout(()=> toonMailOk("Je rapport en plan zijn onderweg naar "+email+". Kijk in je inbox, en anders even in de spam."), 220);
+  }catch(e){ status.style.color="#8A2B21"; status.textContent = e.message; }
   knop.disabled = false;
 }
 // Alles-in-één mail: het rapport (waar je staat) plus de drie volledige richtingen,
@@ -3071,7 +3149,6 @@ async function mailAlles(){
 }
 async function kies(s){
   S.chosen = s; hide("scenarios"); show("action");
-  const _mb=$("mailBlok"); if(_mb) _mb.classList.add("hidden"); // pas tonen als het plan er staat
   $("actTitle").textContent = s.titel;
   const key = (s && s.titel) || "x";
   const alVoorbereid = !!(S.planProm && S.planProm[key]);
@@ -3099,7 +3176,8 @@ async function kies(s){
       const n = $("voortgangN"); if(n){ n.textContent = af+" van "+alle.length+" gedaan"; }
     });
     $("pdfKnop").onclick = () => window.print();
-    const mb = $("mailBlok"); if(mb){ mb.classList.remove("hidden"); const st=$("mailStatus"); if(st) st.textContent=""; const mk=$("mailKnop"); if(mk){ mk.textContent="Stuur naar mijn mail"; mk.onclick = mailPlan; } }
+    // De mailfunctie zit in een pop-up, naast de pdf-knop.
+    const mpk = $("mailPopKnop"); if(mpk) mpk.onclick = openMailPop;
   }catch(e){
     if(S.planProm) delete S.planProm[key]; // faalde: uit de cache zodat opnieuw proberen werkt
     $("actBody").innerHTML = `<div class="err">${esc(e.message)}</div>
@@ -3122,10 +3200,11 @@ function aflevering(p, s){
     </div>
     <div class="step" style="margin-top:22px">
       <div class="mono">Bewaar je plan</div>
-      <h3 style="margin:8px 0 8px">Download je plan als pdf</h3>
-      <p class="hint">Week voor week, met de acties, het resultaat per week en je stopcriterium. Zo bewaar je het buiten dit tabblad, zonder account en zonder mailadres.</p>
+      <h3 style="margin:8px 0 8px">Bewaar je plan buiten dit tabblad</h3>
+      <p class="hint">Week voor week, met de acties, het resultaat per week en je stopcriterium. Sla het op als pdf of stuur het naar je eigen mailadres.</p>
       <div class="row" style="margin-top:6px"><button class="btn" id="pdfKnop">Download als pdf</button>
-        <span class="muted" style="font-size:13px">Kies in het printvenster voor opslaan als pdf.</span></div>
+        <button class="btn btn-lime" id="mailPopKnop">Stuur naar mijn mail</button></div>
+      <p class="muted" style="font-size:13px;margin-top:8px">Kies in het printvenster voor opslaan als pdf.</p>
     </div>`;
 }
 /* ---------- Deskshift: parallax door de hele landing (alleen desktop) ---------- */
