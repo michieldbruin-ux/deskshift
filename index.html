@@ -129,13 +129,13 @@
 
   /* matrix */
   .plane{position:relative;width:100%;max-width:760px;margin:8px auto 0;aspect-ratio:1/.66;min-height:380px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
-    background:linear-gradient(120deg, #EDEDEB 0%, #E6E6E6 45%, rgba(123,150,105,.16) 78%, rgba(123,150,105,.32) 100%)}
+    background:radial-gradient(135% 125% at 100% 0%, rgba(191,227,95,.42) 0%, rgba(191,227,95,.12) 42%, rgba(191,227,95,0) 66%), linear-gradient(155deg, var(--veld) 0%, #EAEFE0 55%, #E3EAD4 100%)}
   .plane .q{position:absolute;width:50%;height:50%}
-  .plane .q-tr{right:0;top:0;background:rgba(123,150,105,.16);border-left:1px solid var(--lime);border-bottom:1px solid var(--lime)}
+  .plane .q-tr{right:0;top:0;background:rgba(191,227,95,.15);border-left:1px solid var(--lime);border-bottom:1px solid var(--lime)}
   .plane .chip{position:absolute;font-size:11.5px;padding:3px 8px;box-shadow:0 1px 0 rgba(23,37,42,.14)}
   .qdlabel{position:absolute;right:8px;top:26px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--limeL)}
   .plane .chip{cursor:default}
-  .plane .chip.hot{background:var(--ink);color:#FFFFFF;border-color:var(--ink)}
+  .plane .chip.hot{background:var(--ink);color:#FFFFFF;border-color:var(--ink);box-shadow:0 0 0 2px rgba(191,227,95,.6),0 3px 9px rgba(21,42,28,.22)}
   .basis{background:var(--ink);border-radius:var(--r);padding:20px 22px;margin-top:14px}
   .pills{display:flex;flex-wrap:wrap;gap:7px}
   .pills span{background:var(--lime);color:var(--limeT);border-radius:var(--r);padding:5px 10px;font-size:14px;font-weight:600}
