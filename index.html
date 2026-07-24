@@ -1681,7 +1681,7 @@ Wil leren: ${S.ant.ontwikkelen||"onbekend"}`;
   try{
     const d = await askJSON(`Je maakt onderwerpen voor een sorteeroefening. Op basis van de rol hieronder geef je zes concrete, herkenbare taken die in deze functie echt voorkomen. Specifiek, niet generiek. Geen algemene vaardigheden zoals "analyseren", "communiceren" of "samenwerken", die vragen we apart. Twee tot vier woorden per taak, Nederlands, zonder lidwoord, geen dubbele. Meng leuke en vervelende taken door elkaar.
 Antwoord uitsluitend met geldige JSON: {"kaarten":["taak","taak"]}`,
-      [{role:"user",content:ctx}], null, 400);
+      [{role:"user",content:ctx}], null, 400, "licht"); // mechanisch lijstje: licht model
     if(d.kaarten && d.kaarten.length>=5) S.kaarten = d.kaarten.slice(0,6);
     else S.kaarten = KAARTEN.slice(0,6);
   }catch(e){ S.kaarten = KAARTEN.slice(0,6); }
@@ -2051,8 +2051,11 @@ function schikIn(plane, d){
 }
 
 /* ---------- API ---------- */
-async function ask(system, messages, tools, maxTokens){
+async function ask(system, messages, tools, maxTokens, tier){
   const body = {model:MODEL, max_tokens:maxTokens||1000, system:system, messages:messages};
+  // 'licht' laat de server het goedkope model kiezen voor mechanische stapjes.
+  // Zonder tier kiest de server het zware model: bij twijfel kwaliteit.
+  if(tier) body.tier = tier;
   if(tools) body.tools = tools;
   // Let op: dit roept ons EIGEN backend-endpoint aan (/api/chat), niet rechtstreeks Anthropic.
   // De API-sleutel staat alleen server-side, zie /api/chat.js en README-DEPLOY.md.
@@ -2150,21 +2153,24 @@ function jsonUit(raw){
   return JSON.parse(t);
 }
 // vraagt de AI om JSON en probeert het nog één keer strenger als het niet parse-t
-async function askJSON(system, messages, tools, maxTokens){
-  let laatste, mt = maxTokens || 1000;
+async function askJSON(system, messages, tools, maxTokens, tier){
+  let laatste, mt = maxTokens || 1000, tr = tier;
   for(let k=0;k<3;k++){
     try{
       // ask() zit BINNEN de try, zodat een lege of foute respons opnieuw
       // geprobeerd wordt i.p.v. meteen te falen.
       const sys = k===0 ? system
         : system + "\n\nLET OP: je vorige antwoord was onbruikbaar. Antwoord nu UITSLUITEND met één geldig, volledig JSON-object, niets ervoor of erna, geen markdown.";
-      const raw = await ask(sys, messages, tools, mt);
+      const raw = await ask(sys, messages, tools, mt, tr);
       return jsonUit(raw);
     }catch(e){
       laatste = e;
       // Werd het antwoord afgekapt op de tokenlimiet? Geef de volgende poging
       // ruim meer ruimte i.p.v. dezelfde fout te herhalen.
       if(/max_tokens/i.test(e.message||"")) mt = Math.min(8000, Math.round(mt * 1.9));
+      // Lukte het op het lichte model niet, val dan terug op het zware. Een
+      // goedkope stap mag nooit de reden zijn dat de gebruiker vastloopt.
+      tr = undefined;
       if(k < 2) await new Promise(r=>setTimeout(r, 500*(k+1))); // korte backoff
     }
   }
@@ -2191,7 +2197,7 @@ $("toSummary").onclick = async () => {
 Vat de situatie van deze persoon samen als korte kaarten. Puur observerend, nul advies, geen scenario's, geen aanmoediging.
 Antwoord uitsluitend met geldige JSON, zonder markdown:
 {"kaarten":[{"label":"twee of drie woorden","tekst":"maximaal 18 woorden"}],"klap":"één zin van maximaal 20 woorden die het patroon benoemt"}
-Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 1600);
+Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 1600, "licht"); // korte observaties: licht model
     $("sumBody").innerHTML = `<div class="kaartjes">${(d.kaarten||[]).map(k=>
       `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
       ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}

@@ -72,7 +72,7 @@ export default async function handler(req, res) {
   }
   body = body || {};
 
-  const { max_tokens, system, messages } = body;
+  const { max_tokens, system, messages, tier } = body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     res.status(400).json({ error: "Verzoek mist berichten." });
@@ -89,8 +89,20 @@ export default async function handler(req, res) {
   // Het model wordt hier SERVER-SIDE bepaald. We nemen bewust GEEN model of
   // tools uit de browser over, zodat dit endpoint alleen de intake-taak kan
   // doen en niet als algemene, gratis AI-proxy misbruikt kan worden.
+  //
+  // De browser mag wel een 'tier' meegeven, maar alleen als keuze uit deze lijst.
+  // Mechanische stappen (lijstjes, korte samenvattingen) draaien op het lichte,
+  // goedkope model; alles wat de kwaliteit van het product bepaalt (het gratis
+  // inzicht, het profiel, de richtingen en de plannen) op het zware model.
+  // Onbekende of ontbrekende waarde valt terug op zwaar: bij twijfel kwaliteit.
+  // Let op: geen gewone object-lookup, want een tier als "__proto__" of
+  // "constructor" zou dan een object uit de prototypeketen teruggeven in plaats
+  // van een model-id. Alleen deze twee exacte waarden tellen.
+  const ZWAAR = "claude-sonnet-5";
+  const gekozenModel = tier === "licht" ? "claude-haiku-4-5-20251001" : ZWAAR;
+
   const upstreamBody = {
-    model: "claude-sonnet-5",
+    model: gekozenModel,
     max_tokens: veiligeMaxTokens,
     system: veiligSystem,
     messages: messages,
