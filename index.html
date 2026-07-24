@@ -288,8 +288,8 @@
   .voortbalk{height:8px;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:20px}
   .voortbalk span{display:block;height:100%;width:0;background:var(--lime);transition:width .25s ease}
   .slot{position:relative;filter:blur(5px);opacity:.55;pointer-events:none;user-select:none}
-  .slotzone{position:relative;filter:blur(9px);opacity:.32;pointer-events:none;user-select:none;max-height:150px;overflow:hidden;margin-top:20px;
-    -webkit-mask-image:linear-gradient(#000 20%, transparent 100%);mask-image:linear-gradient(#000 20%, transparent 100%)}
+  .slotzone{position:relative;filter:blur(5px);opacity:.5;pointer-events:none;user-select:none;max-height:320px;overflow:hidden;margin-top:18px;
+    -webkit-mask-image:linear-gradient(#000 42%, transparent 100%);mask-image:linear-gradient(#000 42%, transparent 100%)}
   .pwlijst{list-style:none;margin:18px 0 0;padding:0}
   .pwlijst li{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.12);color:#E8EDE2;font-size:15px}
   .pwlijst li:last-child{border-bottom:0}
@@ -305,7 +305,15 @@
   .pbagage{margin-top:16px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
   .pbagage .mono{color:#BBC3B7;width:100%}
   .btag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:var(--r);padding:5px 10px;font-size:13px;color:#E8EDE2}
-  .pwfomo{margin:18px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.14);color:#BBC3B7;font-size:14px}
+  .pw-invest{margin:2px 0 0;color:#EAF1E4 !important;font-size:15.5px;line-height:1.5}
+  .pw-invest b{color:#fff}
+  .pw-knop{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;margin-top:22px;min-height:62px;font-size:17px;box-shadow:0 12px 34px rgba(191,227,95,.30);animation:pwPuls 2.6s ease-in-out infinite}
+  .pw-knop b{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:23px;letter-spacing:-.01em}
+  @keyframes pwPuls{0%,100%{box-shadow:0 12px 30px rgba(191,227,95,.24)}50%{box-shadow:0 14px 44px rgba(191,227,95,.52)}}
+  @media (prefers-reduced-motion:reduce){.pw-knop{animation:none}}
+  .pw-onder{margin:10px 0 0 !important;color:#AEBBA6 !important;font-size:13px;text-align:center}
+  .pwfomo{margin:16px 0 0;padding:12px 14px;border-radius:12px;background:rgba(178,58,44,.16);box-shadow:inset 0 0 0 1px rgba(243,201,194,.22);color:#F3C9C2 !important;font-size:13.5px;line-height:1.5;display:flex;gap:9px;align-items:flex-start}
+  .pwfomo svg{flex:0 0 16px;margin-top:1px}
   .pwkolommen{display:grid;grid-template-columns:1fr 1fr;gap:22px}
   @media(max-width:620px){.pwkolommen{grid-template-columns:1fr;gap:16px}}
   .pwkol ul{margin:10px 0 0;padding-left:18px}
@@ -1435,8 +1443,8 @@ const $ = i => document.getElementById(i);
 // tonen of de landing verbergen, verdwijnt hij hard (de IntersectionObserver
 // alleen is op mobiel Safari niet betrouwbaar bij display:none).
 const _mobBar = () => document.getElementById("mobielCta");
-const show = i => { $(i).classList.remove("hidden"); if(i!=="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
-const hide = i => { $(i).classList.add("hidden"); if(i==="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
+const show = i => { const el=$(i); if(!el) return; el.classList.remove("hidden"); if(i!=="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
+const hide = i => { const el=$(i); if(el) el.classList.add("hidden"); if(i==="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
 /* dynamische tekst */
@@ -2224,6 +2232,7 @@ function ontgrendel(){
   const pw = document.getElementById("paywall"); if(pw) pw.remove();
   const h = document.getElementById("herzien"); if(h) h.classList.remove("hidden");
   const a = document.getElementById("afvallers"); if(a) a.classList.remove("hidden");
+  if(typeof planWarm === "function") planWarm(); // plannen meteen laten schrijven, ze staan klaar bij openen
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -2232,7 +2241,7 @@ document.querySelectorAll("[data-terug]").forEach(b=>b.onclick=()=>{
   // Als het bouwen nog loopt, stop het netjes zodat het niet op de achtergrond
   // doordraait en later over een ander scherm heen rendert.
   S.gangAf = true; if(typeof gangStop === "function") gangStop();
-  ["landing","intake","review","summary","insight","kalib","betaal","scenarios","action"].forEach(hide);
+  ["landing","intake","review","summary","insight","kalib","scenarios","action"].forEach(hide);
   show(b.dataset.terug);
   window.scrollTo({top:0,behavior:"smooth"});
 });
@@ -2417,6 +2426,7 @@ async function draaien(feedback){
   $("profielBox").innerHTML=""; $("scenBody").innerHTML=""; $("afvallers").innerHTML=""; $("herzien").innerHTML="";
   const P = profielGetallen();
   S.gangAf = false; // wordt true als de gebruiker tijdens het bouwen teruggaat
+  S.planProm = {};  // verse plan-cache: oude, weggewogen richtingen niet hergebruiken
   try{
     gangStap(["bezig","bezig","",""]);
     const [prof, kandData] = await Promise.all([
@@ -2506,9 +2516,10 @@ async function draaien(feedback){
       const regels = S.scenarios.map((x,n)=>
         `<li><span class="lk"></span><span>Richting ${n+1}, met naam, doel en plan</span><em>pasvorm ${x.totaal||"?"}</em></li>`).join("");
       $("scenBody").insertAdjacentHTML("afterbegin", `<div class="paywall" id="paywall">
-        <div class="mono" style="color:var(--limeL)">Je uitkomst is berekend</div>
-        <h2 style="margin:10px 0 10px">${topKop}</h2>
-        <p style="margin:0 0 6px">Gebaseerd op ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en de vier keuzes die je net maakte. Zes richtingen zijn tegen elkaar afgewogen, drie zijn overgebleven.</p>
+        <div class="mono" style="color:var(--limeL)">Je uitkomst is klaar</div>
+        <h2 style="margin:10px 0 8px">${topKop}</h2>
+        <p style="margin:0 0 12px">Gewogen uit ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en je vier keuzes. Zes richtingen afgewogen, drie overgebleven, precies op jouw situatie.</p>
+        <p class="pw-invest">Je stak hier net een kwartier in jezelf. <b>Dit is waar het op uitkomt, één klik van je vandaan.</b></p>
         <ul class="pwlijst">
           ${regels}
           <li><span class="lk"></span><span>De onderbouwing per richting, en waarom de andere afvielen</span></li>
@@ -2517,12 +2528,9 @@ async function draaien(feedback){
           <li><span class="lk"></span><span>Blijven, schuiven of switchen, met jouw stand van zaken</span></li>
           <li><span class="lk"></span><span>Berichten die je meteen kunt versturen</span></li>
         </ul>
-        <div class="pwslot">
-          <div><div class="price">€25</div>
-            <p class="muted" style="margin:2px 0 0">Eenmalig. Geen abonnement. Geen account. Direct in beeld.</p></div>
-          <button class="btn btn-lime" id="betaalKnop">Bekijk mijn uitkomst</button>
-        </div>
-        <p class="pwfomo">Je antwoorden staan alleen in dit venster. Sluit je dit tabblad, dan begin je straks opnieuw bij vraag één.</p>
+        <button class="btn btn-lime pw-knop" id="betaalKnop"><span>Ontgrendel mijn drie richtingen</span><b>€25</b></button>
+        <p class="pw-onder">Eenmalig. Geen abonnement, geen account. Meteen in beeld.</p>
+        <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Je antwoorden staan alleen in dit venster. Ga je nu weg, dan begin je straks weer bij vraag één.</span></p>
       </div>`);
     }
     if(!S.betaald){ const bk = $("betaalKnop"); if(bk) bk.onclick = ontgrendel; }
@@ -2618,14 +2626,33 @@ function planHtml(p, s){
     </div>`;
 }
 
+// Plan-cache: zodra er betaald is, starten we het schrijven van de plannen al
+// (planWarm), zodat het bij het openen van een richting klaarstaat en niet lijkt
+// alsof het dan pas bedacht wordt. Belofte per richting, dedupt en herbruikbaar.
+function planPromise(s){
+  S.planProm = S.planProm || {};
+  const key = (s && s.titel) || "x";
+  if(!S.planProm[key]){
+    const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
+    S.planProm[key] = askJSON(P3, msgs, null, 5000);
+  }
+  return S.planProm[key];
+}
+function planWarm(){
+  (S.scenarios||[]).forEach(s=>{
+    const key = (s && s.titel) || "x";
+    try{ planPromise(s).catch(()=>{ if(S.planProm) delete S.planProm[key]; }); }catch(e){}
+  });
+}
 async function kies(s){
   S.chosen = s; hide("scenarios"); show("action");
   $("actTitle").textContent = s.titel;
-  $("actBody").innerHTML = `<div class="thinking">Schrijft je plan van zes weken… <b></b><b></b><b></b><b></b></div>`;
+  const key = (s && s.titel) || "x";
+  const alVoorbereid = !!(S.planProm && S.planProm[key]);
+  $("actBody").innerHTML = `<div class="thinking">${alVoorbereid ? "Je plan van zes weken wordt geopend" : "Schrijft je plan van zes weken"}… <b></b><b></b><b></b><b></b></div>`;
   window.scrollTo({top:0,behavior:"smooth"});
-  const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
   try{
-    S.plan = await askJSON(P3, msgs, null, 5000);
+    S.plan = await planPromise(s);
     $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Deskshift · jouw plan van zes weken</div>
       <h1 style="font-size:30px;margin:10px 0 4px">${esc(s.titel)}</h1></div>` + planHtml(S.plan, s);
     $("actBody").innerHTML = aflevering(S.plan, s) + `
@@ -2646,7 +2673,12 @@ async function kies(s){
       const n = $("voortgangN"); if(n){ n.textContent = af+" van "+alle.length+" gedaan"; }
     });
     $("pdfKnop").onclick = () => window.print();
-  }catch(e){ $("actBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+  }catch(e){
+    if(S.planProm) delete S.planProm[key]; // faalde: uit de cache zodat opnieuw proberen werkt
+    $("actBody").innerHTML = `<div class="err">${esc(e.message)}</div>
+      <button class="btn btn-ghost btn-sm" id="planRetry" style="margin-top:12px">Opnieuw proberen</button>`;
+    const rb=$("planRetry"); if(rb) rb.onclick=()=>kies(s);
+  }
 }
 
 function aflevering(p, s){
