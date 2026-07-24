@@ -307,6 +307,18 @@
   #mobielCta span{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
   #mobielCta .btn{flex:1}
   @media(min-width:760px){#mobielCta{display:none!important}}
+  /* Intake voelt als een app: op mobiel plakt de Vorige/Volgende-balk onderaan
+     het scherm, zodat je nooit hoeft te scrollen om verder te kunnen. */
+  @media(max-width:759px){
+    .intake-nav{position:fixed;left:0;right:0;bottom:0;z-index:15;margin:0!important;
+      padding:10px 16px calc(10px + var(--safe-b, 0px));align-items:center;
+      background:rgba(255,255,255,.94);-webkit-backdrop-filter:saturate(1.1) blur(8px);backdrop-filter:saturate(1.1) blur(8px);
+      border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(31,42,26,.10)}
+    .intake-nav .enterhint{display:none}
+    .intake-nav #back{min-height:46px}
+    .intake-nav #next{min-height:46px;padding-left:24px;padding-right:24px;font-weight:600}
+    #intake{padding-bottom:84px}
+  }
   #printGebied{display:none}
   .herken{background:var(--ink);border-radius:var(--r);padding:24px 24px 20px;margin:22px 0}
   .herken .mono{color:var(--limeL)}
@@ -1165,14 +1177,14 @@
   </div>
   <div id="stage"></div>
   <div id="err"></div>
-  <div class="row spread" style="margin-top:18px">
+  <div class="row spread intake-nav" style="margin-top:18px">
     <button class="btn btn-ghost" id="back">Vorige</button>
     <div style="text-align:right">
       <div class="row" style="justify-content:flex-end">
         <span class="ok" id="saved"></span>
         <button class="btn" id="next">Volgende</button>
       </div>
-      <div class="muted" style="font-size:13px;margin-top:6px">Enter om verder te gaan</div>
+      <div class="muted enterhint" style="font-size:13px;margin-top:6px">Enter om verder te gaan</div>
     </div>
   </div>
 </section>
@@ -1342,8 +1354,12 @@ const SECTIES = [
 
 const S = { betaald:false, s:0, q:0, ant:{}, pos:{skill:{},energie:{}}, kaarten:[], cvNaam:"", cvB64:"", cvTekst:"", terug:false, transcript:"", scenarios:[], chosen:null, actMsgs:[] };
 const $ = i => document.getElementById(i);
-const show = i => $(i).classList.remove("hidden");
-const hide = i => $(i).classList.add("hidden");
+// De mobiele CTA-balk hoort alleen op de landing. Zodra we een andere sectie
+// tonen of de landing verbergen, verdwijnt hij hard (de IntersectionObserver
+// alleen is op mobiel Safari niet betrouwbaar bij display:none).
+const _mobBar = () => document.getElementById("mobielCta");
+const show = i => { $(i).classList.remove("hidden"); if(i!=="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
+const hide = i => { $(i).classList.add("hidden"); if(i==="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
 /* dynamische tekst */
@@ -2595,7 +2611,11 @@ function aflevering(p, s){
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
   function upd(){
     var landing = document.getElementById("landing");
-    var inFlow = landing && landing.classList.contains("hidden");
+    var intake = document.getElementById("intake");
+    // Niet op de intake tonen: die heeft een vaste Vorige/Volgende-balk onderaan,
+    // waar de cue anders overheen zou vallen.
+    var intakeAan = intake && !intake.classList.contains("hidden");
+    var inFlow = landing && landing.classList.contains("hidden") && !intakeAan;
     var doc = document.documentElement;
     var meer = (doc.scrollHeight - window.innerHeight - (window.scrollY||window.pageYOffset)) > 150;
     cue.classList.toggle("aan", !!(inFlow && meer));
