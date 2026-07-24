@@ -932,8 +932,8 @@
   /* Micro-interacties: natuurlijke veer-easing overal gelijk */
   .btn,.btn-ghost,.btn-lime,.homebtn{transition:transform .22s var(--spring),box-shadow .25s var(--spring),background .2s ease,border-color .2s ease}
   @media(hover:hover){
-    .trustkaart{transition:transform .25s var(--spring),box-shadow .25s var(--spring)}
-    .trustkaart:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--line-2),0 10px 24px rgba(21,42,28,.10)}
+    .trustkaart,.credkaart{transition:transform .25s var(--spring),box-shadow .25s var(--spring)}
+    .trustkaart:hover,.credkaart:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--line-2),0 10px 24px rgba(21,42,28,.10)}
     .bon-kaart{transition:transform .3s var(--spring)}
     .bon-kaart:hover{transform:translateY(-3px)}
   }
@@ -972,11 +972,12 @@
   @media(min-width:920px){.cred{max-width:900px}}
   .credgrid{display:grid;gap:12px;grid-template-columns:1fr;margin-top:16px}
   @media(min-width:620px){.credgrid{grid-template-columns:1fr 1fr;gap:14px}}
-  .credkaart{background:var(--chalk);border-radius:14px;padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line-2);border-left:3px solid var(--lime)}
-  .credkaart b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
-  .credkaart span{color:var(--petrol);font-size:14px;line-height:1.45}
-  .cred-nieuw{margin:18px 0 0;font-size:14px;color:var(--petrol)}
-  .cred-nieuw b{color:var(--ink)}
+  .credkaart{background:var(--chalk);border-radius:14px;padding:16px 18px 16px 42px;box-shadow:inset 0 0 0 1px var(--line-2);position:relative}
+  .credkaart::before{content:"";position:absolute;left:18px;top:21px;width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(191,227,95,.22)}
+  .credkaart b{display:block;color:var(--ink);font-size:15px;margin-bottom:5px}
+  .credkaart span{color:var(--petrol);font-size:14.5px;line-height:1.45}
+  .prijs-nieuw{margin:12px 0 0;font-size:14px;color:#AFC2A4}
+  .prijs-nieuw b{color:var(--limeL)}
 </style>
 
 <div class="wrap">
@@ -1057,14 +1058,15 @@
   <div class="cred rv">
     <div class="mono">Waarop dit rust</div>
     <h2 class="bloktitel" style="margin:8px 0 6px">Onderbouwd, niet uit de onderbuik</h2>
-    <p class="muted" style="margin:0 0 4px">Uit vier banen eigen ervaring, gegrond in de arbeids- en organisatiepsychologie. De AI analyseert alleen jóuw antwoorden; de intake en het plan zijn daar strak omheen gebouwd.</p>
+    <p class="muted" style="margin:0 0 4px">Gegrond in de arbeids- en organisatiepsychologie. De AI analyseert alleen jóuw antwoorden; de intake en het plan zijn daar strak omheen gebouwd.</p>
     <div class="credgrid">
-      <div class="credkaart"><b>Job demands-resources</b><span>Te weinig taakeisen geeft net zulke klachten als te veel: verveling, cynisme, schuldgevoel.</span></div>
-      <div class="credkaart"><b>Job crafting</b><span>Je functie zelf verbouwen: welk deel je uitbreidt, en welk deel je inruilt.</span></div>
-      <div class="credkaart"><b>Zelfdeterminatie</b><span>Autonomie, competentie en verbondenheid als brandstof voor motivatie.</span></div>
-      <div class="credkaart"><b>Flow</b><span>Verveling ontstaat zodra je kunde je uitdaging voorbijstreeft. Precies deze klacht.</span></div>
+      <div class="credkaart"><b>Job demands-resources</b><span>Bakker en Demerouti. Te weinig taakeisen geeft net zulke klachten als te veel.</span></div>
+      <div class="credkaart"><b>Job crafting</b><span>Wrzesniewski en Dutton. Je functie zelf verbouwen in plaats van er alleen in werken.</span></div>
+      <div class="credkaart"><b>Zelfdeterminatietheorie</b><span>Deci en Ryan. Autonomie, competentie en verbondenheid als brandstof.</span></div>
+      <div class="credkaart"><b>Flow</b><span>Csikszentmihalyi. Verveling ontstaat zodra je kunde je uitdaging voorbijstreeft.</span></div>
+      <div class="credkaart"><b>Vrije tijd met betekenis</b><span>Vrije tijd die alleen herstel is, voegt weinig toe.</span></div>
+      <div class="credkaart"><b>Optimaal tijdsbudget</b><span>Te weinig vrije tijd geeft stress, te veel geeft leegte. Dat laatste is precies de klacht die deze test in kaart brengt.</span></div>
     </div>
-    <p class="cred-nieuw"><b>Nieuw.</b> Je bent er vroeg bij, en je merkt het aan de prijs.</p>
   </div>
 
   <div class="trust rv">
@@ -1078,11 +1080,19 @@
     </div>
   </div>
 
+  <div class="maker rv">
+    <div class="maker-quote">
+      <div class="mono">Waarom dit bestaat</div>
+      <p>Ik heb me er lang schuldig over gevoeld. In vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Dit is het gesprek dat ik toen had willen voeren.</p>
+    </div>
+  </div>
+
   <div class="prijs-dark rv">
     <div class="prijs-dark-in">
       <div class="prijs-links">
         <div class="mono">Wat het kost, en wat er letterlijk op je scherm staat</div>
         <div class="price-groot" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
+        <p class="prijs-nieuw"><b>Nieuw.</b> Je bent er vroeg bij, en je merkt het aan de prijs.</p>
         <p class="prijs-onder">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
         <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
         <p class="micro" style="color:#AFC2A4;margin:12px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
@@ -1097,13 +1107,6 @@
           <li><span>Kant-en-klare berichten om je richting intern voor te stellen</span></li>
         </ul>
       </div>
-    </div>
-  </div>
-
-  <div class="maker rv">
-    <div class="maker-quote">
-      <div class="mono">Waarom dit bestaat</div>
-      <p>Ik heb me er lang schuldig over gevoeld. In vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Dit is het gesprek dat ik toen had willen voeren.</p>
     </div>
   </div>
 
