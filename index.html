@@ -881,10 +881,14 @@
   .bon2 li span{flex:1}
   .bon2 li em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#4A6B1E;white-space:nowrap}
 
-  /* Founder-note als citaat */
-  .maker{padding:16px 2px}
+  /* Founder-note als citaat. De lime streep zit op .maker-quote, dus die van
+     het buitenblok gaat eraf (anders staan er twee lijntjes naast elkaar). */
+  .maker{padding:16px 2px;border-left:0}
   .maker-quote{border-left:3px solid var(--lime);padding:4px 0 4px 18px}
   .maker-quote p{margin:8px 0 0;font-size:16px;line-height:1.6;color:var(--ink)}
+  .maker-sig{margin-top:14px!important;font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.02em;color:var(--slate)!important}
+  .maker-sig a{color:var(--petrol);text-decoration:none;border-bottom:1px solid var(--line)}
+  .maker-sig a:hover{color:var(--ink);border-bottom-color:var(--ink)}
 
   /* Slot-CTA band (full-bleed donker) */
   .slot-cta{position:relative;left:50%;margin-left:-50vw;width:100vw;background:var(--ink);color:#fff;padding:56px 20px;margin-top:26px;text-align:center;background-image:radial-gradient(100% 140% at 50% 0%,rgba(191,227,95,.10),transparent 62%)}
@@ -1158,6 +1162,16 @@
     </div>
   </div>
 
+  <div class="maker rv">
+    <div class="maker-quote">
+      <div class="mono">Waarom dit bestaat</div>
+      <p>In vier banen achter elkaar ging het hetzelfde. Na een paar maanden liep het werk terug en werd mijn agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Ik heb me daar jaren schuldig over gevoeld en er met vrijwel niemand over gepraat. Je klaagt niet over te weinig werk.</p>
+      <p>Toen ik er eindelijk over begon, bleek het overal te zitten. Alleen is er nauwelijks iets voor. Voor te veel werk bestaat hulp, voor te weinig uitdaging vrijwel niet, terwijl het net zo hard aan je vreet.</p>
+      <p>Dus bouwde ik het gesprek dat ik toen zelf had willen voeren. Onderbouwd met de arbeids- en organisatiepsychologie, niet met onderbuikgevoel. Geen coachtraject, geen abonnement, geen diagnose. Eén eerlijke intake en een plan dat je zelf uitvoert. Werkt het niet voor je, dan hoor ik dat liever dan dat je ermee blijft zitten.</p>
+      <p class="maker-sig">Michiel, maker van Deskshift &middot; <a href="mailto:info@deskshift.pro">info@deskshift.pro</a></p>
+    </div>
+  </div>
+
   <div class="trust rv">
     <div class="mono">Jouw data is jouw data</div>
     <h2 class="bloktitel" style="margin:8px 0 18px">Gemaakt om niets over je te onthouden</h2>
@@ -1166,13 +1180,6 @@
       <div class="trustkaart"><b>Op je eigen toestel.</b><span>Je antwoorden worden alleen op dit toestel bewaard, zodat je later verder kunt. Wij houden geen profiel over je bij.</span></div>
       <div class="trustkaart"><b>Alleen voor je analyse.</b><span>Om je inzicht te maken gaan je antwoorden naar een AI-dienst (Anthropic) en worden daar alleen daarvoor gebruikt. Niet naar je werkgever of collega's.</span></div>
       <div class="trustkaart"><b>Eén knop wist alles.</b><span>Ook halverwege, definitief.</span></div>
-    </div>
-  </div>
-
-  <div class="maker rv">
-    <div class="maker-quote">
-      <div class="mono">Waarom dit bestaat</div>
-      <p>Ik heb me er lang schuldig over gevoeld. In vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Dit is het gesprek dat ik toen had willen voeren.</p>
     </div>
   </div>
 
