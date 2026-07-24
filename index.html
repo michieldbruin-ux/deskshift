@@ -128,11 +128,11 @@
   .addrow{display:flex;gap:8px;margin-top:12px}
 
   /* matrix */
-  .plane{position:relative;width:100%;aspect-ratio:1/.92;min-height:420px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:8px;
+  .plane{position:relative;width:100%;max-width:760px;margin:8px auto 0;aspect-ratio:1/.66;min-height:380px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
     background:linear-gradient(120deg, #EDEDEB 0%, #E6E6E6 45%, rgba(123,150,105,.16) 78%, rgba(123,150,105,.32) 100%)}
   .plane .q{position:absolute;width:50%;height:50%}
   .plane .q-tr{right:0;top:0;background:rgba(123,150,105,.16);border-left:1px solid var(--lime);border-bottom:1px solid var(--lime)}
-  .plane .chip{position:absolute;font-size:12.5px;padding:4px 8px;box-shadow:0 1px 0 rgba(23,37,42,.14)}
+  .plane .chip{position:absolute;font-size:11.5px;padding:3px 8px;box-shadow:0 1px 0 rgba(23,37,42,.14)}
   .qdlabel{position:absolute;right:8px;top:26px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--limeL)}
   .plane .chip{cursor:default}
   .plane .chip.hot{background:var(--ink);color:#FFFFFF;border-color:var(--ink)}
@@ -976,8 +976,6 @@
   .credkaart::before{content:"";position:absolute;left:18px;top:21px;width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(191,227,95,.22)}
   .credkaart b{display:block;color:var(--ink);font-size:15px;margin-bottom:5px}
   .credkaart span{color:var(--petrol);font-size:14.5px;line-height:1.45}
-  .prijs-nieuw{margin:12px 0 0;font-size:14px;color:#AFC2A4}
-  .prijs-nieuw b{color:var(--limeL)}
 </style>
 
 <div class="wrap">
@@ -1058,7 +1056,7 @@
   <div class="cred rv">
     <div class="mono">Waarop dit rust</div>
     <h2 class="bloktitel" style="margin:8px 0 6px">Onderbouwd, niet uit de onderbuik</h2>
-    <p class="muted" style="margin:0 0 4px">Gegrond in de arbeids- en organisatiepsychologie. De AI analyseert alleen jóuw antwoorden; de intake en het plan zijn daar strak omheen gebouwd.</p>
+    <p class="muted" style="margin:0 0 4px">Gegrond in de arbeids- en organisatiepsychologie. <strong class="ds-pop">Deskshift</strong> analyseert alleen jóuw antwoorden; de intake en het plan zijn daar strak omheen gebouwd.</p>
     <div class="credgrid">
       <div class="credkaart"><b>Job demands-resources</b><span>Bakker en Demerouti. Te weinig taakeisen geeft net zulke klachten als te veel.</span></div>
       <div class="credkaart"><b>Job crafting</b><span>Wrzesniewski en Dutton. Je functie zelf verbouwen in plaats van er alleen in werken.</span></div>
@@ -1092,7 +1090,6 @@
       <div class="prijs-links">
         <div class="mono">Wat het kost, en wat er letterlijk op je scherm staat</div>
         <div class="price-groot" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
-        <p class="prijs-nieuw"><b>Nieuw.</b> Je bent er vroeg bij, en je merkt het aan de prijs.</p>
         <p class="prijs-onder">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
         <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
         <p class="micro" style="color:#AFC2A4;margin:12px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
@@ -1181,7 +1178,7 @@
 
 <section id="summary" class="hidden">
   <div class="mono">Jouw situatie, zoals die nu is</div>
-  <h2 style="margin:12px 0 18px">De as-is schets</h2>
+  <h2 style="margin:12px 0 18px">Waar je nu staat</h2>
   <div id="sumBody"></div>
   <div id="sumQuad"></div>
   <div class="row hidden" id="sumRow" style="margin-top:22px">
@@ -1247,6 +1244,9 @@ if(!window.storage){
   };
 }
 const KAARTEN = ["Analyseren","Presenteren","Schrijven","Overleggen","Plannen","Onderhandelen","Uitzoeken","Bouwen of maken","Anderen helpen","Details controleren","Nieuwe mensen spreken","Beslissen","Documenteren","Improviseren"];
+// Algemene, vakoverstijgende richtingen die naast de rolspecifieke taken in de
+// sorteeroefening verschijnen. Zo vangen we ook wat niet in een taaktitel past.
+const ALGEMEEN = ["Creativiteit","Sociaal contact","Analytisch werk","Structuur en orde","Leidinggeven","Iets nieuws leren"];
 
 /* rolduur: maanden, daarna halve jaren, daarna hele jaren */
 const ROLDUUR = (function(){
@@ -1304,16 +1304,16 @@ const SECTIES = [
     stappen:[
       {id:"echturen",type:"slider",vraag:"Hoeveel uur per week ben je écht met taken bezig?",hint:"Een ruwe schatting van een gemiddelde week is genoeg. Exclusief overleg dat je zelf niet nodig vindt. Je contract is {contract} uur.",min:0,max:45,def:26,unit:"uur",pctVan:"contract"},
       {id:"moment",type:"choice",vraag:"Wanneer ben je meestal klaar met je week?",opties:["Al op dinsdag","Woensdag","Donderdag","Vrijdagochtend","Ik ben nooit echt klaar"]},
-      {id:"invulling",type:"longtext",vraag:"Wat doe je in de uren dat je technisch werkt, maar niet aan werk denkt?",hint:"Er is geen fout antwoord. Iedereen heeft die uren."}
+      {id:"invulling",type:"longtext",vraag:"Je bent aan het werk, maar niet met je werk bezig. Wat doe je dan?",hint:"Er is geen fout antwoord. Iedereen heeft die uren."}
     ]},
 
   { id:"talent",naam:"Talent", kop:"Waar je goed in bent en wat je leuk vindt",
-    intro:"Twee sorteeroefeningen met kaartjes uit jouw eigen vak. Dit is het hart van de intake.",
+    intro:"Twee sorteeroefeningen met onderwerpen uit jouw eigen vak. Dit is het hart van de intake.",
     theorie:"Kunnen en leuk vinden zijn niet hetzelfde. Waar je goed in bent maar geen plezier aan beleeft, wordt de taak die je toegeschoven krijgt. De overlap van allebei is waar het rendement zit.",
     stappen:[
       {id:"energie",type:"dual",vraag:"Hoeveel energie heb je aan het begin en aan het eind van een werkdag?",hint:"Cijfer van 1 tot 10 voor een gemiddelde dag.",a:{label:"Bij het begin",def:7},b:{label:"Aan het eind",def:5}},
-      {id:"skill",type:"strip",vraag:"Waar ben je goed in?",hint:"Kaartjes uit jouw werk als {functie}. Sleep ze naar links of rechts, alleen wat je herkent.",links:"hier ben ik niet goed in",rechts:"hier ben ik goed in",bron:"skill"},
-      {id:"energiekaart",type:"strip",vraag:"En wat doe je graag?",hint:"Dezelfde kaartjes, nu op plezier. Straks leg ik beide antwoorden over elkaar.",links:"doe ik met tegenzin",rechts:"doe ik graag, krijg er energie van",bron:"energie"},
+      {id:"skill",type:"strip",vraag:"Waar ben je goed in?",hint:"Onderwerpen uit jouw werk als {functie}, plus een paar algemene. Sleep ze naar links of rechts, alleen wat je herkent.",links:"hier ben ik niet goed in",rechts:"hier ben ik goed in",bron:"skill"},
+      {id:"energiekaart",type:"strip",vraag:"En wat doe je graag?",hint:"Dezelfde onderwerpen, nu op plezier. Straks leg ik beide antwoorden over elkaar.",links:"doe ik met tegenzin",rechts:"doe ik graag, krijg er energie van",bron:"energie"},
       {id:"benaderd",type:"longtext",vraag:"Waar benaderen collega's je spontaan voor, ook al hoort het niet bij je functie?",hint:"Geen idee? Schrijf dan gerust: geen idee."}
     ]},
 
@@ -1322,7 +1322,7 @@ const SECTIES = [
     theorie:"De zelfdeterminatietheorie stelt dat motivatie ontstaat bij autonomie, competentie en verbondenheid. Vraag mensen wat ze zouden doen zonder risico, en die drie komen bijna altijd boven.",
     stappen:[
       {id:"nieuwsgierig",type:"longtext",vraag:"Waar ben je de afgelopen maand nieuwsgierig naar geweest, puur voor jezelf?"},
-      {id:"aldoet",type:"longtext",vraag:"Doe je nu al iets in je vrije werktijd dat geen officieel werk is?",hint:"Zonder oordeel. Dit is vaker regel dan uitzondering."},
+      {id:"aldoet",type:"longtext",vraag:"Vul je je eigen ruimte binnen werktijd al in met iets naast je officiële taken?",hint:"Zonder oordeel. Dit is vaker regel dan uitzondering."},
       {id:"droom",type:"longtext",vraag:"Geen geld nodig, geen risico, niemand die meekijkt. Wat ga je doen?",hint:"Mag groot. Mag onrealistisch. Schrijf op wat er als eerste opkomt."},
       {id:"droom2",type:"longtext",vraag:"En over vijf jaar: waar wil je dan goed in zijn?",hint:"Niet welke functie. Welke vaardigheid of welk onderwerp."},
       {id:"grenzen",type:"multi",vraag:"Wat wil je zeker niet?",hint:"Meerdere antwoorden mogelijk.",opties:["Risico op ontslag","Mijn avonden en weekenden kwijt","Iets dat raakt aan mijn werkgever of sector","Opvallen bij collega's"]},
@@ -1509,15 +1509,17 @@ Wil leren: ${S.ant.ontwikkelen||"onbekend"}`;
     const d = await askJSON(`Je maakt kaartjes voor een sorteeroefening. Op basis van de rol hieronder geef je veertien concrete taken die in deze functie echt voorkomen. Herkenbaar en specifiek, niet generiek. Twee tot vier woorden per kaartje, Nederlands, zonder lidwoord, geen dubbele. Meng leuke en vervelende taken door elkaar.
 Antwoord uitsluitend met geldige JSON: {"kaarten":["taak","taak"]}`,
       [{role:"user",content:ctx}], null, 400);
-    if(d.kaarten && d.kaarten.length>=8) S.kaarten = d.kaarten.slice(0,16);
+    if(d.kaarten && d.kaarten.length>=8) S.kaarten = d.kaarten.slice(0,12);
     else S.kaarten = KAARTEN.slice();
   }catch(e){ S.kaarten = KAARTEN.slice(); }
+  // Voeg de algemene richtingen toe, zonder dubbele (ongeacht hoofdletters).
+  ALGEMEEN.forEach(a=>{ if(!S.kaarten.some(k=>k.toLowerCase()===a.toLowerCase())) S.kaarten.push(a); });
   bewaar();
 }
 
 async function stripVeld(v, st){
   if(!S.kaarten.length){
-    v.innerHTML = `<div class="thinking">Stelt kaartjes op uit jouw vak… <b></b><b></b><b></b></div>`;
+    v.innerHTML = `<div class="thinking">Stelt onderwerpen op uit jouw vak… <b></b><b></b><b></b></div>`;
     await maakKaarten();
   }
   const bron = st.bron;
@@ -1606,7 +1608,7 @@ $("next").onclick = async () => {
   leesVeld();
   if(!ingevuld()){
     const st = stap();
-    $("err").innerHTML = `<div class="err">${st.type==="strip"?"Sleep minstens drie kaartjes in de balk.":st.type==="choice"?"Kies een optie, of vul zelf iets in.":"Vul dit nog even in."}</div>`;
+    $("err").innerHTML = `<div class="err">${st.type==="strip"?"Sleep minstens drie onderwerpen in de balk.":st.type==="choice"?"Kies een optie, of vul zelf iets in.":"Vul dit nog even in."}</div>`;
     return;
   }
   $("err").innerHTML = "";
@@ -1768,7 +1770,7 @@ function matrixTeken(el){
       <span class="axl l">met tegenzin</span><span class="axl r">doe ik graag</span>
       ${d.map(p=>`<span class="chip${p.x>.5&&p.y<.5?" hot":""}" style="left:${(p.x*100).toFixed(1)}%;top:${(p.y*100).toFixed(1)}%">${esc(p.naam)}</span>`).join("")}
     </div>
-    <p class="muted" style="margin-top:8px;font-size:13px">De plek van elk kaartje is jouw eigen plaatsing. Alleen waar kaartjes elkaar overlapten, zijn ze binnen hetzelfde vak iets verschoven.</p>
+    <p class="muted" style="margin-top:8px;font-size:13px">De plek van elk onderwerp is jouw eigen plaatsing. Alleen waar onderwerpen elkaar overlapten, zijn ze binnen hetzelfde vak iets verschoven.</p>
     <div class="basis">
       <div class="mono" style="color:var(--limeL)">Hier bouwen de scenario's op</div>
       <h3 style="color:var(--chalk);margin:8px 0 10px">Benut je sterkte en doe wat je leuk vindt</h3>
@@ -1777,34 +1779,55 @@ function matrixTeken(el){
     </div>`;
   schikIn(document.getElementById("plane2"), d);
 }
-/* houdt de eigen coordinaten aan, maar duwt overlappende kaartjes uit elkaar
-   binnen hun eigen kwadrant, zodat beeld en analyse nooit uiteenlopen */
+/* legt de chips per kwadrant in een net raster, met zoveel kolommen als er in
+   de breedte passen, en laat de plane in hoogte meegroeien; zo raakt niets
+   elkaar en valt niets buiten beeld, ook niet op smalle schermen */
 function schikIn(plane, d){
   if(!plane) return;
   requestAnimationFrame(()=>{
-    const pr = plane.getBoundingClientRect(), W = pr.width, H = pr.height;
-    const pad = 7, kop = 24;
+    const pad = 8, kop = 26, gapY = 6, gapX = 8, voet = 22;
+    const W = plane.getBoundingClientRect().width, halfW = W/2;
     const chips = Array.prototype.slice.call(plane.querySelectorAll(".chip"));
-    const items = chips.map((c,i)=>({c:c, p:d[i], w:c.offsetWidth, h:c.offsetHeight}))
-                       .sort((a,b)=>a.p.y-b.p.y || a.p.x-b.p.x);
-    const gezet = [];
-    items.forEach(it=>{
-      const rechts = it.p.x > .5, boven = it.p.y < .5;
-      const x0 = rechts ? W/2+pad : pad;
-      const x1 = Math.max(x0, (rechts ? W-pad : W/2-pad) - it.w);
-      const y0 = boven ? kop : H/2+pad;
-      const y1 = Math.max(y0, (boven ? H/2-pad : H-pad) - it.h);
-      let x = Math.min(Math.max(it.p.x*W - it.w/2, x0), x1);
-      let y = Math.min(Math.max(it.p.y*H - it.h/2, y0), y1);
-      const botst = () => gezet.some(g => x < g.x+g.w+6 && x+it.w+6 > g.x && y < g.y+g.h+4 && y+it.h+4 > g.y);
-      let n = 0, kolom = 0;
-      while(botst() && n < 80){
-        y += it.h + 5;
-        if(y > y1){ kolom++; y = y0; x = Math.min(x1, x0 + kolom*(it.w*0.55)); }
-        n++;
+    const raw = chips.map((c,i)=>({c:c, p:d[i], w:c.offsetWidth, h:c.offsetHeight}));
+    if(!raw.length) return;
+    const rowH = Math.max.apply(null, raw.map(it=>it.h)) + gapY;
+    // Per kwadrant: bepaal hoeveel kolommen er binnen de kwadrantbreedte passen
+    // (op smalle schermen vaak één), en leg de chips in een net raster. Zo raakt
+    // niets elkaar en valt niets buiten beeld; de hoogte groeit mee met de drukte.
+    const quads = [[true,true],[false,true],[true,false],[false,false]].map(function(kw){
+      const rechts=kw[0], boven=kw[1];
+      const g = raw.filter(it=>(it.p.x>.5)===rechts && (it.p.y<.5)===boven)
+                   .sort((a,b)=>a.p.y-b.p.y || a.p.x-b.p.x);
+      const xL = rechts ? halfW+pad : pad;
+      const xR = rechts ? W-pad     : halfW-pad;
+      const colW = g.length ? Math.max.apply(null, g.map(it=>it.w)) : 0;
+      const cols = Math.max(1, Math.floor((xR-xL+gapX)/(colW+gapX)));
+      const rows = Math.ceil(g.length/cols) || 0;
+      return {rechts:rechts, boven:boven, g:g, xL:xL, xR:xR, colW:colW, cols:cols, rows:rows};
+    });
+    const topRows = Math.max(quads[0].rows, quads[1].rows);
+    const botRows = Math.max(quads[2].rows, quads[3].rows);
+    const halfH = Math.max(topRows, botRows) * rowH;
+    // Gelijke helften zodat het assenkruis op 50% blijft kloppen.
+    const H = Math.max(380, kop + 2*halfH + pad + voet);
+    plane.style.aspectRatio = "auto";
+    plane.style.height = H + "px";
+    quads.forEach(function(q){
+      const yTop = q.boven ? kop : H/2 + pad;
+      let idx = 0;
+      for(let col=0; col<q.cols && idx<q.g.length; col++){
+        const x = q.xL + col*(q.colW+gapX);
+        for(let r=0; r<q.rows && idx<q.g.length; r++){
+          const it = q.g[idx++];
+          // Klem altijd binnen de plane: een chip die breder is dan zijn halve
+          // kwadrant (lange naam op smal scherm) schuift naar binnen i.p.v. af te
+          // kappen aan de rand.
+          const px = Math.max(pad, Math.min(x, W - pad - it.w));
+          it.c.style.left = px+"px";
+          it.c.style.top  = (yTop + r*rowH) + "px";
+          it.c.style.transform = "none";
+        }
       }
-      it.c.style.left = x+"px"; it.c.style.top = y+"px"; it.c.style.transform = "none";
-      gezet.push({x:x, y:y, w:it.w, h:it.h});
     });
   });
 }
