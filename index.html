@@ -861,16 +861,27 @@
   @keyframes mprogSheen{to{transform:translateX(100%)}}
   @media (prefers-reduced-motion:reduce){.mprog span::after{animation:none}}
 
-  /* Alleen de donkere staaf-delen deinen zacht na het laden (niet de hele sectie).
-     translateY staat vóór scaleY zodat de vulhoogte gelijk blijft. */
-  .week.on .week-fill{animation:weekBob 3.4s ease-in-out 1.2s infinite}
-  .week.on .week-day:nth-child(1) .week-fill{animation-delay:1.2s}
-  .week.on .week-day:nth-child(2) .week-fill{animation-delay:1.35s}
-  .week.on .week-day:nth-child(3) .week-fill{animation-delay:1.5s}
-  .week.on .week-day:nth-child(4) .week-fill{animation-delay:1.65s}
-  .week.on .week-day:nth-child(5) .week-fill{animation-delay:1.8s}
-  /* alleen de bovenkant ademt: scaleY pulseert vanaf de onderkant (origin bottom) */
-  @keyframes weekBob{0%,100%{transform:scaleY(var(--h))}50%{transform:scaleY(calc(var(--h) * 1.045))}}
+  /* Waterbed-effect: maandag t/m woensdag (het vroege werk) en donderdag/vrijdag
+     bewegen in tegenfase. Gaan ma/di/wo omhoog (meer werk vroeg gedaan), dan
+     zakken do/vrij; en andersom. Alle staven delen dezelfde timing zodat de
+     twee groepen precies tegen elkaar in wippen. min()/max() klemmen zodat een
+     staaf nooit boven vol of onder nul uitkomt. Origin bottom: alleen de
+     bovenkant beweegt, de onderkant blijft staan. */
+  .week.on .week-day:nth-child(1) .week-fill,
+  .week.on .week-day:nth-child(2) .week-fill,
+  .week.on .week-day:nth-child(3) .week-fill{animation:weekVroeg 4.6s ease-in-out 1.6s infinite}
+  .week.on .week-day:nth-child(4) .week-fill,
+  .week.on .week-day:nth-child(5) .week-fill{animation:weekLaat 4.6s ease-in-out 1.6s infinite}
+  @keyframes weekVroeg{
+    0%,100%{transform:scaleY(var(--h))}
+    25%{transform:scaleY(min(1, var(--h) + .09))}
+    75%{transform:scaleY(max(.05, var(--h) - .09))}
+  }
+  @keyframes weekLaat{
+    0%,100%{transform:scaleY(var(--h))}
+    25%{transform:scaleY(max(.05, var(--h) - .09))}
+    75%{transform:scaleY(min(1, var(--h) + .09))}
+  }
   @media (prefers-reduced-motion:reduce){.week.on .week-fill{animation:none}}
 
   /* 'Deskshift' vetgedrukt met highlight die bij het landen inzweeft */
@@ -1090,7 +1101,8 @@
       <div class="prijs-links">
         <div class="mono">Wat het kost, en wat er letterlijk op je scherm staat</div>
         <div class="price-groot" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
-        <p class="prijs-onder">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
+        <p class="prijs-onder" style="margin:0 0 12px">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
+        <p class="prijs-onder" style="margin:0 0 18px;line-height:1.5">Ter vergelijking: een uur loopbaancoaching kost al snel meer dan dit hele plan. Dit is niet het eindpunt, het is de eerste stap naar je volgende richting.</p>
         <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
         <p class="micro" style="color:#AFC2A4;margin:12px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
       </div>
