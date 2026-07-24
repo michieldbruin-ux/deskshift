@@ -249,6 +249,16 @@
   .pop-slot{font-size:14px;color:var(--ink);margin:0 0 20px}
   .pop-kaart .btn{width:100%}
   @media (prefers-reduced-motion:reduce){.pop,.pop-kaart{transition:opacity .2s linear}.pop.aan .pop-kaart{transform:none}}
+  .okvink{position:relative;display:inline-flex;align-items:center;justify-content:center;width:104px;height:104px;margin:2px auto 14px;border-radius:50%;background:rgba(123,150,105,.16)}
+  .okburst{position:absolute;inset:0;border-radius:50%;background:rgba(123,150,105,.4);opacity:0}
+  .pop.aan #mailOk .okburst,#mailOk.aan .okburst{animation:okBurst .8s var(--ease) .05s both}
+  .okcirkel{stroke-dasharray:232;stroke-dashoffset:232}
+  .okpad{stroke-dasharray:60;stroke-dashoffset:60}
+  #mailOk.aan .okcirkel{animation:okDraw .5s var(--ease) .1s both}
+  #mailOk.aan .okpad{animation:okDraw .35s var(--ease) .5s both}
+  @keyframes okDraw{to{stroke-dashoffset:0}}
+  @keyframes okBurst{0%{transform:scale(.5);opacity:.7}100%{transform:scale(2.1);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.okcirkel,.okpad{stroke-dashoffset:0!important;animation:none!important}.okburst{animation:none!important}}
   .doelblok{background:var(--ink);border-radius:var(--r);padding:26px}
   .tijdlijn{margin-top:18px}
   .wk{display:grid;grid-template-columns:46px 1fr;gap:14px;margin-bottom:14px}
@@ -330,6 +340,11 @@
   .mailrij input::placeholder{color:#8FA285}
   .mailrij .btn{min-height:50px;white-space:nowrap}
   .mailstatus{margin:10px 0 0;font-size:14px;min-height:18px;color:#CBD6C2}
+  .slotcap{display:flex;gap:8px;align-items:center;justify-content:center;margin:18px 0 2px;color:var(--slate);font-size:13.5px;text-align:center}
+  .slotcap svg{flex:0 0 15px;color:var(--slate)}
+  .ontgrendeld{display:flex;gap:12px;align-items:flex-start;background:var(--lime);border-radius:14px;padding:16px 18px;margin:0 0 20px;font-size:15px;line-height:1.45;color:var(--limeT);box-shadow:0 12px 30px rgba(191,227,95,.25)}
+  .ontgrendeld b{color:var(--ink)}
+  .og-vink{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--lime);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;margin-top:1px}
   .gratisstap h3{color:var(--chalk)}
   .framebox{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-top:20px}
   .frij{display:grid;grid-template-columns:190px 1fr 44px;gap:12px;align-items:center;margin-bottom:10px}
@@ -592,6 +607,10 @@
   .foot{text-align:center;padding:30px 0 4px}
   .foot .brand{justify-content:center}
   .foot p{margin:8px 0 0}
+  .footlinks{font-size:13px;color:var(--slate)}
+  .footlinks a{color:var(--petrol);text-decoration:none;border-bottom:1px solid var(--line)}
+  .footlinks a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  .footlinks span{margin:0 6px;color:var(--line)}
   .devrow{opacity:.75}
 
   /* ---------- intake & vervolg: weg van het formulier-gevoel ---------- */
@@ -1202,6 +1221,8 @@
   <div class="foot rv">
     <span class="brand small"><svg class="mark" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#152A1C"/><rect x="7" y="7" width="8" height="8" rx="2" fill="#D6EBA8"/><rect x="17" y="7" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="7" y="17" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="17" y="17" width="8" height="8" rx="2" fill="#D6EBA8"/></svg>Deskshift</span>
     <p class="muted">Voor mensen van wie het werk te klein is geworden. Geen cookies, geen tracking.</p>
+    <p class="footlinks"><a href="/privacy">Privacyverklaring</a> <span aria-hidden="true">&middot;</span> <a href="/terms">Algemene voorwaarden</a> <span aria-hidden="true">&middot;</span> <a href="mailto:info@deskshift.pro">Contact</a></p>
+    <p class="muted" style="margin-top:6px">Deskshift geeft geen loopbaan-, medisch, juridisch of financieel advies. Je blijft zelf verantwoordelijk voor je keuzes.</p>
   </div>
 
   <div class="row devrow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
@@ -1227,7 +1248,7 @@
       <li><b>Niemand leest mee.</b> Om je inzicht te maken gaan ze alleen anoniem naar de Deskshift AI engine, en verder nergens heen, niet naar je werkgever of collega's.</li>
       <li><b>Eén knop wist alles,</b> ook halverwege.</li>
     </ul>
-    <p class="pop-slot">Wees dus gerust eerlijk. Hoe eerlijker je antwoordt, hoe scherper je uitkomst.</p>
+    <p class="pop-slot">Wees dus gerust eerlijk. Hoe eerlijker je antwoordt, hoe scherper je uitkomst. Door te beginnen ga je akkoord met onze <a href="/privacy" target="_blank" rel="noopener" style="color:#4A6B1E">privacyverklaring</a>.</p>
     <button class="btn btn-lime btn-hero" id="popStart">Ik snap het, we beginnen</button>
   </div>
 </div>
@@ -1254,6 +1275,22 @@
     <p class="pop-slot" style="margin-bottom:22px">Dit wist alles wat je op dit toestel hebt ingevuld en sluit de intake. Dit kan niet ongedaan worden gemaakt.</p>
     <button class="btn btn-hero" id="exitJa" style="width:100%;background:#B23A2C;color:#fff;margin-bottom:10px">Ja, verwijder alles</button>
     <button class="btn btn-ghost" id="exitNee" style="width:100%">Nee, ik ga door</button>
+  </div>
+</div>
+
+<div id="mailOk" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="mailOkTitel">
+  <div class="pop-kaart" style="text-align:center;max-width:420px">
+    <div class="okvink" aria-hidden="true">
+      <span class="okburst"></span>
+      <svg viewBox="0 0 80 80" width="80" height="80">
+        <circle class="okcirkel" cx="40" cy="40" r="36" fill="none" stroke="#7B9669" stroke-width="5"/>
+        <path class="okpad" d="M25 41.5 36 52 56 30" fill="none" stroke="#5F7A50" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="mono" style="color:#4A6B1E">Onderweg naar je inbox</div>
+    <h2 id="mailOkTitel" style="margin:2px 0 10px">Verstuurd</h2>
+    <p class="pop-slot" id="mailOkTekst" style="margin-bottom:22px">We hebben je rapport verstuurd. Kijk in je inbox, en anders even in de spam.</p>
+    <button class="btn btn-lime btn-hero" id="mailOkKnop" style="width:100%">Klaar</button>
   </div>
 </div>
 
@@ -1325,6 +1362,16 @@
   <div id="gang"></div>
   <div id="profielBox"></div>
   <div id="scenBody"></div>
+  <div id="mailAlles" class="mailblok hidden">
+    <div class="mono" style="color:var(--limeL)">Houd het bij je</div>
+    <h3 style="color:var(--chalk);margin:8px 0 4px">Stuur je uitkomst en alle drie de plannen naar je mail</h3>
+    <p style="color:#CBD6C2;margin:0 0 14px;font-size:15px">Je hebt betaald, dus je houdt toegang. Eén mail met je richtingen en de volledige plannen, netjes opgemaakt.</p>
+    <div class="mailrij">
+      <input type="email" id="mailAllesAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
+      <button class="btn btn-lime" id="mailAllesKnop">Stuur alles naar mijn mail</button>
+    </div>
+    <p id="mailAllesStatus" class="mailstatus"></p>
+  </div>
   <div id="afvallers"></div>
   <div id="herzien"></div>
   <div class="row" style="margin-top:18px"><button class="btn btn-ghost" data-terug="kalib">Terug</button></div>
@@ -1791,6 +1838,12 @@ function openPop(popId, knopId, next){
 // Privacy-pop-up bij de start van de intake; korte uitleg vóór de eerste sortering.
 function openPrivacy(next){ openPop("privacyPop", "popStart", next); }
 function toonSortUitleg(){ openPop("sortPop", "sortPopOk"); }
+// Prominente bevestiging na het versturen van een mail, met getekende vink.
+function toonMailOk(tekst){
+  const t = document.getElementById("mailOkTekst");
+  if(t && tekst) t.textContent = tekst;
+  openPop("mailOk", "mailOkKnop");
+}
 // Eerst de intake laden, dán de privacy-pop-up eroverheen tonen (niet meer
 // boven de landing). De pop-up sluit gewoon; de gebruiker staat dan op vraag 1.
 $("start").onclick = async () => { await startIntake(); openPrivacy(()=>{}); };
@@ -2246,8 +2299,12 @@ function ontgrendel(){
   S.betaald = true;
   document.querySelectorAll(".slot,.slotzone").forEach(el=>el.classList.remove("slot","slotzone"));
   const pw = document.getElementById("paywall"); if(pw) pw.remove();
+  const cap = document.querySelector(".slotcap"); if(cap) cap.remove();
+  // Duidelijke "je bent er"-banner: dit is de betaalde waarde.
+  if($("scenBody")) $("scenBody").insertAdjacentHTML("afterbegin", `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Ontgrendeld.</b> Dit is waar je voor betaalde: je drie richtingen, helemaal uitgewerkt en van jou. Bekijk ze rustig, kies wanneer je wilt, en stuur alles naar je mail zodat je het houdt.</div></div>`);
   const h = document.getElementById("herzien"); if(h) h.classList.remove("hidden");
   const a = document.getElementById("afvallers"); if(a) a.classList.remove("hidden");
+  const mb = document.getElementById("mailAlles"); if(mb){ mb.classList.remove("hidden"); const mk=document.getElementById("mailAllesKnop"); if(mk) mk.onclick = mailAlles; }
   if(typeof planWarm === "function") planWarm(); // plannen meteen laten schrijven, ze staan klaar bij openen
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -2452,6 +2509,7 @@ async function draaien(feedback){
     if(S.gangAf) return;
     // Bouw het profiel nu wel op, maar toon het pas aan het eind (samen met de
     // richtingen). Anders lijkt het scherm klaar terwijl de laatste stap nog laadt.
+    S.profiel = prof; S.pg = P; // bewaren voor het rapport in de mail
     const profHtml = `<div class="profiel">
       <div class="mono" style="color:var(--limeL)">Wat de intake laat zien</div>
       <h2>${esc(prof.archetype||"")}</h2>
@@ -2488,7 +2546,7 @@ async function draaien(feedback){
 
     const beste = S.scenarios[0]||{};
     $("scenBody").innerHTML = `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
-      <p class="muted" style="margin-bottom:18px">De cijfers komen uit je eigen antwoorden, niet uit een oordeel over jou.</p>` +
+      <p class="muted" style="margin-bottom:18px">De cijfers komen uit je eigen antwoorden. Bekijk ze alle drie en ga gerust heen en terug, niets ligt vast.</p>` +
       S.scenarios.map((s,i)=>`
       <div class="card${s.totaal<55?" weak":""}">
         <div class="row spread" style="align-items:flex-start">
@@ -2505,7 +2563,7 @@ async function draaien(feedback){
             <span><b>${["","zeer laag","laag","gemiddeld","hoog","zeer hoog"][+s.risico||3]}</b>risico</span>
           </div>
           <div class="row" style="margin-top:14px">
-            <button class="btn btn-lime btn-sm" data-kies="${i}">Kies dit pad</button>
+            <button class="btn btn-lime btn-sm" data-kies="${i}">Bekijk het plan</button>
             <button class="btn btn-ghost btn-sm" data-uit="${i}">Onderbouwing</button>
           </div>
           <div class="detail hidden" id="det${i}">
@@ -2548,6 +2606,8 @@ async function draaien(feedback){
         <p class="pw-onder">Eenmalig. Geen abonnement, geen account. Meteen in beeld.</p>
         <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Je antwoorden staan alleen in dit venster. Ga je nu weg, dan begin je straks weer bij vraag één.</span></p>
       </div>`);
+      const _pw = document.getElementById("paywall");
+      if(_pw) _pw.insertAdjacentHTML("afterend", `<p class="slotcap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg><span>Hieronder je drie richtingen, al helemaal uitgewerkt. Nu nog vervaagd. Ontgrendel om ze te lezen.</span></p>`);
     }
     if(!S.betaald){ const bk = $("betaalKnop"); if(bk) bk.onclick = ontgrendel; }
     frameTeken();
@@ -2660,38 +2720,114 @@ function planWarm(){
     try{ planPromise(s).catch(()=>{ if(S.planProm) delete S.planProm[key]; }); }catch(e){}
   });
 }
-// Gebrande e-mail (inline stijlen, tabel-layout: dat is wat mailclients aankunnen).
-function mailHtmlBouw(p, s){
-  const ink="#152A1C", lime="#BFE35F", paper="#ECEEE6", petrol="#3E5546", accent="#4A6B1E";
-  const wk = (p.weken||[]).map(w=>`
-    <tr><td style="padding:14px 0;border-bottom:1px solid #E1E6DB">
-      <div style="font:bold 12px/1.2 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${accent}">Week ${esc(String(w.nr||""))} &middot; ${esc(w.thema||"")}</div>
-      <ul style="margin:8px 0 6px;padding-left:18px;color:${petrol};font-size:15px">${(w.acties||[]).map(a=>`<li style="margin:3px 0">${esc(a)}</li>`).join("")}</ul>
-      ${w.resultaat?`<div style="font-size:14px;color:${ink}"><b>Klaar aan het eind:</b> ${esc(w.resultaat)}</div>`:""}
-    </td></tr>`).join("");
-  const berichten = (p.berichten||[]).map(b=>`
-    <div style="background:${paper};border-radius:12px;padding:14px 16px;margin:10px 0">
-      <div style="font:bold 12px/1.2 'Courier New',monospace;letter-spacing:.5px;text-transform:uppercase;color:${petrol};margin-bottom:6px">${esc(b.titel||"")}</div>
-      <div style="font-size:15px;color:${ink};white-space:pre-wrap">${esc(b.tekst||"")}</div>
-    </div>`).join("");
-  const eerste = (s&&s.eersteStap) || p.eersteStap || "";
-  return `<!doctype html><html><body style="margin:0;background:${paper};font-family:Arial,Helvetica,sans-serif;color:${ink}">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${paper};padding:24px 12px"><tr><td align="center">
+// Gebrande e-mail als RAPPORT (inline stijlen, tabel-layout: dat is wat
+// mailclients aankunnen). Opbouw: waar je nu staat -> wat mist en wat de kansen
+// zijn -> dan pas het stappenplan.
+const MK = { ink:"#404E3B", lime:"#7B9669", limeL:"#BAC8B1", paper:"#F3F5F1", petrol:"#4F6360", accent:"#5F7A50", lijn:"#CFD6CB" };
+// Logo zonder SVG (mailclients slikken die vaak niet): vier gekleurde vlakjes
+// op een donkere ronde tegel, net als het merkteken op de site.
+function mailLogo(){
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="background:${MK.ink};border-radius:9px;padding:6px">
+    <tr><td style="width:11px;height:11px;background:${MK.limeL};border-radius:2px;font-size:0;line-height:0">&nbsp;</td><td style="width:4px;font-size:0">&nbsp;</td><td style="width:11px;height:11px;background:${MK.lime};border-radius:2px;font-size:0;line-height:0">&nbsp;</td></tr>
+    <tr><td style="height:4px;font-size:0">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td style="width:11px;height:11px;background:${MK.lime};border-radius:2px;font-size:0;line-height:0">&nbsp;</td><td style="font-size:0">&nbsp;</td><td style="width:11px;height:11px;background:${MK.limeL};border-radius:2px;font-size:0;line-height:0">&nbsp;</td></tr>
+  </table>`;
+}
+function mailHeader(sub){
+  return `<tr><td style="background:${MK.ink};padding:22px 26px">
+    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:middle">${mailLogo()}</td>
+      <td style="vertical-align:middle;padding-left:12px;font:bold 20px/1 Arial;color:#ffffff;letter-spacing:-.3px">Deskshift</td>
+    </tr></table>
+    <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1.4px;text-transform:uppercase;color:${MK.limeL};margin-top:12px">${esc(sub)}</div>
+  </td></tr>`;
+}
+function mailFooter(){
+  return `<tr><td style="background:${MK.paper};padding:18px 26px;font-size:12px;color:${MK.petrol}">Gemaakt met Deskshift, uit jouw eigen antwoorden. Geen account, geen tracking; wij bewaren je gegevens niet, dus bewaar deze mail zelf. Dit is geen loopbaan-, juridisch of financieel advies.</td></tr>`;
+}
+function mailShell(sub, inhoud){
+  return `<!doctype html><html><body style="margin:0;background:${MK.paper};font-family:Arial,Helvetica,sans-serif;color:${MK.ink}">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${MK.paper};padding:24px 12px"><tr><td align="center">
     <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:18px;overflow:hidden">
-      <tr><td style="background:${ink};padding:22px 26px">
-        <div style="font:bold 20px/1 Arial;color:#ffffff;letter-spacing:-.3px">Deskshift</div>
-        <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1.4px;text-transform:uppercase;color:${lime};margin-top:8px">Jouw plan van zes weken</div>
-      </td></tr>
-      <tr><td style="padding:26px">
-        <h1 style="font-size:23px;margin:0 0 8px;color:${ink}">${esc((s&&s.titel)||"Je plan")}</h1>
-        ${p.doel?`<p style="font-size:16px;color:${petrol};margin:0 0 4px"><b style="color:${ink}">Doel:</b> ${esc(p.doel)}</p>`:""}
-        ${p.waarom?`<p style="font-size:15px;color:${petrol};margin:0 0 16px">${esc(p.waarom)}</p>`:""}
-        ${eerste?`<div style="background:${ink};color:#fff;border-radius:12px;padding:16px 18px;margin:0 0 18px"><div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${lime};margin-bottom:6px">Je eerste stap deze week</div><div style="font-size:16px">${esc(eerste)}</div></div>`:""}
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${wk}</table>
-        ${berichten?`<h2 style="font-size:18px;margin:22px 0 6px;color:${ink}">Berichten die je meteen kunt versturen</h2>${berichten}`:""}
-      </td></tr>
-      <tr><td style="background:${paper};padding:18px 26px;font-size:12px;color:${petrol}">Gemaakt met Deskshift, uit jouw eigen antwoorden. Geen account, geen tracking.</td></tr>
+      ${mailHeader(sub)}
+      ${inhoud}
+      ${mailFooter()}
     </table></td></tr></table></body></html>`;
+}
+// "Waar je nu staat": het profiel uit de intake als leesbaar rapport.
+function mailRapport(){
+  const prof = S.profiel || {}; const P = S.pg || {};
+  const punten = (prof.punten||[]).map(k=>`
+    <tr><td style="padding:9px 0;border-bottom:1px solid ${MK.lijn};vertical-align:top">
+      <div style="font:bold 12px/1.3 'Courier New',monospace;letter-spacing:.5px;text-transform:uppercase;color:${MK.accent};margin-bottom:2px">${esc(k.label||"")}</div>
+      <div style="font-size:15px;color:${MK.petrol}">${esc(k.tekst||"")}</div>
+    </td></tr>`).join("");
+  const bagage = (prof.bagage||[]).map(b=>`<span style="display:inline-block;background:${MK.paper};color:${MK.ink};border-radius:20px;padding:5px 12px;margin:3px 4px 3px 0;font-size:13px">${esc(b)}</span>`).join("");
+  const uren = (P.slack!=null||P.eigenBasis!=null) ? `Berekend uit je antwoorden: ongeveer ${esc(String(P.slack!=null?P.slack:"?"))} uur ruimte in je werkweek en ${esc(String(P.eigenBasis!=null?P.eigenBasis:"?"))} uur eigen tijd per week.` : "";
+  const drijf = (P.rang&&P.rang[0]) ? ` Je sterkste drijfveer is ${esc(P.rang[0])}.` : "";
+  return `<tr><td style="padding:26px 26px 6px">
+    <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Waar je nu staat</div>
+    <h1 style="font-size:23px;margin:6px 0 14px;color:${MK.ink}">${esc(prof.archetype||"Je profiel")}</h1>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${punten}</table>
+    ${bagage?`<div style="margin:16px 0 0;font:bold 12px/1 'Courier New',monospace;letter-spacing:.5px;text-transform:uppercase;color:${MK.petrol}">Wat je al hebt liggen</div><div style="margin-top:8px">${bagage}</div>`:""}
+    ${(uren||drijf)?`<div style="background:${MK.paper};border-radius:12px;padding:13px 15px;margin:16px 0 0;font-size:14px;color:${MK.ink}">${uren}${drijf}</div>`:""}
+  </td></tr>`;
+}
+// "Wat mist er en wat zijn de kansen" voor één richting.
+function mailContext(s){
+  s = s||{};
+  const rijen = [
+    ["Waarom dit bij je past", s.waarom],
+    ["Wat er al bestaat in de praktijk", s.marktsignaal],
+    ["De zwakke plek, waar het spaak kan lopen", s.kans],
+    ["Wanneer je zou stoppen", s.kill],
+  ].filter(r=>r[1]);
+  if(!rijen.length) return "";
+  return `<div style="margin:4px 0">${rijen.map(r=>`
+    <div style="margin:10px 0">
+      <div style="font:bold 12px/1.3 'Courier New',monospace;letter-spacing:.5px;text-transform:uppercase;color:${MK.accent};margin-bottom:2px">${esc(r[0])}</div>
+      <div style="font-size:15px;color:${MK.petrol}">${esc(r[1])}</div>
+    </div>`).join("")}</div>`;
+}
+function mailWkRijen(p){
+  return (p.weken||[]).map(w=>`
+    <tr><td style="padding:12px 0;border-bottom:1px solid ${MK.lijn}">
+      <div style="font:bold 12px/1.2 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Week ${esc(String(w.nr||""))} &middot; ${esc(w.thema||"")}</div>
+      <ul style="margin:8px 0 6px;padding-left:18px;color:${MK.petrol};font-size:15px">${(w.acties||[]).map(a=>`<li style="margin:3px 0">${esc(a)}</li>`).join("")}</ul>
+      ${w.resultaat?`<div style="font-size:14px;color:${MK.ink}"><b>Klaar aan het eind:</b> ${esc(w.resultaat)}</div>`:""}
+    </td></tr>`).join("");
+}
+function mailBerichten(p){
+  return (p.berichten||[]).map(b=>`
+    <div style="background:${MK.paper};border-radius:12px;padding:14px 16px;margin:10px 0">
+      <div style="font:bold 12px/1.2 'Courier New',monospace;letter-spacing:.5px;text-transform:uppercase;color:${MK.petrol};margin-bottom:6px">${esc(b.titel||"")}</div>
+      <div style="font-size:15px;color:${MK.ink};white-space:pre-wrap">${esc(b.tekst||"")}</div>
+    </div>`).join("");
+}
+// Het stappenplan zelf: doel, eerste stap, zes weken, kant-en-klare berichten.
+function mailPlanBlok(p, s){
+  const eerste = (s&&s.eersteStap) || p.eersteStap || "";
+  const wk = mailWkRijen(p); const ber = mailBerichten(p);
+  return `
+    ${p.doel?`<div style="background:${MK.ink};color:#fff;border-radius:12px;padding:16px 18px;margin:6px 0 14px"><div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.limeL};margin-bottom:6px">Waar je over zes weken staat</div><div style="font-size:16px">${esc(p.doel)}</div></div>`:""}
+    ${eerste?`<div style="border:2px solid ${MK.lime};border-radius:12px;padding:14px 16px;margin:0 0 14px"><div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent};margin-bottom:4px">Je eerste stap deze week</div><div style="font-size:16px;color:${MK.ink}">${esc(eerste)}</div></div>`:""}
+    ${wk?`<div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.petrol};margin:6px 0 2px">Je zes weken</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${wk}</table>`:""}
+    ${ber?`<div style="font:bold 15px/1.3 Arial;color:${MK.ink};margin:20px 0 6px">Berichten die je meteen kunt versturen</div>${ber}`:""}
+  `;
+}
+// Eén gekozen richting, met het volledige rapport eromheen.
+function mailHtmlBouw(p, s){
+  const inhoud = `
+    ${mailRapport()}
+    <tr><td style="padding:8px 26px 0">
+      <div style="height:1px;background:${MK.lijn};margin:8px 0 18px"></div>
+      <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Je gekozen richting</div>
+      <h2 style="font-size:21px;margin:6px 0 4px;color:${MK.ink}">${esc((s&&s.titel)||"Je plan")}</h2>
+      ${(s&&s.pitch)?`<p style="font-size:15px;color:${MK.petrol};margin:0 0 10px">${esc(s.pitch)}</p>`:""}
+      ${mailContext(s)}
+      ${mailPlanBlok(p, s)}
+    </td></tr>`;
+  return mailShell("Jouw rapport en plan van zes weken", inhoud);
 }
 async function mailPlan(){
   const inp = $("mailAdres"), knop = $("mailKnop"), status = $("mailStatus");
@@ -2706,8 +2842,46 @@ async function mailPlan(){
       body:JSON.stringify({ email, onderwerp:"Je Deskshift-plan: "+((S.chosen&&S.chosen.titel)||""), html })});
     const d = await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
-    status.style.color="#D6EBA8"; status.textContent="Verstuurd. Kijk in je inbox, en anders even in de spam.";
+    status.style.color="#D6EBA8"; status.textContent="Verstuurd naar "+email+".";
     knop.textContent = "Nog een keer sturen";
+    toonMailOk("Je rapport en plan zijn onderweg naar "+email+". Kijk in je inbox, en anders even in de spam.");
+  }catch(e){ status.style.color="#F3C9C2"; status.textContent = e.message; }
+  knop.disabled = false;
+}
+// Alles-in-één mail: het rapport (waar je staat) plus de drie volledige richtingen,
+// elk met context en stappenplan. Wacht op de al voorbereide plannen.
+function mailHtmlAlles(scen, plans){
+  const secties = scen.map((s,i)=>{
+    const p = plans[i]||{};
+    return `<tr><td style="padding:20px 26px 0">
+      <div style="height:1px;background:${MK.lijn};margin:6px 0 14px"></div>
+      <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Richting ${i+1}${s.totaal?` &middot; pasvorm ${esc(String(s.totaal))}`:""}</div>
+      <h2 style="font-size:20px;margin:6px 0 4px;color:${MK.ink}">${esc(s.titel||"")}</h2>
+      ${s.pitch?`<p style="font-size:15px;color:${MK.petrol};margin:0 0 10px">${esc(s.pitch)}</p>`:""}
+      ${mailContext(s)}
+      ${mailPlanBlok(p, s)}
+    </td></tr>`;
+  }).join("");
+  return mailShell("Jouw rapport en drie richtingen", mailRapport() + secties);
+}
+async function mailAlles(){
+  const inp = $("mailAllesAdres"), knop = $("mailAllesKnop"), status = $("mailAllesStatus");
+  if(!inp || !knop || !status) return;
+  const email = (inp.value||"").trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ status.style.color="#F3C9C2"; status.textContent="Vul een geldig e-mailadres in."; return; }
+  const scen = S.scenarios||[];
+  if(!scen.length){ status.style.color="#F3C9C2"; status.textContent="Er zijn nog geen richtingen."; return; }
+  knop.disabled = true; status.style.color="#CBD6C2"; status.textContent="Plannen verzamelen en versturen…";
+  try{
+    const plans = await Promise.all(scen.map(s=> planPromise(s).catch(()=>({})) ));
+    const html = mailHtmlAlles(scen, plans);
+    const r = await fetch("/api/mail",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ email, onderwerp:"Je Deskshift-uitkomst en drie plannen", html })});
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
+    status.style.color="#D6EBA8"; status.textContent="Verstuurd naar "+email+".";
+    knop.textContent = "Nog een keer sturen";
+    toonMailOk("Je rapport en alle drie de plannen zijn onderweg naar "+email+". Kijk in je inbox, en anders even in de spam.");
   }catch(e){ status.style.color="#F3C9C2"; status.textContent = e.message; }
   knop.disabled = false;
 }

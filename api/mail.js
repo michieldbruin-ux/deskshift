@@ -22,6 +22,27 @@ function parseAfzender(s) {
   return { name: "Deskshift", email: (s || "").trim() };
 }
 
+// Best-effort rate-limiting per IP. Serverless-instances zijn kortlevend en er
+// kunnen er meerdere tegelijk draaien, dus dit is een drempel tegen misbruik als
+// open mailrelay, geen waterdicht slot.
+const RL = new Map(); // ip -> number[] (tijdstempels in ms)
+function clientIp(req) {
+  const xff = req.headers["x-forwarded-for"];
+  if (typeof xff === "string" && xff) return xff.split(",")[0].trim();
+  return req.headers["x-real-ip"] || (req.socket && req.socket.remoteAddress) || "onbekend";
+}
+function teVaak(ip, regels) {
+  const nu = Date.now();
+  const maxMs = Math.max.apply(null, regels.map((r) => r.ms));
+  const lijst = (RL.get(ip) || []).filter((t) => nu - t < maxMs);
+  lijst.push(nu);
+  RL.set(ip, lijst);
+  if (RL.size > 5000) {
+    for (const [k, v] of RL) { const laatste = v[v.length - 1]; if (laatste == null || nu - laatste > maxMs) RL.delete(k); }
+  }
+  return regels.some((r) => lijst.filter((t) => nu - t < r.ms).length > r.max);
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") { res.status(405).json({ error: "Alleen POST is toegestaan." }); return; }
 
@@ -30,6 +51,14 @@ export default async function handler(req, res) {
   const refererOk = hostToegestaan(req.headers.referer);
   if (originOk === false || (originOk === null && refererOk === false)) {
     res.status(403).json({ error: "Verzoek niet toegestaan." });
+    return;
+  }
+
+  // Mail is duurder om te misbruiken: houd het strak. Max 3 per minuut en 12 per
+  // uur per IP; ruim genoeg voor een echte gebruiker die twee mails wil sturen.
+  if (teVaak(clientIp(req), [{ max: 3, ms: 60000 }, { max: 12, ms: 3600000 }])) {
+    res.setHeader("Retry-After", "60");
+    res.status(429).json({ error: "Even te veel verzoeken. Wacht een minuut en probeer het opnieuw." });
     return;
   }
 
