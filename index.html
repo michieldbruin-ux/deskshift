@@ -2424,7 +2424,9 @@ async function draaien(feedback){
       askJSON(P_KANDIDATEN(P, feedback), bericht(), null, 3200)
     ]);
     if(S.gangAf) return;
-    $("profielBox").innerHTML = `<div class="profiel">
+    // Bouw het profiel nu wel op, maar toon het pas aan het eind (samen met de
+    // richtingen). Anders lijkt het scherm klaar terwijl de laatste stap nog laadt.
+    const profHtml = `<div class="profiel">
       <div class="mono" style="color:var(--limeL)">Wat de intake laat zien</div>
       <h2>${esc(prof.archetype||"")}</h2>
       <ul class="plijst">${(prof.punten||[]).map(k=>
@@ -2455,6 +2457,8 @@ async function draaien(feedback){
       return Object.assign({}, k, s);
     });
     gangStop();
+    // Nu pas het profiel tonen, samen met de richtingen hieronder.
+    $("profielBox").innerHTML = profHtml;
 
     const beste = S.scenarios[0]||{};
     $("scenBody").innerHTML = `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
