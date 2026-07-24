@@ -966,6 +966,17 @@
   .pd-reel i{display:block;height:1em;line-height:1;font-style:normal}
   .pd-prep .pd-reel{transform:translateY(0)!important;transition:none!important}
   @media (prefers-reduced-motion:reduce){.pd-reel{transition:none}}
+
+  /* Credibility: de wetenschappelijke basis als pijlers, plus eerlijke nieuw-regel */
+  .cred{padding:20px 2px}
+  @media(min-width:920px){.cred{max-width:900px}}
+  .credgrid{display:grid;gap:12px;grid-template-columns:1fr;margin-top:16px}
+  @media(min-width:620px){.credgrid{grid-template-columns:1fr 1fr;gap:14px}}
+  .credkaart{background:var(--chalk);border-radius:14px;padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line-2);border-left:3px solid var(--lime)}
+  .credkaart b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+  .credkaart span{color:var(--petrol);font-size:14px;line-height:1.45}
+  .cred-nieuw{margin:18px 0 0;font-size:14px;color:var(--petrol)}
+  .cred-nieuw b{color:var(--ink)}
 </style>
 
 <div class="wrap">
@@ -1043,6 +1054,19 @@
     </div>
   </div>
 
+  <div class="cred rv">
+    <div class="mono">Waarop dit rust</div>
+    <h2 class="bloktitel" style="margin:8px 0 6px">Onderbouwd, niet uit de onderbuik</h2>
+    <p class="muted" style="margin:0 0 4px">Uit vier banen eigen ervaring, gegrond in de arbeids- en organisatiepsychologie. De AI analyseert alleen jóuw antwoorden; de intake en het plan zijn daar strak omheen gebouwd.</p>
+    <div class="credgrid">
+      <div class="credkaart"><b>Job demands-resources</b><span>Te weinig taakeisen geeft net zulke klachten als te veel: verveling, cynisme, schuldgevoel.</span></div>
+      <div class="credkaart"><b>Job crafting</b><span>Je functie zelf verbouwen: welk deel je uitbreidt, en welk deel je inruilt.</span></div>
+      <div class="credkaart"><b>Zelfdeterminatie</b><span>Autonomie, competentie en verbondenheid als brandstof voor motivatie.</span></div>
+      <div class="credkaart"><b>Flow</b><span>Verveling ontstaat zodra je kunde je uitdaging voorbijstreeft. Precies deze klacht.</span></div>
+    </div>
+    <p class="cred-nieuw"><b>Nieuw.</b> Je bent er vroeg bij, en je merkt het aan de prijs.</p>
+  </div>
+
   <div class="trust rv">
     <div class="mono">Jouw data is jouw data</div>
     <h2 class="bloktitel" style="margin:8px 0 18px">Gemaakt om niets over je te onthouden</h2>
@@ -1058,7 +1082,7 @@
     <div class="prijs-dark-in">
       <div class="prijs-links">
         <div class="mono">Wat het kost, en wat er letterlijk op je scherm staat</div>
-        <div class="price-groot" data-para="0.06" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
+        <div class="price-groot" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
         <p class="prijs-onder">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
         <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
         <p class="micro" style="color:#AFC2A4;margin:12px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
@@ -1082,11 +1106,6 @@
       <p>Ik heb me er lang schuldig over gevoeld. In vier banen achter elkaar hetzelfde: na een paar maanden liep het werk terug en werd de agenda leger, niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg. Dit is het gesprek dat ik toen had willen voeren.</p>
     </div>
   </div>
-
-  <details class="uitklap rv">
-    <summary><span class="mono">Waar dit op gebaseerd is</span><span class="pijl">▾</span></summary>
-    <p class="muted" style="font-size:15px;margin-top:10px">De intake volgt vier lijnen uit de arbeids- en organisatiepsychologie: het job demands-resources model van Bakker en Demerouti, waarin te weinig taakeisen net zulke klachten geven als te veel; job crafting van Wrzesniewski en Dutton, over het zelf verbouwen van je functie; de zelfdeterminatietheorie van Deci en Ryan, met autonomie, competentie en verbondenheid als brandstof; en Csikszentmihalyi's flow, waarin verveling ontstaat zodra je kunde je uitdaging voorbijstreeft. Daar komen twee lijnen over vrije tijd bij: vrije tijd die alleen herstel is voegt weinig toe, terwijl vrije tijd met betekenis wel telt. En er bestaat zoiets als een optimaal tijdsbudget: te weinig vrije tijd geeft stress, te veel geeft leegte. Dat laatste is precies de klacht die deze test in kaart brengt.</p>
-  </details>
 
   <div class="faq rv">
     <div class="mono" style="margin-bottom:10px">Voor de zekerheid</div>
@@ -1247,13 +1266,12 @@ const SECTIES = [
     ]},
 
   { id:"verleden", naam:"Verleden", kop:"Wat je tot hier heeft gebracht",
-    intro:"Drie vragen over je loopbaan, plus een optionele snelkoppeling.",
+    intro:"Drie korte vragen over je loopbaan.",
     theorie:"Patronen herhalen zich. Als je in eerdere rollen na een paar maanden leegliep, zegt dat meer over de match tussen jouw tempo en de functie dan over de functie zelf.",
     stappen:[
       {id:"jaren",type:"slider",vraag:"Hoeveel jaar werk je in totaal?",min:0,max:45,def:8,unit:"jaar"},
       {id:"werkgevers",type:"slider",vraag:"Bij hoeveel werkgevers heb je gewerkt?",min:1,max:15,def:3,unit:"werkgevers"},
-      {id:"patroon",type:"choice",vraag:"Herken je dat je werk na een tijd te ruim gaat zitten?",opties:["Ja, in vrijwel elke rol","Ja, in sommige rollen","Nee, dit is de eerste keer","Weet ik niet"]},
-      {id:"cv",type:"cv",vraag:"Wil je je cv of LinkedIn-tekst meegeven?",hint:"Optioneel. Het maakt je scenario's specifieker. Een pdf blijft in je browser en gaat alleen mee in de analyse."}
+      {id:"patroon",type:"choice",vraag:"Herken je dat je werk na een tijd te ruim gaat zitten?",opties:["Ja, in vrijwel elke rol","Ja, in sommige rollen","Nee, dit is de eerste keer","Weet ik niet"]}
     ]},
 
   { id:"nu", naam:"Werk nu", kop:"Je huidige rol, feitelijk",
@@ -1473,20 +1491,6 @@ function veldTeken(st){
     };
     teken();
   }
-  else if(st.type==="cv"){
-    v.innerHTML = `<div class="row"><label class="btn btn-ghost btn-sm" style="display:inline-block">Kies een pdf<input type="file" id="cvfile" accept="application/pdf" style="display:none"></label>
-      <span class="muted" id="cvnaam">${S.cvNaam||"Geen bestand gekozen"}</span></div>
-      <p class="hint" style="margin:16px 0 6px">Of plak de tekst van je LinkedIn-profiel.</p>
-      <textarea id="in" placeholder="Plakken mag ruw, opmaak maakt niet uit.">${S.cvTekst?esc(S.cvTekst):""}</textarea>
-      <p class="hint" style="margin-top:10px">Liever niet? Sla deze vraag gewoon over.</p>`;
-    $("cvfile").onchange = e => {
-      const f = e.target.files[0]; if(!f) return;
-      $("cvnaam").textContent = f.name + " wordt gelezen";
-      const r = new FileReader();
-      r.onload = () => { S.cvB64 = r.result.split(",")[1]; S.cvNaam = f.name; $("cvnaam").textContent = f.name; };
-      r.readAsDataURL(f);
-    };
-  }
   else if(st.type==="strip"){ stripVeld(v, st); }
 }
 
@@ -1585,7 +1589,6 @@ function leesVeld(){
   }
   else if(st.type==="multi") S.ant[st.id] = Array.prototype.slice.call(v.querySelectorAll("input:checked")).map(x=>x.value);
   else if(st.type==="rank") S.ant[st.id] = v._rank;
-  else if(st.type==="cv"){ S.cvTekst = $("in").value.trim(); S.ant.cv = (S.cvNaam?("pdf: "+S.cvNaam+" "):"") + (S.cvTekst?"(profieltekst meegegeven)":""); }
   else if(st.type==="strip"){ if(v._lees) v._lees(); S.ant[st.id] = S.pos[st.bron]; }
 }
 function ingevuld(){
@@ -2467,9 +2470,7 @@ function aflevering(p, s){
     [".hero .eyebrow",0.04],[".hero-mock",0.10],
     ["#weekViz",0.05],[".week-cap",0.03],
     [".hoe .mono",0.05],[".hoe .bloktitel",0.03],
-    [".citaat .mono",0.06],[".citaat-tekst",0.04],
     [".trust .mono",0.05],[".trust .bloktitel",0.03],[".trustkaart",0.05],
-    [".prijs-dark .mono",0.05],[".price-groot",0.07],[".bon-kaart",0.05],
     [".maker-quote",0.04],[".faq > .mono",0.05],[".slot-cta h2",0.04]
   ];
   config.forEach(function(c){
