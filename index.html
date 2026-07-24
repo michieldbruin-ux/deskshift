@@ -114,6 +114,7 @@
   /* horizontale strip */
   .strip{position:relative;width:100%;height:210px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;touch-action:none;margin-top:6px;
     background:linear-gradient(90deg, #EDEDEB 0%, #E6E6E6 38%, rgba(123,150,105,.22) 68%, rgba(123,150,105,.42) 100%)}
+  @media(max-width:640px){.strip{height:360px}}
   .strip .half{display:none}
   .strip .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(23,37,42,.14)}
   .stl{position:absolute;top:8px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);max-width:44%}
@@ -121,7 +122,7 @@
   .schaalhint{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-top:8px}
   .stl.l{left:8px}
   .stl.r{right:8px}
-  .chip{position:absolute;background:var(--chalk);border:1px solid var(--ink);border-radius:var(--r);padding:5px 9px;font-size:13px;cursor:grab;user-select:none;white-space:nowrap;box-shadow:0 1px 0 rgba(23,37,42,.18)}
+  .chip{position:absolute;background:var(--chalk);border:1px solid var(--ink);border-radius:var(--r);padding:6px 11px;font-size:13px;cursor:grab;user-select:none;white-space:normal;overflow-wrap:normal;word-break:normal;max-width:165px;line-height:1.25;text-align:center;box-shadow:0 1px 0 rgba(23,37,42,.18)}
   .chip.drag{cursor:grabbing;box-shadow:0 4px 10px rgba(23,37,42,.22);z-index:3}
   .tray{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;min-height:20px}
   .tray .chip{position:static;box-shadow:none}
@@ -132,7 +133,7 @@
     background:radial-gradient(135% 125% at 100% 0%, rgba(191,227,95,.42) 0%, rgba(191,227,95,.12) 42%, rgba(191,227,95,0) 66%), linear-gradient(155deg, var(--veld) 0%, #EAEFE0 55%, #E3EAD4 100%)}
   .plane .q{position:absolute;width:50%;height:50%}
   .plane .q-tr{right:0;top:0;background:rgba(191,227,95,.15);border-left:1px solid var(--lime);border-bottom:1px solid var(--lime)}
-  .plane .chip{position:absolute;font-size:11.5px;padding:3px 8px;box-shadow:0 1px 0 rgba(23,37,42,.14)}
+  .plane .chip{position:absolute;font-size:11.5px;padding:3px 8px;white-space:nowrap;max-width:none;text-align:left;box-shadow:0 1px 0 rgba(23,37,42,.14)}
   .qdlabel{position:absolute;right:8px;top:26px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--limeL)}
   .plane .chip{cursor:default}
   .plane .chip.hot{background:var(--ink);color:#FFFFFF;border-color:var(--ink);box-shadow:0 0 0 2px rgba(191,227,95,.6),0 3px 9px rgba(21,42,28,.22)}
@@ -314,7 +315,7 @@
       padding:10px 16px calc(10px + var(--safe-b, 0px));align-items:center;
       background:rgba(255,255,255,.94);-webkit-backdrop-filter:saturate(1.1) blur(8px);backdrop-filter:saturate(1.1) blur(8px);
       border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(31,42,26,.10)}
-    .intake-nav .enterhint{display:none}
+    .enterhint{display:none}
     .intake-nav #back{min-height:46px}
     .intake-nav #next{min-height:46px;padding-left:24px;padding-right:24px;font-weight:600}
     #intake{padding-bottom:84px}
@@ -1432,7 +1433,7 @@ function veldTeken(st){
   else if(st.type==="longtext"){
     v.innerHTML = `<textarea id="in" placeholder="Schrijf het op zoals je het zou zeggen. Ook als het rommelig is.">${cur?esc(cur):""}</textarea>
       <div class="veilig" style="margin-top:10px"><i></i>Niemand leest mee · hoe eerlijker je bent, hoe scherper je uitkomst</div>
-      <p class="muted" style="font-size:13px;margin:8px 0 0">Enter gaat verder, Shift + Enter maakt een nieuwe regel.</p>`;
+      <p class="muted enterhint" style="font-size:13px;margin:8px 0 0">Enter gaat verder, Shift + Enter maakt een nieuwe regel.</p>`;
   }
   else if(st.type==="slider"){
     const val = (cur===undefined||cur===null)?st.def:cur;
