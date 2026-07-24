@@ -6,6 +6,8 @@
 // Optioneel:
 //   STRIPE_PRICE_ID     - overschrijft de prijs-id hieronder, bijvoorbeeld om in
 //                         testmodus een test-prijs te gebruiken.
+//   STRIPE_PROMO_CODES  - op "uit" zetten verbergt het kortingscodeveld op de
+//                         betaalpagina. Standaard staat het veld aan.
 // (STRIPE_PUBLIC_KEY is voor de browser en wordt hier niet gebruikt.)
 // De browser praat NOOIT rechtstreeks met Stripe met de secret key.
 
@@ -68,6 +70,11 @@ export default async function handler(req, res) {
   const key = process.env.STRIPE_PRIVATE_KEY;
   if (!key) { res.status(500).json({ error: "Betaalconfiguratie ontbreekt (STRIPE_PRIVATE_KEY)." }); return; }
   const prijsId = (process.env.STRIPE_PRICE_ID || PRIJS_ID_STANDAARD || "").trim();
+  // Kortingsveld staat aan tenzij het uitdrukkelijk uitgezet is.
+  const promoUit = ["uit", "off", "nee", "false", "0"].indexOf(
+    String(process.env.STRIPE_PROMO_CODES || "").trim().toLowerCase()
+  ) >= 0;
+  const promoAan = !promoUit;
 
   const basis = siteBasis(req);
 
@@ -80,9 +87,9 @@ export default async function handler(req, res) {
     // betaalmethoden die in het Dashboard aanstaan (card, iDEAL, ...). Dat voorkomt
     // een harde fout als iDEAL nog niet geactiveerd is.
     p.append("locale", "nl");
-    // Laat de klant een kortingscode invoeren op de betaalpagina. De codes zelf
-    // maak je in het Stripe-dashboard (kortingsbon plus promotiecode).
-    p.append("allow_promotion_codes", "true");
+    // Invoerveld voor een kortingscode op de betaalpagina. Standaard aan; zet de
+    // environment variable STRIPE_PROMO_CODES op "uit" om het veld te verbergen.
+    if (promoAan) p.append("allow_promotion_codes", "true");
     p.append("line_items[0][quantity]", "1");
     if (metPrijsId) {
       p.append("line_items[0][price]", metPrijsId);
