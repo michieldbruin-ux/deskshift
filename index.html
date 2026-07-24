@@ -2295,18 +2295,131 @@ $("kalibKlaar").onclick = () => {
   }
   hide("kalib"); show("scenarios"); draaien(); window.scrollTo({top:0,behavior:"smooth"});
 };
-function ontgrendel(){
+// Het profiel-blok als HTML. Los, zodat we het ook kunnen herbouwen na terugkeer
+// van de betaalpagina (waar het geheugen leeg is).
+function profielHtml(prof, P){
+  prof = prof || {}; P = P || {};
+  return `<div class="profiel">
+    <div class="mono" style="color:var(--limeL)">Wat de intake laat zien</div>
+    <h2>${esc(prof.archetype||"")}</h2>
+    <ul class="plijst">${(prof.punten||[]).map(k=>
+      `<li><span class="plabel">${esc(k.label)}</span><span>${esc(k.tekst)}</span></li>`).join("")}</ul>
+    <div class="pbagage"><span class="mono">Wat je al hebt liggen</span>
+      ${(prof.bagage||[]).map(b=>`<span class="btag">${esc(b)}</span>`).join("")}</div>
+    <div class="mono" style="margin-top:16px;color:#BBC3B7;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${P.slack} uur ruimte in je werkweek en ${P.eigenBasis} uur eigen tijd per week. Je sterkste drijfveer is ${esc((P.rang&&P.rang[0])||"")}.</div>
+  </div>`;
+}
+
+// Ná de betaling: werk de drie richtingen nu volledig uit (dat sparen we bij
+// niet-betalers uit), toon ze zichtbaar en zet de mail- en herzien-opties aan.
+async function ontgrendel(){
   S.betaald = true;
-  document.querySelectorAll(".slot,.slotzone").forEach(el=>el.classList.remove("slot","slotzone"));
   const pw = document.getElementById("paywall"); if(pw) pw.remove();
   const cap = document.querySelector(".slotcap"); if(cap) cap.remove();
+  document.querySelectorAll(".slot,.slotzone").forEach(el=>el.classList.remove("slot","slotzone"));
+  $("scenBody").innerHTML = `<div class="thinking">Je richtingen worden helemaal uitgeschreven, een paar tellen. <b></b><b></b><b></b><b></b></div>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+  try{
+    const P = S.pg || profielGetallen();
+    // Kandidaat-payload voor de API-call; het renderen gebeurt op de volledige
+    // S.scenarios (die o.a. horizonWeken en risico bewaart).
+    const bron = (S.topKand && S.topKand.length === S.scenarios.length) ? S.topKand : S.scenarios;
+    const uits = await Promise.all(bron.map(k =>
+      askJSON(P_UITWERKING(P),
+        [{role:"user",content:"Intake:\n"+S.transcript+"\n\nDe geselecteerde richting om uit te werken:\n"+JSON.stringify({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})}],
+        null, 1600)
+    ));
+    S.scenarios = S.scenarios.map((k,i)=>{
+      const u = uits[i] || {};
+      const s = u.scenario || (Array.isArray(u.scenarios) ? u.scenarios[0] : u) || {};
+      return Object.assign({}, k, s);
+    });
+  }catch(e){
+    // Uitwerking mislukt: toon de richtingen toch. Het plan zelf komt los via
+    // kies() en is dus niet afhankelijk van deze stap.
+  }
+  toonRichtingen();
   // Duidelijke "je bent er"-banner: dit is de betaalde waarde.
   if($("scenBody")) $("scenBody").insertAdjacentHTML("afterbegin", `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Ontgrendeld.</b> Dit is waar je voor betaalde: je drie richtingen, helemaal uitgewerkt en van jou. Bekijk ze rustig, kies wanneer je wilt, en stuur alles naar je mail zodat je het houdt.</div></div>`);
-  const h = document.getElementById("herzien"); if(h) h.classList.remove("hidden");
-  const a = document.getElementById("afvallers"); if(a) a.classList.remove("hidden");
   const mb = document.getElementById("mailAlles"); if(mb){ mb.classList.remove("hidden"); const mk=document.getElementById("mailAllesKnop"); if(mk) mk.onclick = mailAlles; }
   if(typeof planWarm === "function") planWarm(); // plannen meteen laten schrijven, ze staan klaar bij openen
   window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- betaling via Stripe ---------- */
+const BETAAL_KEY = "deskshift_betaal_v1";
+// Bewaar de uitkomst kort, zodat die na terugkeer van Stripe hersteld kan worden
+// (de pagina herlaadt en het werkgeheugen is dan leeg).
+function bewaarBetaalSnapshot(){
+  try{
+    localStorage.setItem(BETAAL_KEY, JSON.stringify({
+      v:1, ts:Date.now(), scenarios:S.scenarios, topKand:S.topKand, rest:S.rest,
+      profiel:S.profiel, pg:S.pg, transcript:S.transcript
+    }));
+  }catch(e){}
+}
+function laadBetaalSnapshot(){
+  try{
+    const raw = localStorage.getItem(BETAAL_KEY); if(!raw) return null;
+    const s = JSON.parse(raw);
+    if(!s || !Array.isArray(s.scenarios) || !s.scenarios.length) return null;
+    if(s.ts && Date.now()-s.ts > 6*3600*1000){ localStorage.removeItem(BETAAL_KEY); return null; }
+    return s;
+  }catch(e){ return null; }
+}
+function wisBetaalSnapshot(){ try{ localStorage.removeItem(BETAAL_KEY); }catch(e){} }
+function herstelState(snap){
+  S.scenarios = snap.scenarios||[]; S.topKand = snap.topKand||S.scenarios;
+  S.rest = snap.rest||[]; S.profiel = snap.profiel||S.profiel; S.pg = snap.pg||S.pg;
+  S.transcript = snap.transcript || S.transcript;
+  if(S.profiel && S.pg && $("profielBox")) $("profielBox").innerHTML = profielHtml(S.profiel, S.pg);
+}
+// De paywall-knop: start een echte Stripe-betaling. Slaagt dat niet, dan blijft
+// de gebruiker op de paywall met een nette melding.
+async function startBetaling(){
+  const bk = $("betaalKnop");
+  const zet = t => { if(bk){ const s=bk.querySelector("span"); if(s) s.textContent=t; } };
+  const fout = m => {
+    let el = document.getElementById("betaalFout");
+    if(!el && bk){ bk.insertAdjacentHTML("afterend", `<p id="betaalFout" class="pw-onder" style="color:#F3C9C2"></p>`); el = document.getElementById("betaalFout"); }
+    if(el) el.textContent = m;
+  };
+  try{
+    if(bk) bk.disabled = true; zet("Veilig betalen openen…");
+    bewaarBetaalSnapshot();
+    const r = await fetch("/api/checkout", {method:"POST", headers:{"Content-Type":"application/json"}, body:"{}"});
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok || !d.url) throw new Error(d.error || "Betaling kon niet worden gestart.");
+    window.location.href = d.url;
+  }catch(e){
+    if(bk) bk.disabled = false; zet("Ontgrendel mijn drie richtingen");
+    fout(e.message + " Probeer het zo nog eens.");
+  }
+}
+// Bij het laden: kwam de gebruiker net terug van Stripe? Verifieer de betaling
+// server-side (nooit blind op de URL vertrouwen) en ontgrendel dan.
+async function checkBetaalTerugkeer(){
+  let u; try{ u = new URL(window.location.href); }catch(e){ return false; }
+  const betaald = u.searchParams.get("betaald");
+  const sid = u.searchParams.get("sid");
+  if(betaald == null) return false;
+  const opschonen = () => { u.searchParams.delete("betaald"); u.searchParams.delete("sid"); try{ history.replaceState(null,"", u.pathname + (u.search||"")); }catch(e){} };
+  if(betaald !== "1" || !sid){
+    // Betaling afgebroken: herstel de uitkomst met paywall, geen ontgrendeling.
+    opschonen();
+    const snap = laadBetaalSnapshot();
+    if(snap){ herstelState(snap); ["landing","intake","review","summary","insight","kalib"].forEach(hide); show("scenarios"); toonRichtingen(); }
+    return !!snap;
+  }
+  let paid = false;
+  try{ const r = await fetch("/api/verify?sid="+encodeURIComponent(sid)); const d = await r.json().catch(()=>({})); paid = !!(r.ok && d.paid); }catch(e){ paid = false; }
+  opschonen();
+  const snap = laadBetaalSnapshot();
+  if(!paid || !snap){ wisBetaalSnapshot(); if(snap){ herstelState(snap); ["landing","intake","review","summary","insight","kalib"].forEach(hide); show("scenarios"); toonRichtingen(); } return false; }
+  herstelState(snap); wisBetaalSnapshot();
+  ["landing","intake","review","summary","insight","kalib"].forEach(hide); show("scenarios");
+  await ontgrendel();
+  return true;
 }
 
 /* terugknoppen */
@@ -2396,14 +2509,16 @@ function barsHtml(bars){
 }
 
 /* ---------- de vier stappen ---------- */
-const STAPPEN = ["Je profiel opbouwen","Richtingen bedenken","Afwegen tegen jouw grenzen","Toetsen en uitschrijven"];
+// Drie stappen vóór de betaling. De volledige uitwerking van de richtingen
+// gebeurt pas ná de betaling (scheelt API-kosten bij wie niet betaalt, en de
+// paywall verschijnt sneller). Zie ontgrendel().
+const STAPPEN = ["Je profiel opbouwen","Richtingen bedenken","Afwegen tegen jouw grenzen"];
 const SUBS = [
   ["je antwoorden lezen","patronen zoeken","je eigen woorden wegen","de rem benoemen"],
   ["richtingen aftasten","je sterktes koppelen","varianten verwerpen","zes overhouden"],
-  ["tijd en grenzen toetsen","drijfveer wegen","sterktes matchen","rangschikken"],
-  ["kijken wat er al bestaat","het plan uitschrijven","de eerste stap bepalen","het stopcriterium zetten"]
+  ["tijd en grenzen toetsen","drijfveer wegen","sterktes matchen","rangschikken"]
 ];
-let gangState = ["","","",""], gangTimer = null, gangStart = 0, gangTick = 0, gangRaf = null;
+let gangState = ["","",""], gangTimer = null, gangStart = 0, gangTick = 0, gangRaf = null;
 function gangBouw(){
   // Skelet één keer bouwen; daarna alleen delen bijwerken, zodat de
   // voortgangsbalk nooit opnieuw start en vloeiend blijft lopen.
@@ -2451,7 +2566,7 @@ function gangStap(state){
 function gangStop(){
   if(gangTimer){ clearInterval(gangTimer); gangTimer=null; }
   if(gangRaf !== null){ cancelAnimationFrame(gangRaf); gangRaf = null; }
-  gangState=["af","af","af","af"]; gangTeken();
+  gangState=["af","af","af"]; gangTeken();
   const fill = document.getElementById("mprogFill");
   if(fill){ fill.style.transition = "width .5s cubic-bezier(.22,.61,.36,1)"; fill.style.width = "100%"; }
   setTimeout(()=>{ $("gang").innerHTML=""; }, 900);
@@ -2501,7 +2616,7 @@ async function draaien(feedback){
   S.gangAf = false; // wordt true als de gebruiker tijdens het bouwen teruggaat
   S.planProm = {};  // verse plan-cache: oude, weggewogen richtingen niet hergebruiken
   try{
-    gangStap(["bezig","bezig","",""]);
+    gangStap(["bezig","bezig",""]);
     const [prof, kandData] = await Promise.all([
       askJSON(P_ANALYSE, bericht(), null, 1500),
       askJSON(P_KANDIDATEN(P, feedback), bericht(), null, 3200)
@@ -2510,42 +2625,40 @@ async function draaien(feedback){
     // Bouw het profiel nu wel op, maar toon het pas aan het eind (samen met de
     // richtingen). Anders lijkt het scherm klaar terwijl de laatste stap nog laadt.
     S.profiel = prof; S.pg = P; // bewaren voor het rapport in de mail
-    const profHtml = `<div class="profiel">
-      <div class="mono" style="color:var(--limeL)">Wat de intake laat zien</div>
-      <h2>${esc(prof.archetype||"")}</h2>
-      <ul class="plijst">${(prof.punten||[]).map(k=>
-        `<li><span class="plabel">${esc(k.label)}</span><span>${esc(k.tekst)}</span></li>`).join("")}</ul>
-      <div class="pbagage"><span class="mono">Wat je al hebt liggen</span>
-        ${(prof.bagage||[]).map(b=>`<span class="btag">${esc(b)}</span>`).join("")}</div>
-      <div class="mono" style="margin-top:16px;color:#BBC3B7;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${P.slack} uur ruimte in je werkweek en ${P.eigenBasis} uur eigen tijd per week. Je sterkste drijfveer is ${esc(P.rang[0])}.</div>
-    </div>`;
+    const profHtml = profielHtml(prof, P);
 
-    gangStap(["af","af","bezig",""]);
+    gangStap(["af","af","bezig"]);
     const kand = (kandData.kandidaten) || [];
     const gescoord = kand.map(k=>{ const s = scoreKandidaat(k,P); return Object.assign({},k,{bars:s.bars,totaal:s.totaal}); })
                          .sort((a,b)=>b.totaal-a.totaal);
     const top = gescoord.slice(0,3), rest = gescoord.slice(3);
-
-    gangStap(["af","af","af","bezig"]);
-    // Werk de drie richtingen PARALLEL uit, elk in een eigen kleine call. Dat is
-    // veel sneller dan één grote call (die op de tijdslimiet liep en een 504 gaf).
-    const uits = await Promise.all(top.map(k =>
-      askJSON(P_UITWERKING(P),
-        [{role:"user",content:"Intake:\n"+S.transcript+"\n\nDe geselecteerde richting om uit te werken:\n"+JSON.stringify({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})}],
-        null, 1600)
-    ));
     if(S.gangAf) return;
-    S.scenarios = top.map((k,i)=>{
-      const u = uits[i] || {};
-      const s = u.scenario || (Array.isArray(u.scenarios) ? u.scenarios[0] : u) || {};
-      return Object.assign({}, k, s);
-    });
+    // Vóór de betaling tonen we de richtingen op kandidaat-niveau (titel, pitch,
+    // pasvorm, uren). Dat is genoeg voor de vervaagde teaser. De volledige
+    // uitwerking (doel, onderbouwing, zwakke plek, stopcriterium) schrijven we
+    // pas ná de betaling in ontgrendel(). Scheelt API-kosten bij niet-betalers.
+    S.scenarios = top.map(k => Object.assign({}, k));
+    S.topKand = top.map(k => ({titel:k.titel, type:k.type, pitch:k.pitch, uren:k.uren, totaal:k.totaal, bars:k.bars}));
+    S.rest = rest;
     gangStop();
     // Nu pas het profiel tonen, samen met de richtingen hieronder.
     $("profielBox").innerHTML = profHtml;
 
-    const beste = S.scenarios[0]||{};
-    $("scenBody").innerHTML = `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
+    toonRichtingen();
+  }catch(e){
+    gangStop();
+    $("scenBody").innerHTML = `<div class="err">Er ging iets mis in deze stap: ${esc(e.message)}</div>
+      <div class="row"><button class="btn" id="opnieuw">Opnieuw proberen</button></div>`;
+    const o = $("opnieuw"); if(o) o.onclick = ()=>draaien(feedback);
+  }
+}
+
+// Rendert de richtingen in scenBody. Vóór de betaling: kandidaat-niveau, vervaagd
+// achter de paywall. Ná de betaling: volledig uitgewerkt en zichtbaar. Wordt
+// zowel door draaien() als door ontgrendel() aangeroepen.
+function toonRichtingen(){
+  const rest = S.rest || [];
+  $("scenBody").innerHTML = `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
       <p class="muted" style="margin-bottom:18px">De cijfers komen uit je eigen antwoorden. Bekijk ze alle drie en ga gerust heen en terug, niets ligt vast.</p>` +
       S.scenarios.map((s,i)=>`
       <div class="card${s.totaal<55?" weak":""}">
@@ -2577,19 +2690,19 @@ async function draaien(feedback){
       </div>`).join("") +
       `<div id="frame"></div>`;
 
-    if(!S.betaald){
-      const zone = document.createElement("div");
-      zone.className = "slotzone";
-      while($("scenBody").firstChild) zone.appendChild($("scenBody").firstChild);
-      $("scenBody").appendChild(zone);
-      const top = S.scenarios[0]||{};
-      const gelijkAanTop = S.scenarios.filter(x=>(x.totaal||0)===(top.totaal||0)).length;
-      const topKop = gelijkAanTop>1
-        ? `Je sterkste richtingen scoren ${top.totaal||"?"} van 100`
-        : `Je best passende richting scoort ${top.totaal||"?"} van 100`;
-      const regels = S.scenarios.map((x,n)=>
-        `<li><span class="lk"></span><span>Richting ${n+1}, met naam, doel en plan</span><em>pasvorm ${x.totaal||"?"}</em></li>`).join("");
-      $("scenBody").insertAdjacentHTML("afterbegin", `<div class="paywall" id="paywall">
+  if(!S.betaald){
+    const zone = document.createElement("div");
+    zone.className = "slotzone";
+    while($("scenBody").firstChild) zone.appendChild($("scenBody").firstChild);
+    $("scenBody").appendChild(zone);
+    const top = S.scenarios[0]||{};
+    const gelijkAanTop = S.scenarios.filter(x=>(x.totaal||0)===(top.totaal||0)).length;
+    const topKop = gelijkAanTop>1
+      ? `Je sterkste richtingen scoren ${top.totaal||"?"} van 100`
+      : `Je best passende richting scoort ${top.totaal||"?"} van 100`;
+    const regels = S.scenarios.map((x,n)=>
+      `<li><span class="lk"></span><span>Richting ${n+1}, met naam, doel en plan</span><em>pasvorm ${x.totaal||"?"}</em></li>`).join("");
+    $("scenBody").insertAdjacentHTML("afterbegin", `<div class="paywall" id="paywall">
         <div class="mono" style="color:var(--limeL)">Je uitkomst is klaar</div>
         <h2 style="margin:10px 0 8px">${topKop}</h2>
         <p style="margin:0 0 12px">Gewogen uit ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en je vier keuzes. Zes richtingen afgewogen, drie overgebleven, precies op jouw situatie.</p>
@@ -2606,37 +2719,31 @@ async function draaien(feedback){
         <p class="pw-onder">Eenmalig. Geen abonnement, geen account. Meteen in beeld.</p>
         <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Je antwoorden staan alleen in dit venster. Ga je nu weg, dan begin je straks weer bij vraag één.</span></p>
       </div>`);
-      const _pw = document.getElementById("paywall");
-      if(_pw) _pw.insertAdjacentHTML("afterend", `<p class="slotcap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg><span>Hieronder je drie richtingen, al helemaal uitgewerkt. Nu nog vervaagd. Ontgrendel om ze te lezen.</span></p>`);
-    }
-    if(!S.betaald){ const bk = $("betaalKnop"); if(bk) bk.onclick = ontgrendel; }
-    frameTeken();
-    $("scenBody").querySelectorAll("[data-uit]").forEach(b=>b.onclick=()=>{
-      const d = $("det"+b.dataset.uit); d.classList.toggle("hidden");
-      b.textContent = d.classList.contains("hidden") ? "Onderbouwing" : "Verberg onderbouwing";
-    });
-    $("scenBody").querySelectorAll("[data-kies]").forEach(b=>b.onclick=()=>kies(S.scenarios[+b.dataset.kies]));
+    const _pw = document.getElementById("paywall");
+    if(_pw) _pw.insertAdjacentHTML("afterend", `<p class="slotcap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg><span>Hieronder je drie richtingen. Nu nog vervaagd. Ontgrendel om ze helemaal uitgewerkt te lezen.</span></p>`);
+    const bk = $("betaalKnop"); if(bk) bk.onclick = startBetaling;
+  }
+  frameTeken();
+  $("scenBody").querySelectorAll("[data-uit]").forEach(b=>b.onclick=()=>{
+    const d = $("det"+b.dataset.uit); d.classList.toggle("hidden");
+    b.textContent = d.classList.contains("hidden") ? "Onderbouwing" : "Verberg onderbouwing";
+  });
+  $("scenBody").querySelectorAll("[data-kies]").forEach(b=>b.onclick=()=>kies(S.scenarios[+b.dataset.kies]));
 
-    $("afvallers").className = S.betaald ? "" : "hidden";
-    $("herzien").className = S.betaald ? "" : "hidden";
-    if(rest.length) $("afvallers").innerHTML = `<div class="afval"><div class="mono">Ook overwogen, afgevallen</div>
+  $("afvallers").className = S.betaald ? "" : "hidden";
+  $("herzien").className = S.betaald ? "" : "hidden";
+  if(rest.length) $("afvallers").innerHTML = `<div class="afval"><div class="mono">Ook overwogen, afgevallen</div>
       <ul style="margin:10px 0 0;padding-left:18px">${rest.map(k=>{
         const zwak = (k.bars||[]).slice().sort((a,b)=>a.score-b.score)[0];
         return `<li><b style="color:var(--ink)">${esc(k.titel)}</b> · ${esc(k.pitch||"")} · viel af op ${esc(zwak?zwak.label.toLowerCase():"pasvorm")} (${zwak?zwak.score:"?"})</li>`;
       }).join("")}</ul></div>`;
 
-    $("herzien").innerHTML = `<div class="step" style="margin-top:24px">
+  $("herzien").innerHTML = `<div class="step" style="margin-top:24px">
       <h3>Raakt dit je niet?</h3>
       <p class="hint">Schrijf op wat er niet klopt. De richtingen worden opnieuw bedacht met jouw correctie erin.</p>
       <textarea id="fb" placeholder="Bijvoorbeeld: te braaf, of juist te risicovol, of het gaat te veel over mijn huidige werk."></textarea>
       <div class="row" style="margin-top:10px"><button class="btn btn-ghost" id="fbBtn">Opnieuw, met deze correctie</button></div></div>`;
-    $("fbBtn").onclick = () => { const t = $("fb").value.trim(); if(t) draaien(t); };
-  }catch(e){
-    gangStop();
-    $("scenBody").innerHTML = `<div class="err">Er ging iets mis in deze stap: ${esc(e.message)}</div>
-      <div class="row"><button class="btn" id="opnieuw">Opnieuw proberen</button></div>`;
-    const o = $("opnieuw"); if(o) o.onclick = ()=>draaien(feedback);
-  }
+  const fbBtn = $("fbBtn"); if(fbBtn) fbBtn.onclick = () => { const t = $("fb").value.trim(); if(t) draaien(t); };
 }
 
 /* ---------- actiepad ---------- */
@@ -3057,4 +3164,8 @@ function aflevering(p, s){
   // vangnet: mocht een observer-callback uitblijven, toon alles alsnog
   setTimeout(function(){ els.forEach(function(el){ el.classList.add("in"); }); }, 1600);
 })();
+
+// Terugkeer van de Stripe-betaalpagina afhandelen (moet ná alle definities, want
+// het leunt op BETAAL_KEY en de render-functies hierboven).
+try{ checkBetaalTerugkeer(); }catch(e){}
 </script>
