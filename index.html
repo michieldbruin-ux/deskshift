@@ -2415,11 +2415,26 @@ async function checkBetaalTerugkeer(){
   try{ const r = await fetch("/api/verify?sid="+encodeURIComponent(sid)); const d = await r.json().catch(()=>({})); paid = !!(r.ok && d.paid); }catch(e){ paid = false; }
   opschonen();
   const snap = laadBetaalSnapshot();
-  if(!paid || !snap){ wisBetaalSnapshot(); if(snap){ herstelState(snap); ["landing","intake","review","summary","insight","kalib"].forEach(hide); show("scenarios"); toonRichtingen(); } return false; }
-  herstelState(snap); wisBetaalSnapshot();
-  ["landing","intake","review","summary","insight","kalib"].forEach(hide); show("scenarios");
-  await ontgrendel();
-  return true;
+  const naarScenarios = () => { ["landing","intake","review","summary","insight","kalib","action"].forEach(hide); show("scenarios"); };
+  if(paid && snap){
+    herstelState(snap); wisBetaalSnapshot();
+    naarScenarios();
+    await ontgrendel();
+    return true;
+  }
+  if(paid && !snap){
+    // Betaald, maar de uitkomst staat niet meer op dit toestel (andere browser,
+    // opslag gewist, of de tab is te lang oud). Niet stilzwijgend naar de landing:
+    // laat weten dat de betaling gelukt is en hoe ze alsnog hun rapport krijgen.
+    naarScenarios();
+    if($("profielBox")) $("profielBox").innerHTML = "";
+    if($("scenBody")) $("scenBody").innerHTML = `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Je betaling is gelukt.</b> We konden je uitkomst op dit toestel niet automatisch terugvinden (bijvoorbeeld omdat je in een andere browser terugkwam). Mail <a href="mailto:info@deskshift.pro" style="color:var(--limeT);font-weight:600">info@deskshift.pro</a> vanaf hetzelfde adres als je betaling, dan sturen we je rapport en plan alsnog toe.</div></div>`;
+    return false;
+  }
+  // Verificatie mislukt of geen betaling: herstel de paywall als het kan.
+  wisBetaalSnapshot();
+  if(snap){ herstelState(snap); naarScenarios(); toonRichtingen(); }
+  return false;
 }
 
 /* terugknoppen */

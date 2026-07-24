@@ -63,8 +63,10 @@ export default async function handler(req, res) {
   params.append("mode", "payment");
   params.append("success_url", basis + "/?betaald=1&sid={CHECKOUT_SESSION_ID}");
   params.append("cancel_url", basis + "/?betaald=0");
-  params.append("payment_method_types[0]", "card");
-  params.append("payment_method_types[1]", "ideal");
+  // Bewust GEEN payment_method_types meegeven: dan gebruikt Stripe automatisch de
+  // betaalmethoden die in het Dashboard aanstaan (card, iDEAL, ...). Dat voorkomt
+  // een harde fout als iDEAL nog niet geactiveerd is.
+  params.append("locale", "nl");
   params.append("line_items[0][quantity]", "1");
   params.append("line_items[0][price_data][currency]", "eur");
   params.append("line_items[0][price_data][unit_amount]", "2500");
