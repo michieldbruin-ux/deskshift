@@ -126,6 +126,20 @@
   .chip.drag{cursor:grabbing;box-shadow:0 4px 10px rgba(23,37,42,.22);z-index:3}
   .tray{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;min-height:20px}
   .tray .chip{position:static;box-shadow:none}
+  /* Sorteren met schuiven: tik op de balk of sleep de knop (fijn op mobiel) */
+  .sortpoles{display:flex;justify-content:space-between;gap:12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin:2px 2px 18px}
+  .sortpoles span:last-child{color:var(--petrol);text-align:right}
+  .sortlijst{display:grid;gap:16px}
+  .sortrij{display:grid;gap:9px}
+  .sortlbl{font-size:15px;font-weight:500;color:var(--slate);transition:color .2s ease}
+  .sortrij.gezet .sortlbl{color:var(--ink)}
+  .sortsl{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:999px;background:var(--line);outline:none;cursor:pointer;margin:0}
+  .sortrij.gezet .sortsl{background:linear-gradient(90deg,var(--limeL),var(--lime))}
+  .sortsl::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--slate);box-shadow:0 1px 5px rgba(21,42,28,.28);cursor:grab}
+  .sortrij.gezet .sortsl::-webkit-slider-thumb{background:var(--ink);border-color:#fff}
+  .sortsl::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--slate);box-shadow:0 1px 5px rgba(21,42,28,.28);cursor:grab}
+  .sortrij.gezet .sortsl::-moz-range-thumb{background:var(--ink);border-color:#fff}
+  .sortsl:active{cursor:grabbing}
   .addrow{display:flex;gap:8px;margin-top:12px}
 
   /* matrix */
@@ -1201,6 +1215,20 @@
   </div>
 </div>
 
+<div id="sortPop" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="sortPopTitel">
+  <div class="pop-kaart">
+    <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="8" height="16" rx="2" fill="#152A1C"/><rect x="13" y="4" width="8" height="16" rx="2" fill="#BFE35F"/></svg></div>
+    <div class="mono">Twee keer sorteren</div>
+    <h2 id="sortPopTitel">Let op: twee verschillende vragen</h2>
+    <ul class="pop-lijst">
+      <li><b>Eerst:</b> waar ben je goed in?</li>
+      <li><b>Daarna:</b> wat doe je graag?</li>
+    </ul>
+    <p class="pop-slot">Goed kunnen en leuk vinden zijn niet hetzelfde. We leggen je twee antwoorden over elkaar en zoeken waar ze allebei samenvallen. Daar zit je richting.</p>
+    <button class="btn btn-lime btn-hero" id="sortPopOk">Duidelijk</button>
+  </div>
+</div>
+
 <section id="intake" class="hidden">
   <div class="rail">
     <div class="railtop">
@@ -1255,9 +1283,9 @@
 </section>
 
 <section id="kalib" class="hidden">
-  <div class="mono">Laatste stap voor de scenario's</div>
-  <h2 style="margin:12px 0 6px">Vier keuzes die het verschil maken</h2>
-  <p class="muted">Geen goede of foute antwoorden. Deze vier bepalen hoe de paden gewogen worden.</p>
+  <div class="mono">Bijna klaar</div>
+  <h2 style="margin:12px 0 6px">Nog vier korte voorkeuren</h2>
+  <p class="muted">Geen goede of foute antwoorden. Ze helpen om de richtingen straks bij jou te laten passen.</p>
   <div id="kalibBody"></div>
   <div class="row" style="margin-top:20px"><button class="btn btn-lime" id="kalibKlaar">Klaar, ga verder</button>
     <button class="btn btn-ghost" data-terug="insight">Terug</button></div>
@@ -1369,7 +1397,7 @@ const SECTIES = [
     theorie:"Kunnen en leuk vinden zijn niet hetzelfde. Waar je goed in bent maar geen plezier aan beleeft, wordt de taak die je toegeschoven krijgt. De overlap van allebei is waar het rendement zit.",
     stappen:[
       {id:"energie",type:"dual",vraag:"Hoeveel energie heb je aan het begin en aan het eind van een werkdag?",hint:"Cijfer van 1 tot 10 voor een gemiddelde dag.",a:{label:"Bij het begin",def:7},b:{label:"Aan het eind",def:5}},
-      {id:"skill",type:"strip",vraag:"Waar ben je goed in?",hint:"Onderwerpen uit jouw werk als {functie}, plus een paar algemene. Sleep ze naar links of rechts, alleen wat je herkent.",links:"hier ben ik niet goed in",rechts:"hier ben ik goed in",bron:"skill"},
+      {id:"skill",type:"strip",vraag:"Waar ben je goed in?",hint:"Onderwerpen uit jouw werk als {functie}, plus een paar algemene. Zet elke schuif naar links of rechts, alleen bij wat je herkent.",links:"hier ben ik niet goed in",rechts:"hier ben ik goed in",bron:"skill"},
       {id:"energiekaart",type:"strip",vraag:"En wat doe je graag?",hint:"Dezelfde onderwerpen, nu op plezier. Straks leg ik beide antwoorden over elkaar.",links:"doe ik met tegenzin",rechts:"doe ik graag, krijg er energie van",bron:"energie"},
       {id:"benaderd",type:"longtext",vraag:"Waar benaderen collega's je spontaan voor, ook al hoort het niet bij je functie?",hint:"Geen idee? Schrijf dan gerust: geen idee."}
     ]},
@@ -1588,60 +1616,59 @@ async function stripVeld(v, st){
     await maakKaarten();
   }
   const bron = st.bron;
-  v.innerHTML = `<div class="strip" id="strip">
-      <div class="half r"></div><div class="mid"></div>
-      <span class="stl l">${st.links}</span><span class="stl r">${st.rechts}</span>
-    </div>
-    <div class="schaalhint"><span>helemaal links</span><span>ertussenin mag ook</span><span>helemaal rechts</span></div>
-    <div class="mono" style="margin-top:12px">Nog te plaatsen</div>
-    <div class="tray" id="tray"></div>
-    <div class="addrow"><input type="text" id="eigen" placeholder="Eigen taak toevoegen"><button class="btn btn-ghost btn-sm" id="addc">Toevoegen</button></div>`;
-  const strip = $("strip"), tray = $("tray");
+  const eerder = S.pos[bron] || {};
+  // Eén gedeelde lijst voor beide sorteringen, zodat de matrix ze kan overleggen.
+  const basis = S.kaarten.length ? S.kaarten : KAARTEN;
+  const andere = bron==="energie" ? Object.keys(S.pos.skill||{}) : [];
+  const alle = basis.concat(Object.keys(eerder).filter(k=>basis.indexOf(k)<0))
+                    .concat(andere.filter(k=>basis.indexOf(k)<0 && eerder[k]===undefined));
+  const uniek = alle.filter((k,i)=>alle.indexOf(k)===i);
+
+  const rij = (naam) => {
+    const gezet = eerder[naam]!==undefined;
+    const val = gezet ? Math.round(eerder[naam]*100) : 50;
+    return `<div class="sortrij${gezet?" gezet":""}" data-naam="${esc(naam)}">
+      <div class="sortlbl">${esc(naam)}</div>
+      <input type="range" class="sortsl" min="0" max="100" step="1" value="${val}" aria-label="${esc(naam)}">
+    </div>`;
+  };
+  v.innerHTML = `<div class="sortpoles"><span>${st.links}</span><span>${st.rechts}</span></div>
+    <div class="sortlijst" id="sortlijst">${uniek.map(rij).join("")}</div>
+    <div class="addrow"><input type="text" id="eigen" placeholder="Eigen onderwerp toevoegen"><button class="btn btn-ghost btn-sm" id="addc">Toevoegen</button></div>`;
+  const lijst = $("sortlijst");
 
   function lees(){
-    const pr = strip.getBoundingClientRect(); const out = {};
-    strip.querySelectorAll(".chip").forEach(c=>{
-      out[c.dataset.naam] = +((c.offsetLeft + c.offsetWidth/2)/pr.width).toFixed(3);
+    const out = {};
+    lijst.querySelectorAll(".sortrij").forEach(r=>{
+      if(r.classList.contains("gezet")){
+        const sl = r.querySelector(".sortsl");
+        out[r.dataset.naam] = +(+sl.value/100).toFixed(3);
+      }
     });
     S.pos[bron] = out;
   }
-  function sleepbaar(c){
-    let drag=false, ox=0, oy=0;
-    c.addEventListener("pointerdown", e=>{
-      drag=true; c.setPointerCapture(e.pointerId); c.classList.add("drag");
-      const r=c.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top;
-      if(c.parentElement===tray){
-        const pr=strip.getBoundingClientRect(); strip.appendChild(c);
-        c.style.left = Math.max(0,Math.min(pr.width-c.offsetWidth, r.left-pr.left))+"px";
-        c.style.top  = Math.max(24,Math.min(pr.height-34, r.top-pr.top))+"px";
-      }
-      e.preventDefault();
-    });
-    c.addEventListener("pointermove", e=>{
-      if(!drag) return;
-      const pr=strip.getBoundingClientRect();
-      let x=e.clientX-pr.left-ox, y=e.clientY-pr.top-oy;
-      x=Math.max(0,Math.min(pr.width-c.offsetWidth,x));
-      y=Math.max(24,Math.min(pr.height-c.offsetHeight-4,y));
-      c.style.left=x+"px"; c.style.top=y+"px";
-    });
-    c.addEventListener("pointerup", ()=>{ drag=false; c.classList.remove("drag"); lees(); });
+  function koppel(sl){
+    // Een schuif telt pas mee zodra de gebruiker hem aanraakt; tikken op de balk
+    // en slepen werken allebei (native range-input, dus prettig op mobiel).
+    const zet = () => { sl.closest(".sortrij").classList.add("gezet"); lees(); };
+    sl.addEventListener("input", zet);
+    sl.addEventListener("pointerdown", zet);
   }
-  function maak(naam, x, rij){
-    const c=document.createElement("div"); c.className="chip"; c.textContent=naam; c.dataset.naam=naam;
-    if(x!==undefined && x!==null){ strip.appendChild(c); c.style.left=(x*100)+"%"; c.style.top=(30+(rij%5)*32)+"px"; }
-    else tray.appendChild(c);
-    sleepbaar(c);
-  }
-  const eerder = S.pos[bron]||{};
-  const andere = bron==="energie" ? Object.keys(S.pos.skill||{}) : [];
-  const basis = S.kaarten.length ? S.kaarten : KAARTEN;
-  const alle = basis.concat(Object.keys(eerder).filter(k=>basis.indexOf(k)<0))
-                    .concat(andere.filter(k=>basis.indexOf(k)<0 && eerder[k]===undefined));
-  let rij=0;
-  alle.forEach(k=>{ const x=eerder[k]; maak(k, x, x!==undefined?rij++:0); });
-  $("addc").onclick = ()=>{ const n=$("eigen").value.trim(); if(n){ maak(n); $("eigen").value=""; } };
+  lijst.querySelectorAll(".sortsl").forEach(koppel);
+
+  $("addc").onclick = ()=>{
+    const n = $("eigen").value.trim(); if(!n) return;
+    const bestaat = Array.prototype.some.call(lijst.querySelectorAll(".sortrij"), r=>r.dataset.naam.toLowerCase()===n.toLowerCase());
+    if(bestaat){ $("eigen").value=""; return; }
+    if(S.kaarten.indexOf(n)<0) S.kaarten.push(n); // ook in de tweede sortering tonen
+    lijst.insertAdjacentHTML("beforeend", rij(n));
+    koppel(lijst.lastElementChild.querySelector(".sortsl"));
+    $("eigen").value="";
+  };
   v._lees = lees;
+
+  // Kleine uitleg vóór de eerste sortering: dit zijn twee verschillende vragen.
+  if(bron==="skill" && !S.sortUitlegGezien){ S.sortUitlegGezien = true; toonSortUitleg(); }
 }
 
 /* ---------- lezen ---------- */
@@ -1673,7 +1700,7 @@ $("next").onclick = async () => {
   leesVeld();
   if(!ingevuld()){
     const st = stap();
-    $("err").innerHTML = `<div class="err">${st.type==="strip"?"Sleep minstens drie onderwerpen in de balk.":st.type==="choice"?"Kies een optie, of vul zelf iets in.":"Vul dit nog even in."}</div>`;
+    $("err").innerHTML = `<div class="err">${st.type==="strip"?"Beweeg minstens drie schuiven.":st.type==="choice"?"Kies een optie, of vul zelf iets in.":"Vul dit nog even in."}</div>`;
     return;
   }
   $("err").innerHTML = "";
@@ -1705,12 +1732,10 @@ document.addEventListener("keydown", e=>{
 });
 
 async function startIntake(){ await wis(); S.s=0; S.q=0; S.ant={}; S.pos={skill:{},energie:{}}; S.kaarten=[]; hide("landing"); show("intake"); toonStap(); }
-// Privacy-pop-up: verschijnt bij de start van de intake en gaat pas verder
-// als de gebruiker bevestigt. Eén moment van geruststelling i.p.v. een vage
-// regel onder losse vragen.
-function openPrivacy(next){
-  const pop = document.getElementById("privacyPop"), knop = document.getElementById("popStart");
-  if(!pop || !knop){ next(); return; }
+// Herbruikbare pop-up met veer-animatie. Sluit op de knop, op Enter of Escape.
+function openPop(popId, knopId, next){
+  const pop = document.getElementById(popId), knop = document.getElementById(knopId);
+  if(!pop || !knop){ if(next) next(); return; }
   pop.classList.remove("hidden");
   requestAnimationFrame(()=> pop.classList.add("aan"));
   const sluit = () => {
@@ -1718,13 +1743,16 @@ function openPrivacy(next){
     document.removeEventListener("keydown", opToets);
     pop.classList.remove("aan");
     setTimeout(()=> pop.classList.add("hidden"), 320);
-    next();
+    if(next) next();
   };
   const opToets = e => { if(e.key==="Enter" || e.key==="Escape"){ e.preventDefault(); sluit(); } };
   knop.addEventListener("click", sluit);
   document.addEventListener("keydown", opToets);
   requestAnimationFrame(()=> knop.focus());
 }
+// Privacy-pop-up bij de start van de intake; korte uitleg vóór de eerste sortering.
+function openPrivacy(next){ openPop("privacyPop", "popStart", next); }
+function toonSortUitleg(){ openPop("sortPop", "sortPopOk"); }
 // Eerst de intake laden, dán de privacy-pop-up eroverheen tonen (niet meer
 // boven de landing). De pop-up sluit gewoon; de gebruiker staat dan op vraag 1.
 $("start").onclick = async () => { await startIntake(); openPrivacy(()=>{}); };
@@ -1867,56 +1895,39 @@ function matrixTeken(el){
     </div>`;
   schikIn(document.getElementById("plane2"), d);
 }
-/* legt de chips per kwadrant in een net raster, met zoveel kolommen als er in
-   de breedte passen, en laat de plane in hoogte meegroeien; zo raakt niets
-   elkaar en valt niets buiten beeld, ook niet op smalle schermen */
+/* Plaatst elke chip op de ECHTE coördinaten uit de sortering (niet gesorteerd),
+   en duwt daarna alleen overlappende paren net genoeg uit elkaar. Zo blijft het
+   beeld trouw aan de invoer én leesbaar, zonder dat iets buiten de plane valt. */
 function schikIn(plane, d){
   if(!plane) return;
   requestAnimationFrame(()=>{
-    const pad = 8, kop = 26, gapY = 6, gapX = 8, voet = 22;
-    const W = plane.getBoundingClientRect().width, halfW = W/2;
+    const r = plane.getBoundingClientRect();
+    const W = r.width, H = r.height, pad = 8, kop = 24, gapX = 7, gapY = 5;
     const chips = Array.prototype.slice.call(plane.querySelectorAll(".chip"));
-    const raw = chips.map((c,i)=>({c:c, p:d[i], w:c.offsetWidth, h:c.offsetHeight}));
-    if(!raw.length) return;
-    const rowH = Math.max.apply(null, raw.map(it=>it.h)) + gapY;
-    // Per kwadrant: bepaal hoeveel kolommen er binnen de kwadrantbreedte passen
-    // (op smalle schermen vaak één), en leg de chips in een net raster. Zo raakt
-    // niets elkaar en valt niets buiten beeld; de hoogte groeit mee met de drukte.
-    const quads = [[true,true],[false,true],[true,false],[false,false]].map(function(kw){
-      const rechts=kw[0], boven=kw[1];
-      const g = raw.filter(it=>(it.p.x>.5)===rechts && (it.p.y<.5)===boven)
-                   .sort((a,b)=>a.p.y-b.p.y || a.p.x-b.p.x);
-      const xL = rechts ? halfW+pad : pad;
-      const xR = rechts ? W-pad     : halfW-pad;
-      const colW = g.length ? Math.max.apply(null, g.map(it=>it.w)) : 0;
-      const cols = Math.max(1, Math.floor((xR-xL+gapX)/(colW+gapX)));
-      const rows = Math.ceil(g.length/cols) || 0;
-      return {rechts:rechts, boven:boven, g:g, xL:xL, xR:xR, colW:colW, cols:cols, rows:rows};
+    if(!chips.length) return;
+    const its = chips.map(function(c,i){
+      const w=c.offsetWidth, h=c.offsetHeight;
+      return { c:c, w:w, h:h,
+        x: Math.min(W-pad-w/2, Math.max(pad+w/2, d[i].x*W)),
+        y: Math.min(H-pad-h/2, Math.max(kop+h/2, d[i].y*H)) };
     });
-    const topRows = Math.max(quads[0].rows, quads[1].rows);
-    const botRows = Math.max(quads[2].rows, quads[3].rows);
-    const halfH = Math.max(topRows, botRows) * rowH;
-    // Gelijke helften zodat het assenkruis op 50% blijft kloppen.
-    const H = Math.max(380, kop + 2*halfH + pad + voet);
-    plane.style.aspectRatio = "auto";
-    plane.style.height = H + "px";
-    quads.forEach(function(q){
-      const yTop = q.boven ? kop : H/2 + pad;
-      let idx = 0;
-      for(let col=0; col<q.cols && idx<q.g.length; col++){
-        const x = q.xL + col*(q.colW+gapX);
-        for(let r=0; r<q.rows && idx<q.g.length; r++){
-          const it = q.g[idx++];
-          // Klem altijd binnen de plane: een chip die breder is dan zijn halve
-          // kwadrant (lange naam op smal scherm) schuift naar binnen i.p.v. af te
-          // kappen aan de rand.
-          const px = Math.max(pad, Math.min(x, W - pad - it.w));
-          it.c.style.left = px+"px";
-          it.c.style.top  = (yTop + r*rowH) + "px";
-          it.c.style.transform = "none";
+    for(let iter=0; iter<160; iter++){
+      let botst = false;
+      for(let a=0;a<its.length;a++){ for(let b=a+1;b<its.length;b++){
+        const A=its[a], B=its[b];
+        const minX=(A.w+B.w)/2+gapX, minY=(A.h+B.h)/2+gapY;
+        const dx=B.x-A.x, dy=B.y-A.y;
+        if(Math.abs(dx)<minX && Math.abs(dy)<minY){
+          botst = true;
+          const ox=minX-Math.abs(dx), oy=minY-Math.abs(dy);
+          if(ox<=oy){ const s=((dx<0?-1:1)*ox)/2; A.x-=s; B.x+=s; }
+          else      { const s=((dy<0?-1:1)*oy)/2; A.y-=s; B.y+=s; }
         }
-      }
-    });
+      }}
+      its.forEach(function(o){ o.x=Math.min(W-pad-o.w/2,Math.max(pad+o.w/2,o.x)); o.y=Math.min(H-pad-o.h/2,Math.max(kop+o.h/2,o.y)); });
+      if(!botst) break;
+    }
+    its.forEach(function(o){ o.c.style.left=(o.x-o.w/2)+"px"; o.c.style.top=(o.y-o.h/2)+"px"; o.c.style.transform="none"; });
   });
 }
 
@@ -2128,16 +2139,16 @@ function inzichtHtml(d){
 /* ---------- scenario's: profiel, kandidaten, weging, uitwerking ---------- */
 /* ---------- kalibratie ---------- */
 const KALIB = [
-  {id:"bewijs", vraag:"Wat wil je over zes maanden kunnen laten zien?", opties:[
-    {l:"Iets dat geld oplevert",v:"inkomen"},{l:"Iets dat ik geleerd heb",v:"leren"},
-    {l:"Interessanter werk in mijn huidige baan",v:"werk"},{l:"Iets dat mensen gebruiken",v:"erkenning"}]},
-  {id:"ritme", vraag:"Wat past beter bij jou?", opties:[
-    {l:"Vier uur per week, een jaar lang",v:"traag"},{l:"Vijftien uur per week, één maand",v:"sprint"}]},
-  {id:"spijt", vraag:"Als het misgaat, wat vind je het vervelendst?", opties:[
-    {l:"Dat het geld heeft gekost",v:"geld"},{l:"Dat het tijd heeft gekost",v:"tijd"},
-    {l:"Dat anderen het zagen mislukken",v:"gezicht"}]},
-  {id:"gezelschap", vraag:"Hoe wil je dit aanpakken?", opties:[
-    {l:"Alleen, in mijn eigen tempo",v:"alleen"},{l:"Met iemand die me scherp houdt",v:"samen"}]}
+  {id:"bewijs", vraag:"Wat zou de komende maanden voor jou de moeite waard maken?", opties:[
+    {l:"Er financieel iets aan overhouden",v:"inkomen"},{l:"Iets nieuws echt onder de knie krijgen",v:"leren"},
+    {l:"Mijn huidige werk interessanter maken",v:"werk"},{l:"Werk doen waar anderen iets aan hebben",v:"erkenning"}]},
+  {id:"ritme", vraag:"Welk ritme past beter bij jou?", opties:[
+    {l:"Rustig aan, een beetje per week over langere tijd",v:"traag"},{l:"In korte, intensieve periodes",v:"sprint"}]},
+  {id:"spijt", vraag:"Waar ben je het zuinigst op?", opties:[
+    {l:"Mijn geld",v:"geld"},{l:"Mijn tijd",v:"tijd"},
+    {l:"Hoe ik overkom bij anderen",v:"gezicht"}]},
+  {id:"gezelschap", vraag:"Wanneer kom jij het best tot je recht?", opties:[
+    {l:"In mijn eentje, op mijn eigen tempo",v:"alleen"},{l:"Met iemand die me scherp houdt",v:"samen"}]}
 ];
 S.kalib = {};
 
