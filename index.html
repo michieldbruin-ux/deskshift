@@ -1223,7 +1223,7 @@
   <div class="foot rv">
     <span class="brand small"><svg class="mark" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#152A1C"/><rect x="7" y="7" width="8" height="8" rx="2" fill="#D6EBA8"/><rect x="17" y="7" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="7" y="17" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="17" y="17" width="8" height="8" rx="2" fill="#D6EBA8"/></svg>Deskshift</span>
     <p class="muted">Voor mensen van wie het werk te klein is geworden. Geen cookies, geen tracking.</p>
-    <p class="footlinks"><a href="/privacy">Privacyverklaring</a> <span aria-hidden="true">&middot;</span> <a href="/terms">Algemene voorwaarden</a> <span aria-hidden="true">&middot;</span> <a href="mailto:info@deskshift.pro">Contact</a></p>
+    <p class="footlinks"><a href="/privacy">Privacyverklaring</a> <span aria-hidden="true">&middot;</span> <a href="/terms">Algemene voorwaarden</a></p>
     <p class="muted" style="margin-top:6px">Deskshift geeft geen loopbaan-, medisch, juridisch of financieel advies. Je blijft zelf verantwoordelijk voor je keuzes.</p>
   </div>
 
@@ -2450,7 +2450,7 @@ async function checkBetaalTerugkeer(){
     // laat weten dat de betaling gelukt is en hoe ze alsnog hun rapport krijgen.
     naarScenarios();
     if($("profielBox")) $("profielBox").innerHTML = "";
-    if($("scenBody")) $("scenBody").innerHTML = `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Je betaling is gelukt.</b> We konden je uitkomst op dit toestel niet automatisch terugvinden (bijvoorbeeld omdat je in een andere browser terugkwam). Mail <a href="mailto:info@deskshift.pro" style="color:var(--limeT);font-weight:600">info@deskshift.pro</a> vanaf hetzelfde adres als je betaling, dan sturen we je rapport en plan alsnog toe.</div></div>`;
+    if($("scenBody")) $("scenBody").innerHTML = `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Je betaling is gelukt.</b> We konden je uitkomst op dit toestel niet automatisch terugvinden. Dat gebeurt als je in een andere browser terugkomt dan waarin je de intake deed. Open deze pagina opnieuw in die browser, dan staat je uitkomst er nog en wordt hij alsnog ontgrendeld.</div></div>`;
     return false;
   }
   // Verificatie mislukt of geen betaling: herstel de paywall als het kan.
