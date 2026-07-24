@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     if (JSON.stringify(messages).length > 180000) { res.status(413).json({ error: "Verzoek te groot." }); return; }
   } catch { res.status(400).json({ error: "Ongeldig verzoek." }); return; }
   const veiligSystem = typeof system === "string" ? system.slice(0, 20000) : undefined;
-  const veiligeMaxTokens = Math.min(Number(max_tokens) || 1000, 4096);
+  const veiligeMaxTokens = Math.min(Number(max_tokens) || 1000, 8192);
 
   // Het model wordt hier SERVER-SIDE bepaald. We nemen bewust GEEN model of
   // tools uit de browser over, zodat dit endpoint alleen de intake-taak kan

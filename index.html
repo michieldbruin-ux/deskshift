@@ -866,7 +866,6 @@
   .mstap-t em{display:block;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--limeL);margin-top:3px;animation:subCycle 2.2s ease both}
   .mstap-t em.mdone{color:#9FB295;animation:none}
   @keyframes subCycle{0%{opacity:0;transform:translateY(5px)}14%{opacity:1;transform:none}80%{opacity:1}100%{opacity:.12;transform:translateY(-3px)}}
-  .mnote{color:#9FB295;font-size:12.5px;margin:14px 0 0}
   @media (prefers-reduced-motion:reduce){.machine-dot,.mpuls,.mstap-t em{animation:none}}
   .mprog{height:6px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden;margin:0 0 18px}
   .mprog span{display:block;height:100%;width:0;background:var(--lime);border-radius:4px;position:relative;overflow:hidden}
@@ -1960,17 +1959,20 @@ function jsonUit(raw){
 }
 // vraagt de AI om JSON en probeert het nog één keer strenger als het niet parse-t
 async function askJSON(system, messages, tools, maxTokens){
-  let laatste;
+  let laatste, mt = maxTokens || 1000;
   for(let k=0;k<3;k++){
     try{
       // ask() zit BINNEN de try, zodat een lege of foute respons opnieuw
       // geprobeerd wordt i.p.v. meteen te falen.
       const sys = k===0 ? system
         : system + "\n\nLET OP: je vorige antwoord was onbruikbaar. Antwoord nu UITSLUITEND met één geldig, volledig JSON-object, niets ervoor of erna, geen markdown.";
-      const raw = await ask(sys, messages, tools, maxTokens);
+      const raw = await ask(sys, messages, tools, mt);
       return jsonUit(raw);
     }catch(e){
       laatste = e;
+      // Werd het antwoord afgekapt op de tokenlimiet? Geef de volgende poging
+      // ruim meer ruimte i.p.v. dezelfde fout te herhalen.
+      if(/max_tokens/i.test(e.message||"")) mt = Math.min(8000, Math.round(mt * 1.9));
       if(k < 2) await new Promise(r=>setTimeout(r, 500*(k+1))); // korte backoff
     }
   }
@@ -1997,7 +1999,7 @@ $("toSummary").onclick = async () => {
 Vat de situatie van deze persoon samen als korte kaarten. Puur observerend, nul advies, geen scenario's, geen aanmoediging.
 Antwoord uitsluitend met geldige JSON, zonder markdown:
 {"kaarten":[{"label":"twee of drie woorden","tekst":"maximaal 18 woorden"}],"klap":"één zin van maximaal 20 woorden die het patroon benoemt"}
-Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 1200);
+Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 1600);
     $("sumBody").innerHTML = `<div class="kaartjes">${(d.kaarten||[]).map(k=>
       `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
       ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}
@@ -2022,7 +2024,7 @@ $("toInsight").onclick = async () => {
 Geef het scherpste patroon uit deze intake. Geen advies, geen scenario's, geen aanmoediging. Benoem wat deze persoon zelf waarschijnlijk niet zo scherp had geformuleerd.
 Antwoord uitsluitend met geldige JSON:
 {"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden","spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"punten":[{"label":"twee of drie woorden","tekst":"maximaal 12 woorden"}]}
-Precies drie punten.`, bericht(), null, 1200);
+Precies drie punten.`, bericht(), null, 1600);
     $("insBody").innerHTML = inzichtHtml(d);
   }catch(e){
     $("insBody").innerHTML = `<div class="err">${esc(e.message)}</div>
@@ -2209,7 +2211,6 @@ function gangBouw(){
     <div class="machine-kop"><span class="machine-dot"></span><span class="mono">Deskshift bouwt jouw richtingen</span></div>
     <div class="mprog"><span id="mprogFill"></span></div>
     <ul class="mstappen" id="mstappenUl"></ul>
-    <p class="mnote" id="mnote"></p>
   </div>`;
 }
 function gangTeken(){
@@ -2223,8 +2224,6 @@ function gangTeken(){
       <span class="mstap-t"><b>${s}</b>${sub?`<em>${sub}…</em>`:""}${st==="af"?'<em class="mdone">klaar</em>':""}</span>
     </li>`;
   }).join("");
-  const note = document.getElementById("mnote");
-  if(note) note.textContent = Math.round((Date.now()-gangStart)/1000) + "s bezig. Meestal veertig tot zeventig seconden. Je hoeft niets te doen.";
 }
 function gangProg(){
   // Psychologische curve, per frame bijgewerkt: eerste twee derde snel,
@@ -2299,8 +2298,8 @@ async function draaien(feedback){
   try{
     gangStap(["bezig","bezig","",""]);
     const [prof, kandData] = await Promise.all([
-      askJSON(P_ANALYSE, bericht(), null, 600),
-      askJSON(P_KANDIDATEN(P, feedback), bericht(), null, 1600)
+      askJSON(P_ANALYSE, bericht(), null, 1500),
+      askJSON(P_KANDIDATEN(P, feedback), bericht(), null, 3200)
     ]);
     $("profielBox").innerHTML = `<div class="profiel">
       <div class="mono" style="color:var(--limeL)">Wat de intake laat zien</div>
@@ -2321,7 +2320,7 @@ async function draaien(feedback){
     gangStap(["af","af","af","bezig"]);
     const uit = await askJSON(P_UITWERKING(P),
       [{role:"user",content:"Intake:\n"+S.transcript+"\n\nGeselecteerde richtingen met scores:\n"+JSON.stringify(top.map(k=>({titel:k.titel,type:k.type,pitch:k.pitch,uren:k.uren,score:k.totaal,bars:k.bars})))}],
-      null, 3000);
+      null, 5000);
     S.scenarios = (uit.scenarios||[]).map((s,i)=>Object.assign({}, top[i]||{}, s));
     gangStop();
 
@@ -2486,7 +2485,7 @@ async function kies(s){
   window.scrollTo({top:0,behavior:"smooth"});
   const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
   try{
-    S.plan = await askJSON(P3, msgs, null, 3000);
+    S.plan = await askJSON(P3, msgs, null, 5000);
     $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Deskshift · jouw plan van zes weken</div>
       <h1 style="font-size:30px;margin:10px 0 4px">${esc(s.titel)}</h1></div>` + planHtml(S.plan, s);
     $("actBody").innerHTML = aflevering(S.plan, s) + `
