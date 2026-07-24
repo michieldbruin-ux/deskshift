@@ -80,6 +80,9 @@ export default async function handler(req, res) {
     // betaalmethoden die in het Dashboard aanstaan (card, iDEAL, ...). Dat voorkomt
     // een harde fout als iDEAL nog niet geactiveerd is.
     p.append("locale", "nl");
+    // Laat de klant een kortingscode invoeren op de betaalpagina. De codes zelf
+    // maak je in het Stripe-dashboard (kortingsbon plus promotiecode).
+    p.append("allow_promotion_codes", "true");
     p.append("line_items[0][quantity]", "1");
     if (metPrijsId) {
       p.append("line_items[0][price]", metPrijsId);
