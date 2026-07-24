@@ -80,13 +80,27 @@ export default async function handler(req, res) {
     const data = await upstream.json();
 
     if (!upstream.ok) {
-      // Geef geen ruwe Anthropic-foutdetails door aan de browser (kan
-      // interne info lekken), wel een bruikbare boodschap.
+      // Log de echte oorzaak server-side (zichtbaar in de Vercel-logs),
+      // maar geef geen ruwe Anthropic-foutdetails door aan de browser.
+      console.error("anthropic-fout", upstream.status, JSON.stringify(data).slice(0, 600));
       res.status(upstream.status).json({
         error: "De AI-dienst gaf een fout terug.",
         status: upstream.status,
       });
       return;
+    }
+
+    // Diagnose voor "lege uitvoer van de AI": als er geen bruikbaar tekstblok
+    // terugkomt, leg dan de stop_reason en de bloktypes vast in de logs.
+    const blokken = Array.isArray(data.content) ? data.content : [];
+    const heeftTekst = blokken.some((b) => b && b.type === "text" && b.text && b.text.trim());
+    if (!heeftTekst) {
+      console.error(
+        "anthropic-leeg",
+        "stop_reason=" + data.stop_reason,
+        "blokken=" + JSON.stringify(blokken.map((b) => b && b.type)),
+        "model=" + data.model
+      );
     }
 
     res.status(200).json(data);

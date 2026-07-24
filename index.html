@@ -1822,8 +1822,17 @@ async function ask(system, messages, tools, maxTokens){
     throw new Error(msg);
   }
   const d = await r.json();
-  const text = (d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
-  if(!text) throw new Error("lege uitvoer van de AI"); // laat askJSON opnieuw proberen i.p.v. JSON.parse("")
+  // Soms geeft de backend een 200 terug met een foutobject i.p.v. een bericht.
+  if(d && d.error){ throw new Error(typeof d.error==="string" ? d.error : (d.error.message||"AI-fout")); }
+  const blokken = Array.isArray(d.content) ? d.content : [];
+  const text = blokken.filter(b=>b.type==="text").map(b=>b.text||"").join("\n").trim();
+  if(!text){
+    // Maak de oorzaak zichtbaar i.p.v. één generieke melding: stop_reason en
+    // welke bloktypes er wél waren, zodat een refusal of afkapping herkenbaar is.
+    const reden = d.stop_reason ? (" (reden: "+d.stop_reason+")") : "";
+    const soorten = blokken.length ? (" [blokken: "+blokken.map(b=>b.type).join(",")+"]") : " [geen inhoud]";
+    throw new Error("lege uitvoer van de AI"+reden+soorten); // laat askJSON opnieuw proberen
+  }
   return text;
 }
 function bouwTranscript(){
@@ -1938,13 +1947,18 @@ $("toSummary").onclick = async () => {
 Vat de situatie van deze persoon samen als korte kaarten. Puur observerend, nul advies, geen scenario's, geen aanmoediging.
 Antwoord uitsluitend met geldige JSON, zonder markdown:
 {"kaarten":[{"label":"twee of drie woorden","tekst":"maximaal 18 woorden"}],"klap":"één zin van maximaal 20 woorden die het patroon benoemt"}
-Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 700);
+Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 1200);
     $("sumBody").innerHTML = `<div class="kaartjes">${(d.kaarten||[]).map(k=>
       `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
       ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}
       <p class="muted" style="margin-top:14px">Klopt dit beeld?</p>`;
     show("sumRow");
-  }catch(e){ $("sumBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; show("sumRow"); }
+  }catch(e){
+    $("sumBody").innerHTML = `<div class="err">${esc(e.message)}</div>
+      <button class="btn btn-ghost btn-sm" id="sumRetry" style="margin-top:12px">Opnieuw proberen</button>`;
+    const rb=$("sumRetry"); if(rb) rb.onclick=()=>$("toSummary").onclick();
+    show("sumRow");
+  }
 };
 
 $("toInsight").onclick = async () => {
@@ -1958,9 +1972,13 @@ $("toInsight").onclick = async () => {
 Geef het scherpste patroon uit deze intake. Geen advies, geen scenario's, geen aanmoediging. Benoem wat deze persoon zelf waarschijnlijk niet zo scherp had geformuleerd.
 Antwoord uitsluitend met geldige JSON:
 {"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden","spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"punten":[{"label":"twee of drie woorden","tekst":"maximaal 12 woorden"}]}
-Precies drie punten.`, bericht(), null, 600);
+Precies drie punten.`, bericht(), null, 1200);
     $("insBody").innerHTML = inzichtHtml(d);
-  }catch(e){ $("insBody").innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+  }catch(e){
+    $("insBody").innerHTML = `<div class="err">${esc(e.message)}</div>
+      <button class="btn btn-ghost btn-sm" id="insRetry" style="margin-top:12px">Opnieuw proberen</button>`;
+    const rb=$("insRetry"); if(rb) rb.onclick=()=>$("toInsight").onclick();
+  }
   $("unlock").disabled = false;
 };
 
