@@ -1207,7 +1207,7 @@
     <ul class="pop-lijst">
       <li><b>Geen account, geen mailadres.</b> Je begint meteen.</li>
       <li><b>Alleen op dit toestel.</b> Je antwoorden blijven hier, zodat je later verder kunt. Wij houden geen profiel over je bij.</li>
-      <li><b>Niemand leest mee.</b> Om je inzicht te maken gaan ze alleen anoniem naar de AI, en verder nergens heen, niet naar je werkgever of collega's.</li>
+      <li><b>Niemand leest mee.</b> Om je inzicht te maken gaan ze alleen anoniem naar de Deskshift AI engine, en verder nergens heen, niet naar je werkgever of collega's.</li>
       <li><b>Eén knop wist alles,</b> ook halverwege.</li>
     </ul>
     <p class="pop-slot">Wees dus gerust eerlijk. Hoe eerlijker je antwoordt, hoe scherper je uitkomst.</p>
@@ -2201,7 +2201,8 @@ function profielGetallen(){
   const slack = Math.max(0, contract - echt);
   const avonden = S.ant.avonden||0;
   let ruimte = Math.round(slack*0.6);          // binnen werktijd, blijft tijd van de werkgever
-  let eigen  = Math.round(avonden*1.2);         // eigen uren buiten werk
+  const eigenBasis = Math.round(avonden*1.2);   // eigen uren buiten werk (rauw, voor weergave)
+  let eigen  = eigenBasis;
   if(S.kalib.ritme==="sprint"){ ruimte = Math.round(ruimte*1.3); eigen = Math.round(eigen*1.8); }
   let beschikbaar = ruimte + eigen;
   const g = S.ant.grenzen||[];
@@ -2213,7 +2214,7 @@ function profielGetallen(){
   if(S.kalib.spijt==="gezicht") zichtTol -= 1;
   const rang = S.ant.rangorde||["Leren","Extra inkomen","Erkenning","Minder verveling"];
   const sweet = matrixData().filter(p=>p.x>.5&&p.y<.5).map(p=>p.naam);
-  return {beschikbaar:Math.max(2,beschikbaar), ruimte:ruimte, eigen:eigen, risicoTol:Math.max(1,risicoTol), zichtTol:Math.max(1,zichtTol), rang:rang, sweet:sweet};
+  return {beschikbaar:Math.max(2,beschikbaar), ruimte:ruimte, eigen:eigen, slack:slack, eigenBasis:eigenBasis, risicoTol:Math.max(1,risicoTol), zichtTol:Math.max(1,zichtTol), rang:rang, sweet:sweet};
 }
 const DRIJF = {inkomen:"Extra inkomen", leren:"Leren", erkenning:"Erkenning", prikkel:"Minder verveling"};
 function scoreKandidaat(k, P){
@@ -2388,7 +2389,7 @@ async function draaien(feedback){
         `<li><span class="plabel">${esc(k.label)}</span><span>${esc(k.tekst)}</span></li>`).join("")}</ul>
       <div class="pbagage"><span class="mono">Wat je al hebt liggen</span>
         ${(prof.bagage||[]).map(b=>`<span class="btag">${esc(b)}</span>`).join("")}</div>
-      <div class="mono" style="margin-top:16px;color:#BBC3B7;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${P.ruimte} uur ruimte in je werkweek en ${P.eigen} uur eigen tijd per week. Je sterkste drijfveer is ${esc(P.rang[0])}.</div>
+      <div class="mono" style="margin-top:16px;color:#BBC3B7;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${P.slack} uur ruimte in je werkweek en ${P.eigenBasis} uur eigen tijd per week. Je sterkste drijfveer is ${esc(P.rang[0])}.</div>
     </div>`;
 
     gangStap(["af","af","bezig",""]);
@@ -2452,11 +2453,15 @@ async function draaien(feedback){
       while($("scenBody").firstChild) zone.appendChild($("scenBody").firstChild);
       $("scenBody").appendChild(zone);
       const top = S.scenarios[0]||{};
+      const gelijkAanTop = S.scenarios.filter(x=>(x.totaal||0)===(top.totaal||0)).length;
+      const topKop = gelijkAanTop>1
+        ? `Je sterkste richtingen scoren ${top.totaal||"?"} van 100`
+        : `Je best passende richting scoort ${top.totaal||"?"} van 100`;
       const regels = S.scenarios.map((x,n)=>
         `<li><span class="lk"></span><span>Richting ${n+1}, met naam, doel en plan</span><em>pasvorm ${x.totaal||"?"}</em></li>`).join("");
       $("scenBody").insertAdjacentHTML("afterbegin", `<div class="paywall" id="paywall">
         <div class="mono" style="color:var(--limeL)">Je uitkomst is berekend</div>
-        <h2 style="margin:10px 0 10px">Je best passende richting scoort ${top.totaal||"?"} van 100</h2>
+        <h2 style="margin:10px 0 10px">${topKop}</h2>
         <p style="margin:0 0 6px">Gebaseerd op ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en de vier keuzes die je net maakte. Zes richtingen zijn tegen elkaar afgewogen, drie zijn overgebleven.</p>
         <ul class="pwlijst">
           ${regels}
