@@ -342,6 +342,13 @@
   .mailstatus{margin:10px 0 0;font-size:14px;min-height:18px;color:#CBD6C2}
   .slotcap{display:flex;gap:8px;align-items:center;justify-content:center;margin:18px 0 2px;color:var(--slate);font-size:13.5px;text-align:center}
   .slotcap svg{flex:0 0 15px;color:var(--slate)}
+  /* Bevestiging bovenaan na een geslaagde betaling */
+  .betaald-banner{display:flex;gap:12px;align-items:center;background:var(--ink);color:var(--chalk);border-radius:14px;padding:15px 18px;margin:0 0 18px;font-size:15px;line-height:1.4;animation:bbIn .5s var(--spring) both}
+  .betaald-banner b{color:var(--limeL)}
+  .bb-vink{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--lime);color:var(--limeT);display:flex;align-items:center;justify-content:center;animation:bbPuls 2.4s ease-in-out 1.2s 2}
+  @keyframes bbIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+  @keyframes bbPuls{0%,100%{box-shadow:0 0 0 0 rgba(123,150,105,0)}35%{box-shadow:0 0 0 8px rgba(123,150,105,.25)}}
+  @media (prefers-reduced-motion:reduce){.betaald-banner,.bb-vink{animation:none}}
   .ontgrendeld{display:flex;gap:12px;align-items:flex-start;background:var(--lime);border-radius:14px;padding:16px 18px;margin:0 0 20px;font-size:15px;line-height:1.45;color:var(--limeT);box-shadow:0 12px 30px rgba(191,227,95,.25)}
   .ontgrendeld b{color:var(--ink)}
   .og-vink{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--lime);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;margin-top:1px}
@@ -1183,7 +1190,7 @@
       <div class="prijs-links">
         <div class="mono">Wat het kost, en wat er letterlijk op je scherm staat</div>
         <div class="price-groot" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
-        <p class="prijs-onder" style="margin:0 0 12px">Eenmalig. Geen abonnement, geen account, geen upsell.</p>
+        <p class="prijs-onder" style="margin:0 0 12px">Eenmalig, inclusief 21% btw. Geen abonnement, geen account, geen upsell.</p>
         <p class="prijs-onder" style="margin:0 0 18px;line-height:1.5">Ter vergelijking: een uur loopbaancoaching kost al snel meer dan dit hele plan. Dit is niet het eindpunt, het is de eerste stap naar je volgende richting.</p>
         <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
         <p class="micro" style="color:#AFC2A4;margin:12px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
@@ -2332,6 +2339,20 @@ function profielHtml(prof, P){
   </div>`;
 }
 
+// Banner bovenaan na een geslaagde betaling. Alleen na een echte, server-side
+// bevestigde betaling, dus niet bij het ontgrendelen in testmodus.
+function toonBetaalBanner(){
+  if(document.getElementById("betaaldBanner")) return;
+  const sec = document.getElementById("scenarios");
+  if(!sec) return;
+  sec.insertAdjacentHTML("afterbegin", `<div class="betaald-banner" id="betaaldBanner" role="status">
+    <span class="bb-vink" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <div><b>Betaling geslaagd.</b> Je hebt volledige toegang tot je uitkomst.</div>
+  </div>`);
+}
+
 // Ná de betaling: werk de drie richtingen nu volledig uit (dat sparen we bij
 // niet-betalers uit), toon ze zichtbaar en zet de mail- en herzien-opties aan.
 async function ontgrendel(){
@@ -2370,6 +2391,22 @@ async function ontgrendel(){
 
 /* ---------- betaling via Stripe ---------- */
 const BETAAL_KEY = "deskshift_betaal_v1";
+const CODE_KEY = "deskshift_code_v1";
+// Verborgen kortingslink: wie binnenkomt via ?code=XYZ krijgt die korting bij het
+// afrekenen, zonder dat er ergens een kortingsveld zichtbaar is. De code wordt
+// bewaard voor deze sessie, want de intake duurt langer dan één paginaweergave.
+function vangKortingscode(){
+  let u; try{ u = new URL(window.location.href); }catch(e){ return; }
+  const c = (u.searchParams.get("code")||"").trim();
+  if(!c) return;
+  if(/^[A-Za-z0-9_-]{1,64}$/.test(c)){ try{ sessionStorage.setItem(CODE_KEY, c); }catch(e){} }
+  // Uit de adresbalk halen, zodat de code niet per ongeluk wordt doorgestuurd.
+  u.searchParams.delete("code");
+  try{ history.replaceState(null,"", u.pathname + (u.search||"")); }catch(e){}
+}
+function leesKortingscode(){
+  try{ return sessionStorage.getItem(CODE_KEY) || ""; }catch(e){ return ""; }
+}
 // Bewaar de uitkomst kort, zodat die na terugkeer van Stripe hersteld kan worden
 // (de pagina herlaadt en het werkgeheugen is dan leeg).
 function bewaarBetaalSnapshot(){
@@ -2409,7 +2446,8 @@ async function startBetaling(){
   try{
     if(bk) bk.disabled = true; zet("Veilig betalen openen…");
     bewaarBetaalSnapshot();
-    const r = await fetch("/api/checkout", {method:"POST", headers:{"Content-Type":"application/json"}, body:"{}"});
+    const r = await fetch("/api/checkout", {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ code: leesKortingscode() })});
     const d = await r.json().catch(()=>({}));
     if(!r.ok || !d.url) throw new Error(d.error || "Betaling kon niet worden gestart.");
     window.location.href = d.url;
@@ -2442,6 +2480,7 @@ async function checkBetaalTerugkeer(){
     herstelState(snap); wisBetaalSnapshot();
     naarScenarios();
     await ontgrendel();
+    toonBetaalBanner();
     return true;
   }
   if(paid && !snap){
@@ -2449,6 +2488,7 @@ async function checkBetaalTerugkeer(){
     // opslag gewist, of de tab is te lang oud). Niet stilzwijgend naar de landing:
     // laat weten dat de betaling gelukt is en hoe ze alsnog hun rapport krijgen.
     naarScenarios();
+    toonBetaalBanner();
     if($("profielBox")) $("profielBox").innerHTML = "";
     if($("scenBody")) $("scenBody").innerHTML = `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Je betaling is gelukt.</b> We konden je uitkomst op dit toestel niet automatisch terugvinden. Dat gebeurt als je in een andere browser terugkomt dan waarin je de intake deed. Open deze pagina opnieuw in die browser, dan staat je uitkomst er nog en wordt hij alsnog ontgrendeld.</div></div>`;
     return false;
@@ -2753,7 +2793,7 @@ function toonRichtingen(){
           <li><span class="lk"></span><span>Berichten die je meteen kunt versturen</span></li>
         </ul>
         <button class="btn btn-lime pw-knop" id="betaalKnop"><span>Ontgrendel mijn drie richtingen</span><b>€25</b></button>
-        <p class="pw-onder">Eenmalig. Geen abonnement, geen account. Meteen in beeld.</p>
+        <p class="pw-onder">Eenmalig, inclusief 21% btw. Geen abonnement, geen account. Meteen in beeld.</p>
         <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Je antwoorden staan alleen in dit venster. Ga je nu weg, dan begin je straks weer bij vraag één.</span></p>
       </div>`);
     const _pw = document.getElementById("paywall");
@@ -3202,7 +3242,9 @@ function aflevering(p, s){
   setTimeout(function(){ els.forEach(function(el){ el.classList.add("in"); }); }, 1600);
 })();
 
-// Terugkeer van de Stripe-betaalpagina afhandelen (moet ná alle definities, want
-// het leunt op BETAAL_KEY en de render-functies hierboven).
+// Kortingscode uit de link opvangen en de terugkeer van de Stripe-betaalpagina
+// afhandelen. Moet ná alle definities, want dit leunt op de sleutels en de
+// render-functies hierboven.
+try{ vangKortingscode(); }catch(e){}
 try{ checkBetaalTerugkeer(); }catch(e){}
 </script>

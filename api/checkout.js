@@ -76,9 +76,32 @@ export default async function handler(req, res) {
   ) >= 0;
   const promoAan = !promoUit;
 
+  // Kortingscode uit de link, meegestuurd door de browser.
+  let body = req.body;
+  if (typeof body === "string") {
+    if (body.length > 4000) { res.status(413).json({ error: "Verzoek te groot." }); return; }
+    try { body = JSON.parse(body); } catch { body = {}; }
+  }
+  const kortingscode = String((body && body.code) || "").trim();
+
   const basis = siteBasis(req);
 
-  function bouwParams(metPrijsId) {
+  // Verborgen kortingslink: de bezoeker komt binnen via ?code=XYZ. We zoeken die
+  // code server-side op, want Stripe wil bij discounts een promotiecode-id
+  // (promo_...) en niet de tekst die de klant intypt. Bestaat de code niet of is
+  // hij niet meer actief, dan gaat de betaling gewoon zonder korting door.
+  async function zoekPromoId(tekst) {
+    if (!tekst || !/^[A-Za-z0-9_-]{1,64}$/.test(tekst)) return null;
+    try {
+      const url = "https://api.stripe.com/v1/promotion_codes?limit=1&active=true&code=" + encodeURIComponent(tekst);
+      const r = await fetch(url, { headers: { Authorization: "Bearer " + key } });
+      const d = await r.json().catch(() => ({}));
+      const eerste = r.ok && Array.isArray(d.data) ? d.data[0] : null;
+      return eerste && eerste.id ? eerste.id : null;
+    } catch (e) { return null; }
+  }
+
+  function bouwParams(metPrijsId, promoId) {
     const p = new URLSearchParams();
     p.append("mode", "payment");
     p.append("success_url", basis + "/?betaald=1&sid={CHECKOUT_SESSION_ID}");
@@ -87,9 +110,15 @@ export default async function handler(req, res) {
     // betaalmethoden die in het Dashboard aanstaan (card, iDEAL, ...). Dat voorkomt
     // een harde fout als iDEAL nog niet geactiveerd is.
     p.append("locale", "nl");
-    // Invoerveld voor een kortingscode op de betaalpagina. Standaard aan; zet de
-    // environment variable STRIPE_PROMO_CODES op "uit" om het veld te verbergen.
-    if (promoAan) p.append("allow_promotion_codes", "true");
+    // Let op: Stripe staat discounts en allow_promotion_codes niet samen toe.
+    // Is er via de link al een korting toegepast, dan geen invoerveld tonen.
+    if (promoId) {
+      p.append("discounts[0][promotion_code]", promoId);
+    } else if (promoAan) {
+      // Invoerveld voor een kortingscode. Standaard aan; zet de environment
+      // variable STRIPE_PROMO_CODES op "uit" om het veld te verbergen.
+      p.append("allow_promotion_codes", "true");
+    }
     p.append("line_items[0][quantity]", "1");
     if (metPrijsId) {
       p.append("line_items[0][price]", metPrijsId);
@@ -112,8 +141,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Kwam de bezoeker binnen via een kortingslink? Dan die korting toepassen.
+    const promoId = await zoekPromoId(kortingscode);
+
     // Eerst met het product uit de Stripe-catalogus, als er een prijs-id is.
-    let poging = prijsId ? await maakSessie(bouwParams(prijsId)) : null;
+    let poging = prijsId ? await maakSessie(bouwParams(prijsId, promoId)) : null;
 
     // Een prijs-id hoort bij één modus: een live-prijs bestaat niet onder een
     // test-sleutel en omgekeerd. Mislukt het daarop, val dan terug op de prijs
@@ -122,7 +154,7 @@ export default async function handler(req, res) {
       console.error("stripe-prijsid-mislukt", poging.status, JSON.stringify(poging.data).slice(0, 300));
       poging = null;
     }
-    if (!poging) poging = await maakSessie(bouwParams(null));
+    if (!poging) poging = await maakSessie(bouwParams(null, promoId));
 
     if (!poging.ok) {
       console.error("stripe-checkout-fout", poging.status, JSON.stringify(poging.data).slice(0, 400));
