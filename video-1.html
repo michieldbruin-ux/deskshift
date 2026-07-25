@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Deskshift video 1</title>
+<!--
+  Losstaand bestand voor een schermopname. Niets uit dit bestand wordt door de
+  site gebruikt. Open het in de browser en het speelt vanzelf af.
+
+  Het doek is exact 1080 bij 1920 pixels. Past dat niet in je venster, dan wordt
+  het als geheel verkleind naar het midden van het scherm, met exact dezelfde
+  verhouding, zodat je opname nooit bijgesneden hoeft te worden.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#404E3B;      /* donkergroen */
+    --sage:#7B9669;     /* salie */
+    --paper:#E6E6E6;    /* warme lichte achtergrond */
+    --wit:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+
+  /* Het doek: vaste 1080x1920, geschaald naar het venster zonder de verhouding
+     te veranderen. De schaal wordt door het script gezet. */
+  #doek{
+    width:1080px;height:1920px;flex:0 0 auto;position:relative;overflow:hidden;
+    background:var(--paper);
+    transition:background-color .85s cubic-bezier(.4,0,.2,1);
+    transform-origin:center center;
+  }
+  #doek.donker{background:var(--ink)}
+
+  /* Elke regel ligt gestapeld in het midden en wordt per stuk in- en uitgefaded. */
+  .regel{
+    position:absolute;left:0;right:0;top:50%;
+    padding:0 104px;
+    transform:translateY(-50%);
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;
+    font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+    font-variation-settings:"wdth" 112;
+    font-weight:800;
+    letter-spacing:-.025em;
+    line-height:1.04;
+    font-size:132px;
+    color:var(--ink);
+    opacity:0;
+    pointer-events:none;
+    will-change:opacity,transform;
+  }
+  .regel.wit{color:var(--wit)}
+  .regel.salie{color:var(--sage)}
+  .regel.klein{font-size:96px;line-height:1.1;letter-spacing:-.02em}
+
+  /* In: zacht opkomen en 20px omhoog. Uit: zacht wegvallen. */
+  .regel.in{animation:regelIn .85s cubic-bezier(.22,.61,.36,1) forwards}
+  .regel.uit{animation:regelUit .5s cubic-bezier(.4,0,1,1) forwards}
+  @keyframes regelIn{
+    from{opacity:0;transform:translateY(calc(-50% + 20px))}
+    to{opacity:1;transform:translateY(-50%)}
+  }
+  @keyframes regelUit{
+    from{opacity:1;transform:translateY(-50%)}
+    to{opacity:0;transform:translateY(calc(-50% - 10px))}
+  }
+
+  /* Slotscherm: de regel plus het woordmerk eronder. */
+  .slot{display:block}
+  .slot .zin{display:block}
+  .merk{
+    display:flex;align-items:center;justify-content:center;gap:18px;
+    margin-top:64px;font-size:64px;font-weight:700;letter-spacing:-.01em;color:var(--ink);
+  }
+  .merk .licht{font-weight:500;color:#4F6360}
+  .merk svg{display:block;width:1.2em;height:1.2em;flex:0 0 auto}
+</style>
+</head>
+<body>
+<div id="doek">
+
+  <!-- 1.0s  De opening, twee korte regels op licht -->
+  <div class="regel" data-in="1.0" data-uit="3.3">Je vak is niet te zwaar.</div>
+  <div class="regel" data-in="3.5" data-uit="5.8">Het is te klein.</div>
+
+  <!-- 6.5s  Op donker -->
+  <div class="regel wit" data-in="6.5" data-uit="8.8">Je capaciteit groeit door.</div>
+  <div class="regel wit" data-in="9.0" data-uit="11.3">Je opdracht niet.</div>
+  <div class="regel wit" data-in="12.0" data-uit="14.3">Dat gat is geen luiheid.</div>
+  <div class="regel salie" data-in="14.5" data-uit="16.8">Het is een tekort aan uitdaging.</div>
+
+  <!-- 17.5s  Terug naar licht -->
+  <div class="regel klein" data-in="17.5" data-uit="19.3">Deskshift maakt dat gat zichtbaar,<br>en zet er een plan op.</div>
+
+  <!-- 19.5s  Slotscherm, blijft staan -->
+  <div class="regel slot" data-in="19.5">
+    <span class="zin">Gratis inzicht.<br>Link in bio.</span>
+    <span class="merk">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <rect x="0" y="10" width="62" height="32" fill="#404E3B"></rect>
+        <rect x="38" y="58" width="62" height="32" fill="#7B9669"></rect>
+      </svg>
+      <span>Desk<span class="licht">shift</span></span>
+    </span>
+  </div>
+</div>
+
+<script>
+(function(){
+  var doek = document.getElementById("doek");
+
+  // Schaal het doek naar het venster, met behoud van 1080x1920. Zo hoef je de
+  // opname niet bij te snijden: wat je ziet is exact de juiste verhouding.
+  function schaal(){
+    // Nooit boven 1 opschalen: dan blijft de tekst haarscherp op 1080 breed.
+    var s = Math.min(1, window.innerWidth / 1080, window.innerHeight / 1920);
+    doek.style.transform = "scale(" + s + ")";
+  }
+  schaal();
+  window.addEventListener("resize", schaal);
+
+  // De achtergrond wisselt op deze momenten (seconden).
+  var achtergrond = [
+    { op: 6.0,  donker: true  },  // na "Het is te klein."
+    { op: 17.0, donker: false }   // voor het slotdeel
+  ];
+
+  // Wacht tot het lettertype er is, anders begint de animatie met een
+  // terugvalletter en zie je halverwege de tekst verspringen.
+  var start = function(){
+    var regels = [].slice.call(document.querySelectorAll(".regel"));
+    regels.forEach(function(el){
+      var inTijd  = parseFloat(el.getAttribute("data-in"));
+      var uitTijd = el.getAttribute("data-uit");
+      setTimeout(function(){ el.classList.add("in"); }, inTijd * 1000);
+      if(uitTijd !== null){
+        setTimeout(function(){
+          el.classList.remove("in");
+          el.classList.add("uit");
+        }, parseFloat(uitTijd) * 1000);
+      }
+    });
+    achtergrond.forEach(function(a){
+      setTimeout(function(){ doek.classList.toggle("donker", a.donker); }, a.op * 1000);
+    });
+  };
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ setTimeout(start, 60); });
+    // Vangnet: mocht het lettertype blijven hangen, begin dan alsnog.
+    setTimeout(function(){ if(!document.querySelector(".regel.in")) start(); }, 2500);
+  } else {
+    setTimeout(start, 200);
+  }
+})();
+</script>
+</body>
+</html>

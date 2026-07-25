@@ -720,7 +720,24 @@
   .prijskol li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--petrol)}
   .prijskol li::before{content:"";position:absolute;left:2px;top:12px;width:8px;height:8px;border-radius:50%;background:var(--limeE)}
 
-  .railtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+  .railtop{display:flex;justify-content:flex-start;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+  /* Merk in de kop van de intake. Op mobiel alleen het teken, zodat het geen
+     regel extra kost naast de twee knoppen die daar toch al krap zitten. */
+  .railmerk{display:inline-flex;align-items:center;gap:8px;font-family:"Archivo",sans-serif;
+    font-variation-settings:"wdth" 112;font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+  .railmerk .mark{width:1.15em;height:1.15em;flex:0 0 auto}
+  .railmerk .rm-l{font-weight:500;color:var(--petrol)}
+  .railtop .wisbtn{margin-left:auto}
+  /* Smal scherm: alleen het teken, en het past niet gecentreerd naast de twee
+     knoppen, dus dan staat het gewoon in de regel mee. */
+  @media(max-width:639px){.railmerk .rm-w{display:none}}
+  /* Ruim genoeg: knoppen links en rechts, het merk precies in het midden. */
+  @media(min-width:640px){
+    .railtop{display:grid;grid-template-columns:1fr auto 1fr;gap:12px}
+    .railtop .homebtn{justify-self:start}
+    .railtop .railmerk{justify-self:center}
+    .railtop .wisbtn{justify-self:end;margin-left:0}
+  }
   .homebtn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease),transform .12s var(--ease)}
   .homebtn:active{transform:scale(.97)}
   @media(hover:hover){.homebtn:hover{border-color:var(--ink);background:var(--veld)}}
@@ -1299,7 +1316,7 @@
     <h2 id="sortPopTitel">Let op: twee verschillende vragen</h2>
     <ul class="pop-lijst">
       <li><b>Eerst:</b> waar ben je goed in?</li>
-      <li><b>Daarna:</b> wat doe je graag?</li>
+      <li><b>Daarna:</b> wat vind je leuk om te doen?</li>
     </ul>
     <p class="pop-slot">Goed kunnen en leuk vinden zijn niet hetzelfde. We leggen je twee antwoorden over elkaar en zoeken waar ze allebei samenvallen. Daar zit je richting.</p>
     <button class="btn btn-lime btn-hero" id="sortPopOk">Duidelijk</button>
@@ -1352,6 +1369,10 @@
   <div class="rail">
     <div class="railtop">
       <button class="homebtn" id="homeBtn" type="button" aria-label="Terug naar de startpagina"><span aria-hidden="true">‹</span> Terug naar start</button>
+      <span class="railmerk" aria-label="Deskshift">
+        <svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect x="0" y="10" width="62" height="32" fill="#404E3B"/><rect x="38" y="58" width="62" height="32" fill="#7B9669"/></svg>
+        <span class="rm-w" aria-hidden="true">Desk<span class="rm-l">shift</span></span>
+      </span>
       <button class="wisbtn" id="exitBtn" type="button" aria-label="Verwijder mijn data en stop"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Verwijder mijn data</button>
     </div>
     <div class="railbalk"><span id="railvul"></span></div>
@@ -1533,7 +1554,7 @@ const SECTIES = [
     stappen:[
       {id:"energie",type:"dual",vraag:"Hoeveel energie heb je aan het begin en aan het eind van een werkdag?",hint:"Cijfer van 1 tot 10 voor een gemiddelde dag.",a:{label:"Bij het begin",def:7},b:{label:"Aan het eind",def:5}},
       {id:"skill",type:"strip",vraag:"Waar ben je goed in?",hint:"Onderwerpen uit jouw werk als {functie}, plus een paar algemene. Zet elke schuif naar links of rechts, alleen bij wat je herkent.",links:"hier ben ik niet goed in",rechts:"hier ben ik goed in",bron:"skill"},
-      {id:"energiekaart",type:"strip",vraag:"En wat doe je graag?",hint:"Dezelfde onderwerpen, nu op plezier. Straks leg ik beide antwoorden over elkaar.",links:"doe ik met tegenzin",rechts:"doe ik graag, krijg er energie van",bron:"energie"},
+      {id:"energiekaart",type:"strip",vraag:"En wat vind je leuk om te doen?",hint:"Dezelfde onderwerpen, nu op plezier. Straks leg ik beide antwoorden over elkaar.",links:"vind ik niet leuk",rechts:"vind ik leuk, krijg er energie van",bron:"energie"},
       {id:"benaderd",type:"longtext",vraag:"Waar benaderen collega's je spontaan voor, ook al hoort het niet bij je functie?",hint:"Geen idee? Schrijf dan gerust: geen idee."}
     ]},
 
@@ -2084,7 +2105,7 @@ function matrixTeken(el){
       <div class="axis v"></div><div class="axis h"></div>
       <span class="qdlabel">goed in en leuk</span>
       <span class="axl t">goed in</span><span class="axl b">niet goed in</span>
-      <span class="axl l">met tegenzin</span><span class="axl r">doe ik graag</span>
+      <span class="axl l">niet leuk</span><span class="axl r">wel leuk</span>
       ${d.map(p=>`<span class="chip${p.x>.5&&p.y<.5?" hot":""}" style="left:${(p.x*100).toFixed(1)}%;top:${(p.y*100).toFixed(1)}%">${esc(p.naam)}</span>`).join("")}
     </div>
     <p class="muted" style="margin-top:8px;font-size:13px">De plek van elk onderwerp is jouw eigen plaatsing. Alleen waar onderwerpen elkaar overlapten, zijn ze binnen hetzelfde vak iets verschoven.</p>
@@ -2167,7 +2188,7 @@ function bouwTranscript(){
   const d = matrixData();
   const sweet = d.filter(p=>p.x>.5&&p.y<.5).map(p=>p.naam);
   const val   = d.filter(p=>p.x<=.5&&p.y<.5).map(p=>p.naam);
-  t += `\n[OVERLAP UIT DE TWEE SORTERINGEN]\nGoed in en doet de gebruiker graag: ${sweet.join(", ")||"geen"}\nGoed in maar doet de gebruiker met tegenzin: ${val.join(", ")||"geen"}\n`;
+  t += `\n[OVERLAP UIT DE TWEE SORTERINGEN]\nGoed in en vindt de gebruiker leuk: ${sweet.join(", ")||"geen"}\nGoed in maar vindt de gebruiker niet leuk: ${val.join(", ")||"geen"}\n`;
   if(S.cvTekst) t += `\n[PROFIELTEKST]\n${S.cvTekst.slice(0,4000)}\n`;
   S.transcript = t;
 }
@@ -2776,13 +2797,13 @@ Je bent loopbaancoach. Bedenk zes richtingen voor de komende maanden: twee binne
 Belangrijk voor het niveau:
 - Denk in richtingen en thema's, niet in tools of techniek. Geen software, platformen of automatiseringspakketten noemen, tenzij de persoon ze zelf noemde als interesse.
 - Een richting beschrijft wat voor werk iemand gaat doen en wat het hem oplevert, bijvoorbeeld "intern begeleider worden voor nieuwe collega's" of "een tweede vakgebied opbouwen naast je huidige".
-- Sluit aan bij wat deze persoon goed kan en graag doet: ${P.sweet.join(", ")||"onbekend"}.
+- Sluit aan bij wat deze persoon goed kan en leuk vindt: ${P.sweet.join(", ")||"onbekend"}.
 - Elke richting moet binnen zes weken een eerste zichtbaar resultaat kunnen opleveren.
 - Deze persoon ziet op zijn scherm dat er ongeveer ${P.slack} uur ruimte in de werkweek zit en ongeveer ${P.eigenBasis} uur eigen tijd per week. Noem geen andere getallen dan deze twee, anders spreekt je tekst het scherm tegen. Reken er intern wel op dat daarvan realistisch ongeveer ${P.ruimte} uur in de werkweek en ${P.eigen} uur eigen tijd echt besteed kan worden, want niet alle ruimte is vrij te besteden. Ruimte binnen de werkweek blijft tijd van de werkgever: daar past leren, verkennen of iets opbouwen dat het werk ook dient. Alles wat puur voor eigen rekening is, hoort in de eigen uren.
 ${feedback?("\nDe gebruiker gaf deze correctie op een eerdere poging. Neem die zwaar mee en wijk echt af van de vorige richting: "+feedback):""}
 
 Antwoord uitsluitend met geldige JSON:
-{"kandidaten":[{"titel":"maximaal 5 woorden, geen jargon","type":"taakverrijking|leren|zijproject","pitch":"één zin, maximaal 16 woorden, in de je-vorm, wat je gaat doen en wat het oplevert","uren":getal uren per week,"risico":1 tot 5,"zichtbaarheid":1 tot 5,"levert":"inkomen|leren|erkenning|prikkel","sterktes":["taak die deze persoon goed kan en graag doet","nog een"],"horizonWeken":getal}]}
+{"kandidaten":[{"titel":"maximaal 5 woorden, geen jargon","type":"taakverrijking|leren|zijproject","pitch":"één zin, maximaal 16 woorden, in de je-vorm, wat je gaat doen en wat het oplevert","uren":getal uren per week,"risico":1 tot 5,"zichtbaarheid":1 tot 5,"levert":"inkomen|leren|erkenning|prikkel","sterktes":["taak die deze persoon goed kan en leuk vindt","nog een"],"horizonWeken":getal}]}
 Precies zes kandidaten, alle drie de types vertegenwoordigd.`;
 }
 
