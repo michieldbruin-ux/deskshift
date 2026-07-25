@@ -1,0 +1,5 @@
+# Alleen nodig voor het opnemen van de video, niet voor de site
+node_modules/
+
+# Uitvoer van record-video.js, opnieuw te maken met: node record-video.js
+deskshift-video1.mp4

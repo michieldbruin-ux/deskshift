@@ -30,10 +30,14 @@
   #doek{
     width:1080px;height:1920px;flex:0 0 auto;position:relative;overflow:hidden;
     background:var(--paper);
-    transition:background-color .85s cubic-bezier(.4,0,.2,1);
     transform-origin:center center;
   }
-  #doek.donker{background:var(--ink)}
+  /* De achtergrondwissel is een animatie en geen transition, zodat een opname
+     hem net als de tekst op een exact tijdstip kan stilzetten. */
+  #doek.naarDonker{animation:bgDonker .85s cubic-bezier(.4,0,.2,1) both}
+  #doek.naarLicht{animation:bgLicht .85s cubic-bezier(.4,0,.2,1) both}
+  @keyframes bgDonker{from{background-color:#E6E6E6}to{background-color:#404E3B}}
+  @keyframes bgLicht{from{background-color:#404E3B}to{background-color:#E6E6E6}}
 
   /* Elke regel ligt gestapeld in het midden en wordt per stuk in- en uitgefaded. */
   .regel{
@@ -123,16 +127,14 @@
   schaal();
   window.addEventListener("resize", schaal);
 
+  var IN_DUUR = 0.85, UIT_DUUR = 0.5, BG_DUUR = 0.85;
+  var IN_EASE = "cubic-bezier(.22,.61,.36,1)", UIT_EASE = "cubic-bezier(.4,0,1,1)";
   // De achtergrond wisselt op deze momenten (seconden).
-  var achtergrond = [
-    { op: 6.0,  donker: true  },  // na "Het is te klein."
-    { op: 17.0, donker: false }   // voor het slotdeel
-  ];
+  var BG_DONKER_OP = 6.0, BG_LICHT_OP = 17.0;
+  var regels = [].slice.call(document.querySelectorAll(".regel"));
 
-  // Wacht tot het lettertype er is, anders begint de animatie met een
-  // terugvalletter en zie je halverwege de tekst verspringen.
+  // Normale weergave: de animatie loopt op de klok, met setTimeout.
   var start = function(){
-    var regels = [].slice.call(document.querySelectorAll(".regel"));
     regels.forEach(function(el){
       var inTijd  = parseFloat(el.getAttribute("data-in"));
       var uitTijd = el.getAttribute("data-uit");
@@ -144,17 +146,57 @@
         }, parseFloat(uitTijd) * 1000);
       }
     });
-    achtergrond.forEach(function(a){
-      setTimeout(function(){ doek.classList.toggle("donker", a.donker); }, a.op * 1000);
-    });
+    setTimeout(function(){ doek.classList.add("naarDonker"); }, BG_DONKER_OP * 1000);
+    setTimeout(function(){
+      doek.classList.remove("naarDonker");
+      doek.classList.add("naarLicht");
+    }, BG_LICHT_OP * 1000);
   };
 
+  // Regie-stand voor een opname: zet het beeld stil op een exact tijdstip.
+  // Een negatieve animation-delay met play-state paused geeft precies het beeld
+  // op dat punt in dezelfde keyframes, dus zonder de easing na te bouwen.
+  function bevries(el, naam, duur, easing, positie){
+    el.style.animation = "none";
+    void el.offsetWidth; // forceer herberekening, anders pakt hij de oude waarde
+    el.style.animation = naam + " " + duur + "s " + easing + " " + (-positie) + "s 1 both paused";
+  }
+  window.zetFrame = function(t){
+    regels.forEach(function(el){
+      el.classList.remove("in", "uit");
+      var inT  = parseFloat(el.getAttribute("data-in"));
+      var uitA = el.getAttribute("data-uit");
+      var uitT = uitA === null ? Infinity : parseFloat(uitA);
+      if(t < inT){ el.style.animation = "none"; el.style.opacity = 0; return; }
+      el.style.opacity = "";
+      if(t < inT + IN_DUUR)      bevries(el, "regelIn",  IN_DUUR,  IN_EASE,  t - inT);
+      else if(t < uitT)          bevries(el, "regelIn",  IN_DUUR,  IN_EASE,  IN_DUUR);
+      else if(t < uitT + UIT_DUUR) bevries(el, "regelUit", UIT_DUUR, UIT_EASE, t - uitT);
+      else { el.style.animation = "none"; el.style.opacity = 0; }
+    });
+    doek.classList.remove("naarDonker", "naarLicht");
+    if(t < BG_DONKER_OP){ doek.style.animation = "none"; doek.style.backgroundColor = "#E6E6E6"; }
+    else if(t < BG_DONKER_OP + BG_DUUR){ doek.style.backgroundColor = ""; bevries(doek, "bgDonker", BG_DUUR, "cubic-bezier(.4,0,.2,1)", t - BG_DONKER_OP); }
+    else if(t < BG_LICHT_OP){ doek.style.animation = "none"; doek.style.backgroundColor = "#404E3B"; }
+    else if(t < BG_LICHT_OP + BG_DUUR){ doek.style.backgroundColor = ""; bevries(doek, "bgLicht", BG_DUUR, "cubic-bezier(.4,0,.2,1)", t - BG_LICHT_OP); }
+    else { doek.style.animation = "none"; doek.style.backgroundColor = "#E6E6E6"; }
+  };
+
+  // Met ?regie in de url begint de animatie niet zelf; dan bepaalt het
+  // opnamescript per frame welk tijdstip getoond wordt.
+  var regie = /(\?|&)regie\b/.test(window.location.search);
+  window.klaarVoorRegie = false;
+
+  function gereed(){
+    if(regie){ window.zetFrame(0); window.klaarVoorRegie = true; }
+    else { start(); }
+  }
   if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(function(){ setTimeout(start, 60); });
+    document.fonts.ready.then(function(){ setTimeout(gereed, 60); });
     // Vangnet: mocht het lettertype blijven hangen, begin dan alsnog.
-    setTimeout(function(){ if(!document.querySelector(".regel.in")) start(); }, 2500);
+    setTimeout(function(){ if(!regie && !document.querySelector(".regel.in")) start(); }, 2500);
   } else {
-    setTimeout(start, 200);
+    setTimeout(gereed, 200);
   }
 })();
 </script>
