@@ -40,9 +40,11 @@
   @keyframes bgLicht{from{background-color:#404E3B}to{background-color:#E6E6E6}}
 
   /* Elke regel ligt gestapeld in het midden en wordt per stuk in- en uitgefaded. */
+  /* Veilige zone. Instagram legt bij een Reel rechts een knoppenbalk en onderin
+     de caption over de video heen. De tekst staat daarom in het bruikbare vak,
+     niet midden in het hele frame. */
   .regel{
-    position:absolute;left:0;right:0;top:50%;
-    padding:0 104px;
+    position:absolute;left:72px;right:216px;top:45%;
     transform:translateY(-50%);
     display:flex;align-items:center;justify-content:center;
     text-align:center;
@@ -51,7 +53,7 @@
     font-weight:800;
     letter-spacing:-.025em;
     line-height:1.04;
-    font-size:132px;
+    font-size:116px;
     color:var(--ink);
     opacity:0;
     pointer-events:none;
@@ -59,7 +61,7 @@
   }
   .regel.wit{color:var(--wit)}
   .regel.salie{color:var(--sage)}
-  .regel.klein{font-size:96px;line-height:1.1;letter-spacing:-.02em}
+  .regel.klein{font-size:86px;line-height:1.12;letter-spacing:-.02em}
 
   /* In: zacht opkomen en 20px omhoog. Uit: zacht wegvallen. */
   .regel.in{animation:regelIn .85s cubic-bezier(.22,.61,.36,1) forwards}
@@ -78,7 +80,7 @@
   .slot .zin{display:block}
   .merk{
     display:flex;align-items:center;justify-content:center;gap:18px;
-    margin-top:64px;font-size:64px;font-weight:700;letter-spacing:-.01em;color:var(--ink);
+    margin-top:52px;font-size:56px;font-weight:700;letter-spacing:-.01em;color:var(--ink);
   }
   .merk .licht{font-weight:500;color:#4F6360}
   .merk svg{display:block;width:1.2em;height:1.2em;flex:0 0 auto}
