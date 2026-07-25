@@ -12,3 +12,14 @@ content/instagram/*.mp4
 content/instagram/*.png
 content/tiktok/*.mp4
 content/tiktok/*.png
+
+# Kopieen van content/CONTENTPLAN.md en content/contentplan.csv, meegepakt in de
+# downloadmappen. Het origineel staat wel in de repo.
+content/instagram/CONTENTPLAN.md
+content/instagram/contentplan.csv
+content/tiktok/CONTENTPLAN.md
+content/tiktok/contentplan.csv
+
+# Downloadmappen voor het inplannen van de posts, gemaakt uit het bovenstaande
+deskshift-instagram.zip
+deskshift-tiktok.zip
