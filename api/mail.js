@@ -54,9 +54,10 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Mail is duurder om te misbruiken: houd het strak. Max 3 per minuut en 12 per
-  // uur per IP; ruim genoeg voor een echte gebruiker die twee mails wil sturen.
-  if (teVaak(clientIp(req), [{ max: 3, ms: 60000 }, { max: 12, ms: 3600000 }])) {
+  // Mail is duurder om te misbruiken: houd het strak. Max 4 per minuut en 12 per
+  // uur per IP; een rapportmail plant er in dezelfde minuut twee opvolgers bij,
+  // en dan moet een tweede rapportpoging niet meteen tegen de limiet lopen.
+  if (teVaak(clientIp(req), [{ max: 4, ms: 60000 }, { max: 12, ms: 3600000 }])) {
     res.setHeader("Retry-After", "60");
     res.status(429).json({ error: "Even te veel verzoeken. Wacht een minuut en probeer het opnieuw." });
     return;
@@ -77,7 +78,7 @@ export default async function handler(req, res) {
   }
   body = body || {};
 
-  const { email, onderwerp, html } = body;
+  const { email, onderwerp, html, scheduledAt } = body;
   if (!geldigMail(email)) { res.status(400).json({ error: "Ongeldig e-mailadres." }); return; }
   if (typeof html !== "string" || !html || html.length > 200000) {
     res.status(400).json({ error: "Ongeldige of te grote inhoud." });
@@ -85,16 +86,30 @@ export default async function handler(req, res) {
   }
   const subject = (typeof onderwerp === "string" && onderwerp.trim().slice(0, 140)) || "Je Deskshift-plan";
 
+  // Optioneel uitgesteld verzenden, voor de opvolgers in week 2 en 4 van het
+  // plan. Minimaal een kwartier vooruit en hooguit 35 dagen; alles daarbuiten
+  // is geen opvolger van een rapport maar misbruik of een bug.
+  let planTijd;
+  if (scheduledAt !== undefined) {
+    const t = Date.parse(scheduledAt);
+    const nu = Date.now();
+    if (isNaN(t) || t < nu + 15 * 60000 || t > nu + 35 * 86400000) {
+      res.status(400).json({ error: "Ongeldig verzendtijdstip." });
+      return;
+    }
+    planTijd = new Date(t).toISOString();
+  }
+
   try {
     const upstream = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": apiKey, "Content-Type": "application/json", accept: "application/json" },
-      body: JSON.stringify({
+      body: JSON.stringify(Object.assign({
         sender,
         to: [{ email }],
         subject,
         htmlContent: html,
-      }),
+      }, planTijd ? { scheduledAt: planTijd } : {})),
     });
     const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {

@@ -187,6 +187,25 @@
   .kaartje p{margin:0;font-size:16px}
   .klap{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:20px 22px;margin-top:14px;font-size:19px;font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:600;line-height:1.25}
 
+  /* Spiegel: kleine observatie uit eigen antwoorden bij een sectie-overgang.
+     Staat in de donkere sectie-kaart, dus lichte tekst. */
+  .spiegel{background:rgba(255,255,255,.08);border-left:3px solid var(--lime);border-radius:0 10px 10px 0;padding:12px 14px;margin-top:14px;font-size:14.5px;line-height:1.5;color:#E7ECE2}
+  .spiegel .mono{display:block;margin-bottom:3px;color:var(--limeL)}
+  /* Oordeel-chips op de schetskaarten: klopt / klopt niet */
+  .oordeel{display:flex;gap:8px;margin-top:12px}
+  .oordeel button{flex:1;min-height:40px;padding:8px 10px;font-family:inherit;font-size:13.5px;font-weight:600;border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--slate);cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease),color .15s var(--ease),transform .12s var(--ease)}
+  .oordeel button:active{transform:scale(.97)}
+  .oordeel button.aan{border-color:var(--ink);background:var(--ink);color:var(--chalk)}
+  .oordeel button.nee.aan{border-color:var(--warn);background:transparent;color:var(--warn)}
+  /* Inzicht: wat je zelf niet opschreef */
+  .insight-onb{background:var(--ink);color:var(--chalk);border-radius:var(--r-lg);padding:16px 18px;margin:16px 0}
+  .insight-onb .mono{color:var(--limeL)}
+  .insight-onb p{margin:6px 0 0;font-size:16px;line-height:1.5}
+  /* Paywall: waar een vergrendelde richting op bouwt */
+  .pw-bouwt{display:block;font-style:normal;font-size:12.5px;color:var(--slate);margin-top:2px}
+  /* Plan: waarom deze week, in je eigen woorden */
+  .wk-omdat{margin:8px 0 0;font-size:13.5px;color:var(--petrol)}
+
   .card{background:var(--veld);border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:var(--r);padding:22px;margin-bottom:18px}
   .card.weak{border-left-color:var(--warn)}
   .tag{display:inline-block;background:var(--veld);border:1px solid var(--line);padding:3px 9px;margin-bottom:12px}
@@ -1370,7 +1389,7 @@
     <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="2.5" stroke="#152A1C" stroke-width="1.8"/><path d="m3.5 7 8.5 6 8.5-6" stroke="#152A1C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="mono">Bewaar het</div>
     <h2 id="mailPopTitel">Stuur dit plan naar je mail</h2>
-    <p class="pop-slot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. Handig om terug te vinden, en als reminder.</p>
+    <p class="pop-slot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. In week 2 en week 4 volgt één korte opvolger met de acties van die week uit je eigen plan. Geen nieuwsbrief, daarna niets meer.</p>
     <div class="mailrij" style="margin-bottom:6px">
       <input type="email" id="mailAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
       <button class="btn btn-lime" id="mailKnop">Versturen</button>
@@ -1648,13 +1667,43 @@ function railTeken(){
 }
 const stap = () => SECTIES[S.s].stappen[S.q];
 
+/* Kleine spiegel bij drie sectie-overgangen: een observatie uit wat er al is
+   ingevuld. Puur client-side, dus zonder wachttijd of API-kosten. Observerend,
+   nooit een oordeel; halverwege een intake is een oordeel opdringerig. Het
+   signaal is dat er wordt meegelezen, niet dat er al geanalyseerd wordt. */
+function spiegelBlok(t){
+  return `<div class="spiegel"><span class="mono">Wat er al staat</span>${esc(t)}</div>`;
+}
+function spiegelHtml(){
+  const id = SECTIES[S.s].id;
+  if(id === "verleden"){
+    const a = S.ant.avonden;
+    if(a === undefined || a === null || a === "") return "";
+    if(+a === 0) return spiegelBlok("Je gaf net aan dat geen enkele avond echt van jou is. Dat telt straks net zo zwaar mee als je werkuren.");
+    return spiegelBlok(`Je gaf net aan dat ${a} ${+a===1?"avond":"avonden"} per week echt van jou ${+a===1?"is":"zijn"}. Onthoud dat getal, verderop bepaalt het wat er naast je werk past.`);
+  }
+  if(id === "talent"){
+    const c = +S.ant.contract || 0, e = +S.ant.echturen;
+    if(!c || isNaN(e)) return "";
+    const echt = Math.min(e, c), gat = c - echt;
+    if(gat > 0) return spiegelBlok(`Even terug: je contract zegt ${c} uur, je schatte ${echt} uur echt werk. Dat verschil van ${gat} uur is het materiaal waar je uitkomst op gaat bouwen.`);
+    return spiegelBlok("Je schatte net dat je week volledig gevuld is met echt werk. Dan wordt des te belangrijker waar je energie zit, en daar gaat deze sectie over.");
+  }
+  if(id === "dromen"){
+    const sweet = matrixData().filter(p=>p.x>.5 && p.y<.5).map(p=>p.naam);
+    if(sweet.length) return spiegelBlok(`Uit je twee sorteringen: ${sweet.slice(0,3).join(", ").toLowerCase()} ${sweet.length===1?"valt":"vallen"} bij jou in het vak goed én leuk. De vragen hierna bepalen wat je daarmee wilt.`);
+    return spiegelBlok("In je twee sorteringen viel niets in het vak goed én leuk. Dat is zelf al een uitkomst; deze sectie zoekt de richting dan ergens anders.");
+  }
+  return "";
+}
+
 function toonStap(){
   railTeken();
   const sec = SECTIES[S.s], st = sec.stappen[S.q];
   let html = "";
   if(S.q === 0){
     html += `<div class="opener"><div class="mono">Sectie ${S.s+1} van ${SECTIES.length} · ${sec.naam}</div>
-      <h2>${sec.kop}</h2><p>${sec.intro}</p><div class="theory">${sec.theorie}</div></div>`;
+      <h2>${sec.kop}</h2><p>${sec.intro}</p><div class="theory">${sec.theorie}</div>${spiegelHtml()}</div>`;
   }
   html += `<div class="step"><div class="qnum mono">Vraag ${S.q+1} van ${sec.stappen.length}</div>
     <h3>${tpl(st.vraag)}</h3>${st.hint?`<p class="hint">${tpl(st.hint)}</p>`:'<div style="height:6px"></div>'}
@@ -2226,8 +2275,63 @@ function bouwTranscript(){
 function bericht(extra){
   const content = [];
   if(S.cvB64) content.push({type:"document",source:{type:"base64",media_type:"application/pdf",data:S.cvB64}});
-  content.push({type:"text",text:(extra||"")+"\n\nDit is de volledige intake:\n"+S.transcript});
+  content.push({type:"text",text:(extra||"")+"\n\nDit is de volledige intake:\n"+S.transcript+schetsFeedbackTekst()});
   return [{role:"user",content:content}];
+}
+
+/* ---------- citaat-verificatie ----------
+   Elke stap die "je zei" beweert, moet dat waar kunnen maken. Eén verzonnen
+   citaat kost meer vertrouwen dan tien echte opleveren, dus alles wat als
+   letterlijk wordt gepresenteerd, wordt hier eerst tegen de eigen antwoorden
+   gehouden. Wat niet klopt, verliest alleen de aanhalingstekens of het veld;
+   de inhoud zelf blijft staan. */
+function normTekst(s){
+  return String(s||"").toLowerCase()
+    .replace(/[‘’“”„"']/g,"")
+    .replace(/[^a-z0-9À-ɏ]+/gi," ")
+    .replace(/\s+/g," ").trim();
+}
+// Alleen wat de gebruiker zelf typte telt als bron, niet onze eigen vraag- of
+// hintteksten. Anders "citeert" het model straks onze vraag terug als bewijs.
+function antwoordTekst(){
+  const delen = [];
+  Object.keys(S.ant||{}).forEach(k=>{
+    const v = S.ant[k];
+    if(typeof v === "string") delen.push(v);
+    if(Array.isArray(v)) delen.push(v.join(" "));
+  });
+  if(S.cvTekst) delen.push(S.cvTekst);
+  return normTekst(delen.join(" \n "));
+}
+function citaatEcht(c, minWoorden){
+  const n = normTekst(String(c||"").replace(/^je zei:?\s*/i,""));
+  if(!n || n.split(" ").length < (minWoorden||3)) return false;
+  return antwoordTekst().indexOf(n) >= 0;
+}
+// Binnen een lopende tekst: aanhalingstekens rond een fragment dat niet
+// woordelijk in de antwoorden staat, worden gestript. Korte fragmenten van
+// twee woorden of minder verliezen hun aanhalingstekens ook, want die zijn te
+// makkelijk toevallig waar om als "letterlijk van jou" te presenteren.
+function stripNepCitaten(t){
+  return String(t||"").replace(/["“„]([^"“”„]{3,140})["”]?/g,
+    (m, binnen)=> citaatEcht(binnen, 3) ? m : binnen);
+}
+// Het oordeel van de gebruiker over de schetskaarten reist mee naar elke
+// volgende AI-stap. Vanaf dat moment bouwt elke stap aantoonbaar voort op een
+// gesprek in plaats van op een formulier.
+function schetsFeedbackTekst(){
+  if(!S.schets || !S.schetsOordeel) return "";
+  const ja = [], nee = [];
+  (S.schets.kaarten||[]).forEach((k,i)=>{
+    const r = k.label + ": " + k.tekst;
+    if(S.schetsOordeel[i] === true) ja.push(r);
+    if(S.schetsOordeel[i] === false) nee.push(r);
+  });
+  if(!ja.length && !nee.length) return "";
+  let t = "\n\n[EERDERE OBSERVATIES, DOOR DE GEBRUIKER ZELF BEOORDEELD]\n";
+  if(ja.length)  t += "Bevestigd als kloppend:\n" + ja.map(x=>"- "+x).join("\n") + "\n";
+  if(nee.length) t += "Afgewezen als niet kloppend (vermijd deze lezing):\n" + nee.map(x=>"- "+x).join("\n") + "\n";
+  return t;
 }
 // rauwe control-tekens binnen strings escapen (meest voorkomende oorzaak van
 // "Expected ',' or ']'": een letterlijke newline of tab in een tekstveld)
@@ -2329,13 +2433,27 @@ $("toSummary").onclick = async () => {
     const d = await askJSON(TOON + `
 
 Vat de situatie van deze persoon samen als korte kaarten. Puur observerend, nul advies, geen scenario's, geen aanmoediging.
+Gebruik in minstens twee kaarten een kort woordelijk fragment uit de antwoorden van de gebruiker, tussen dubbele aanhalingstekens. Citeer alleen wat er letterlijk staat; is er geen bruikbaar fragment, laat de aanhalingstekens dan weg.
 Antwoord uitsluitend met geldige JSON, zonder markdown:
 {"kaarten":[{"label":"twee of drie woorden","tekst":"maximaal 18 woorden"}],"klap":"één zin van maximaal 20 woorden die het patroon benoemt"}
 Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), null, 1600, "licht"); // korte observaties: licht model
-    $("sumBody").innerHTML = `<div class="kaartjes">${(d.kaarten||[]).map(k=>
-      `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p></div>`).join("")}</div>
+    // Alles wat als letterlijk citaat gepresenteerd wordt, moet het ook zijn.
+    (d.kaarten||[]).forEach(k=>{ k.tekst = stripNepCitaten(k.tekst); });
+    if(d.klap) d.klap = stripNepCitaten(d.klap);
+    S.schets = d; S.schetsOordeel = {};
+    $("sumBody").innerHTML = `<div class="kaartjes">${(d.kaarten||[]).map((k,i)=>
+      `<div class="kaartje"><div class="mono">${esc(k.label)}</div><p>${esc(k.tekst)}</p>
+        <div class="oordeel" role="group" aria-label="Klopt deze observatie?">
+          <button type="button" data-oordeel="${i}" data-w="1">Klopt</button>
+          <button type="button" class="nee" data-oordeel="${i}" data-w="0">Klopt niet</button>
+        </div></div>`).join("")}</div>
       ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}
-      <p class="muted" style="margin-top:14px">Klopt dit beeld?</p>`;
+      <p class="muted" style="margin-top:14px">Tik per kaart aan of het klopt. Wat je bevestigt of afwijst, scherpt de volgende stap aan.</p>`;
+    $("sumBody").querySelectorAll("[data-oordeel]").forEach(b=>b.onclick=()=>{
+      S.schetsOordeel[+b.dataset.oordeel] = (b.dataset.w === "1");
+      b.closest(".oordeel").querySelectorAll("button").forEach(x=>x.classList.remove("aan"));
+      b.classList.add("aan");
+    });
     show("sumRow");
   }catch(e){
     $("sumBody").innerHTML = `<div class="err">${esc(e.message)}</div>
@@ -2353,10 +2471,16 @@ $("toInsight").onclick = async () => {
   try{
     const d = await askJSON(TOON + `
 
-Geef het scherpste patroon uit deze intake. Geen advies, geen scenario's, geen aanmoediging. Benoem wat deze persoon zelf waarschijnlijk niet zo scherp had geformuleerd.
+Geef het scherpste patroon uit deze intake. Geen advies, geen scenario's, geen aanmoediging.
+Onderaan de intake staan observaties die de gebruiker zelf als kloppend of niet kloppend beoordeelde. Herhaal die observaties niet: ga een laag dieper, en respecteer wat werd afgewezen.
+Het veld "onbenoemd" is het belangrijkste: iets dat deze persoon zelf nergens opschreef, maar dat uit twee verschillende antwoorden samen volgt. Verwijs kort naar beide antwoorden. Geen algemeenheid die op iedereen past.
+Het veld "citaat" bevat uitsluitend een woordelijk fragment uit de antwoorden; is er geen sterk fragment, laat het dan leeg.
 Antwoord uitsluitend met geldige JSON:
-{"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden","spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"punten":[{"label":"twee of drie woorden","tekst":"maximaal 12 woorden"}]}
+{"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden","spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"onbenoemd":"maximaal 26 woorden, in de je-vorm","punten":[{"label":"twee of drie woorden","tekst":"maximaal 12 woorden"}]}
 Precies drie punten.`, bericht(), null, 1600);
+    // Een citaat dat niet woordelijk van de gebruiker is, vervalt.
+    if(d.citaat && !citaatEcht(d.citaat, 3)) d.citaat = "";
+    S.inzicht = d;
     $("insBody").innerHTML = inzichtHtml(d);
   }catch(e){
     $("insBody").innerHTML = `<div class="err">${esc(e.message)}</div>
@@ -2382,6 +2506,7 @@ function inzichtHtml(d){
       <span class="isp-vs mono">schuurt met</span>
       <span class="isp-kant">${esc(sp.rechts||"")}</span>
     </div>${sp.tekst?`<p class="insight-spt">${esc(sp.tekst)}</p>`:""}`:""}
+    ${d.onbenoemd?`<div class="insight-onb"><div class="mono">Wat je zelf niet opschreef</div><p>${esc(d.onbenoemd)}</p></div>`:""}
     <div class="insight-week">
       <div class="iw-top">
         <span><b>${echt}</b> van ${contract} uur echt werk</span>
@@ -2843,10 +2968,11 @@ function P_UITWERKING(P){
 
 Je bent loopbaancoach en werkt één geselecteerde richting uit voor een eerste gespreksverslag. Concreet, met een doel dat dichtbij ligt, in gewone taal. Geen tools of techniek noemen tenzij de persoon ze zelf noemde.
 
-Zoek kort op wat er in de praktijk al bestaat: opleidingen, netwerken, vergelijkbare rollen, tarieven of wat mensen ervoor vragen. Noem wat je vond, verzin geen bronnen.
+Je kunt niets opzoeken. Houd het marktsignaal daarom algemeen en controleerbaar: wat voor rollen, vraag of initiatieven bestaan er doorgaans rond dit pad. Noem geen specifieke organisaties, cursussen, cijfers of tarieven.
+De citaten zijn uitsluitend woordelijke fragmenten uit de intake; is er geen tweede sterk citaat, geef er dan één.
 
 Antwoord uitsluitend met geldige JSON, precies één scenario:
-{"scenario":{"titel":"neem de titel over","id":"taakverrijking|leren|zijproject","pitch":"scherp de pitch aan","doel":"wat je over zes weken concreet bereikt hebt, één zin in de je-vorm","waarom":"één zin over waarom dit past","citaten":["letterlijk antwoord uit de intake","nog een"],"eersteStap":"wat je deze week doet, één concrete zin in de je-vorm","weken":"wat er in zes weken gebeurt, één zin","marktsignaal":"één zin over wat je vond in de praktijk","kosten":"één zin","kans":"de zwakke plek van dit pad, één zin","kill":"meetbaar criterium waarop je stopt","waaromNiet":"één zin"}}`;
+{"scenario":{"titel":"neem de titel over","id":"taakverrijking|leren|zijproject","pitch":"scherp de pitch aan","doel":"wat je over zes weken concreet bereikt hebt, één zin in de je-vorm","waarom":"één zin over waarom dit past","citaten":["woordelijk fragment uit de intake"],"eersteStap":"wat je deze week doet, één concrete zin in de je-vorm","weken":"wat er in zes weken gebeurt, één zin","marktsignaal":"één zin over wat er in de praktijk doorgaans bestaat rond dit pad","kosten":"één zin","kans":"de zwakke plek van dit pad, één zin","kill":"meetbaar criterium waarop je stopt","waaromNiet":"één zin"}}`;
 }
 
 async function draaien(feedback){
@@ -2898,7 +3024,8 @@ async function draaien(feedback){
 // De onderbouwing van één richting. Toont alleen de regels die er echt zijn,
 // zodat er nooit een kop als "Zwakke plek" met een lege waarde onder staat.
 function onderbouwingHtml(s){
-  const citaat = (s.citaten||[]).filter(Boolean)[0];
+  // Alleen een citaat tonen dat woordelijk van de gebruiker is.
+  const citaat = (s.citaten||[]).filter(c=>c && citaatEcht(c, 3))[0];
   const rijen = [["Waarom dit past", s.waarom], ["Zwakke plek", s.kans], ["Wanneer je stopt", s.kill]]
     .filter(r => r[1] && String(r[1]).trim());
   if(!citaat && !rijen.length) return "";
@@ -2943,12 +3070,24 @@ function toonRichtingen(){
     const topKop = gelijkAanTop>1
       ? `Je sterkste richtingen scoren ${top.totaal||"?"} van 100`
       : `Je best passende richting scoort ${top.totaal||"?"} van 100`;
-    const regels = S.scenarios.map((x,n)=>
-      `<li><span class="lk"></span><span>Richting ${n+1}, met naam, doel en plan</span><em>pasvorm ${x.totaal||"?"}</em></li>`).join("");
+    // De betaalbeslissing valt hier, dus dit scherm hoort het persoonlijkst te
+    // zijn van allemaal: jouw getallen, jouw sterktes, niet "29 antwoorden".
+    const pg = S.pg || {};
+    const stukjes = [];
+    if(pg.slack > 0) stukjes.push(`je ${pg.slack} uur ruimte in de werkweek`);
+    if(+S.ant.avonden > 0) stukjes.push(`je ${S.ant.avonden} vrije avond${+S.ant.avonden===1?"":"en"}`);
+    if((pg.sweet||[]).length) stukjes.push(`wat je goed kunt én leuk vindt (${pg.sweet.slice(0,2).join(", ").toLowerCase()})`);
+    const basisregel = stukjes.length
+      ? `Gebouwd op ${stukjes.join(", ")}, en op wat je in je eigen woorden schreef. Zes richtingen afgewogen, drie overgebleven.`
+      : `Gewogen uit ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en je vier keuzes. Zes richtingen afgewogen, drie overgebleven.`;
+    const regels = S.scenarios.map((x,n)=>{
+      const st = (x.sterktes||[]).filter(Boolean).slice(0,2).map(s=>String(s).toLowerCase()).join(", ");
+      return `<li><span class="lk"></span><span>Richting ${n+1}, met naam, doel en plan${st?`<i class="pw-bouwt">bouwt op: ${esc(st)}</i>`:""}</span><em>pasvorm ${x.totaal||"?"}</em></li>`;
+    }).join("");
     $("scenBody").insertAdjacentHTML("afterbegin", `<div class="paywall" id="paywall">
         <div class="mono" style="color:var(--limeL)">Je uitkomst is klaar</div>
         <h2 style="margin:10px 0 8px">${topKop}</h2>
-        <p style="margin:0 0 12px">Gewogen uit ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en je vier keuzes. Zes richtingen afgewogen, drie overgebleven, precies op jouw situatie.</p>
+        <p style="margin:0 0 12px">${basisregel}</p>
         <p class="pw-invest">Je stak hier net een kwartier in jezelf. <b>Dit is waar het op uitkomt, één klik van je vandaan.</b></p>
         <ul class="pwlijst">
           ${regels}
@@ -2995,16 +3134,25 @@ const P3 = TOON + `
 Je bent loopbaancoach en schrijft het plan voor het gekozen pad. Concreet, in gewone taal, op het niveau van een coach die iemand de komende zes weken begeleidt. Geen tools of software noemen tenzij de persoon ze zelf noemde.
 
 Zes weken, elke week met een eigen thema, twee tot vier acties en een resultaat dat aan het eind van die week klaar is. Acties moeten uitvoerbaar zijn in de uren die deze persoon heeft.
+Geef bij minstens twee weken ook een veld "omdat": een kort woordelijk citaat uit de intake dat verklaart waarom juist die week erin zit. Citeer alleen wat er letterlijk staat; past er bij een week geen echt citaat, laat "omdat" daar dan weg.
 
 Vul afhankelijk van het type ook het bijpassende blok:
-- taakverrijking: script, met een opening voor het gesprek met de leidinggevende en twee tegenwerpingen met antwoord
-- leren: bronnen, drie concrete plekken om te beginnen
+- taakverrijking: script, met een opening voor het gesprek met de leidinggevende en twee tegenwerpingen met antwoord. De opening vertrekt uit wat deze persoon zelf schreef over wat er uitgebreid of geleerd moet worden, in de eigen woorden.
+- leren: bronnen, drie plekken om te beginnen. Alleen breed bekende, bestaande namen; twijfel je over een naam, beschrijf dan het soort plek en hoe je die vindt. Verzin niets.
 - zijproject: validatie, drie toetsen die het idee moet doorstaan, met per toets wanneer je stopt
 Vul altijd berichten: een of twee korte teksten die de gebruiker letterlijk kan versturen, bijvoorbeeld naar de leidinggevende, een oud-collega of iemand uit het netwerk.
 
 Antwoord uitsluitend met geldige JSON:
-{"doel":"wat er over zes weken ligt, één zin","waarom":"twee zinnen waarom dit doel bij deze persoon past","weken":[{"nr":1,"thema":"twee tot vier woorden","acties":["maximaal 14 woorden"],"resultaat":"wat er aan het eind van deze week klaar is"}],"meetpunt":"waaraan je ziet dat het werkt","kill":"wanneer je stopt","steun":"wie je erbij betrekt, of hoe je het alleen volhoudt","berichten":[{"titel":"waar dit bericht voor is","tekst":"kant-en-klaar bericht dat je kunt kopieren, maximaal 60 woorden"}],"script":{"opening":"","tegenwerpingen":[{"bezwaar":"","antwoord":""}]},"bronnen":[{"naam":"","wat":"","tijd":""}],"validatie":[{"toets":"","stop":""}]}
+{"doel":"wat er over zes weken ligt, één zin","waarom":"twee zinnen waarom dit doel bij deze persoon past","weken":[{"nr":1,"thema":"twee tot vier woorden","acties":["maximaal 14 woorden"],"resultaat":"wat er aan het eind van deze week klaar is","omdat":"alleen een woordelijk citaat uit de intake, anders weglaten"}],"meetpunt":"waaraan je ziet dat het werkt","kill":"wanneer je stopt","steun":"wie je erbij betrekt, of hoe je het alleen volhoudt","berichten":[{"titel":"waar dit bericht voor is","tekst":"kant-en-klaar bericht dat je kunt kopieren, maximaal 60 woorden"}],"script":{"opening":"","tegenwerpingen":[{"bezwaar":"","antwoord":""}]},"bronnen":[{"naam":"","wat":"","tijd":""}],"validatie":[{"toets":"","stop":""}]}
 Laat de blokken die niet van toepassing zijn helemaal weg. Zes weken, niet meer.`;
+
+// Houdt in een plan alleen citaten over die echt van de gebruiker zijn.
+function zuiverPlan(p){
+  if(p && Array.isArray(p.weken)) p.weken.forEach(w=>{
+    if(w && w.omdat && !citaatEcht(w.omdat, 3)) delete w.omdat;
+  });
+  return p;
+}
 
 function planHtml(p, s){
   const wk = (p.weken||[]).map(w=>`
@@ -3014,6 +3162,7 @@ function planHtml(p, s){
         <h3>${esc(w.thema||"")}</h3>
         <ul class="acties">${(w.acties||[]).map((a,i)=>
           `<li><label><input type="checkbox" data-w="${w.nr}" data-i="${i}"> <span>${esc(a)}</span></label></li>`).join("")}</ul>
+        ${w.omdat?`<p class="wk-omdat">In jouw woorden: <em>"${esc(String(w.omdat).replace(/^je zei:?\s*/i,"").replace(/^["“„]|["”]$/g,""))}"</em></p>`:""}
         ${w.resultaat?`<p class="uitkomst"><span class="mono">Klaar aan het eind</span>${esc(w.resultaat)}</p>`:""}
       </div>
     </div>`).join("");
@@ -3060,7 +3209,7 @@ function planPromise(s){
   const key = (s && s.titel) || "x";
   if(!S.planProm[key]){
     const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
-    S.planProm[key] = askJSON(P3, msgs, null, 5000);
+    S.planProm[key] = askJSON(P3, msgs, null, 5000).then(zuiverPlan);
   }
   return S.planProm[key];
 }
@@ -3151,6 +3300,7 @@ function mailWkRijen(p){
     <tr><td style="padding:12px 0;border-bottom:1px solid ${MK.lijn}">
       <div style="font:bold 12px/1.2 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Week ${esc(String(w.nr||""))} &middot; ${esc(w.thema||"")}</div>
       <ul style="margin:8px 0 6px;padding-left:18px;color:${MK.petrol};font-size:15px">${(w.acties||[]).map(a=>`<li style="margin:3px 0">${esc(a)}</li>`).join("")}</ul>
+      ${w.omdat?`<div style="font-size:13px;color:${MK.petrol};font-style:italic;margin:0 0 6px">In jouw woorden: "${esc(String(w.omdat).replace(/^je zei:?\s*/i,"").replace(/^["“„]|["”]$/g,""))}"</div>`:""}
       ${w.resultaat?`<div style="font-size:14px;color:${MK.ink}"><b>Klaar aan het eind:</b> ${esc(w.resultaat)}</div>`:""}
     </td></tr>`).join("");
 }
@@ -3186,6 +3336,43 @@ function mailHtmlBouw(p, s){
     </td></tr>`;
   return mailShell("Jouw rapport en plan van zes weken", inhoud);
 }
+/* ---------- opvolgers in week 2 en 4 ----------
+   Herkenning die terugkomt nadat de betaling al gedaan is: op dag 7 en dag 21
+   één korte mail met de acties van die week uit het eigen plan. Best effort:
+   kan de mailprovider uitgesteld verzenden niet aan, dan merkt de gebruiker
+   daar niets van, want het rapport zelf is dan al binnen. Geen nieuwsbrief,
+   na week 4 volgt niets meer. */
+function mailOpvolger(nr, w, p, s){
+  const acties = (w.acties||[]).map(a=>
+    `<tr><td style="padding:3px 0;font-size:14px;color:${MK.petrol}">&bull;&nbsp;&nbsp;${esc(a)}</td></tr>`).join("");
+  const citaat = ((s&&s.citaten)||[]).filter(c=>c && citaatEcht(c, 3))[0];
+  const slot = nr >= 4
+    ? `<p style="font-size:14px;color:${MK.petrol};margin:14px 0 0"><b>Werkt het?</b> ${esc(p.meetpunt||"")}<br><b>Werkt het niet?</b> Dan is dit je eigen stopcriterium: ${esc(p.kill||(s&&s.kill)||"")}</p>`
+    : "";
+  const inhoud = `<tr><td style="padding:22px 26px 8px">
+    <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Week ${nr} van je plan</div>
+    <h2 style="font-size:20px;margin:8px 0 6px;color:${MK.ink}">${esc(w.thema||(s&&s.titel)||"")}</h2>
+    ${citaat?`<p style="font-size:14px;color:${MK.petrol};font-style:italic;margin:0 0 12px">Waarom je hieraan begon, in je eigen woorden: "${esc(citaat)}"</p>`:""}
+    <table cellpadding="0" cellspacing="0" style="width:100%">${acties}</table>
+    ${w.resultaat?`<p style="font-size:14px;color:${MK.ink};margin:12px 0 0"><b>Klaar aan het eind van deze week:</b> ${esc(w.resultaat)}</p>`:""}
+    ${slot}
+    <p style="font-size:13px;color:${MK.petrol};margin:16px 0 4px">Dit is een geplande opvolger van je eigen rapport. ${nr>=4?"Dit was de laatste; hierna mailen we je niet meer.":"Er volgt er nog één, in week 4."}</p>
+  </td></tr>`;
+  return mailShell("Week "+nr+" van je plan", inhoud);
+}
+function planOpvolgers(email, p, s){
+  if(S.opvolgersGepland || !p) return;
+  const w2 = (p.weken||[])[1], w4 = (p.weken||[])[3];
+  if(!w2 && !w4) return;
+  S.opvolgersGepland = true;
+  const stuur = (dagen, onderwerp, html) =>
+    fetch("/api/mail",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ email, onderwerp, html, scheduledAt:new Date(Date.now()+dagen*86400000).toISOString() })
+    }).catch(()=>{});
+  if(w2) stuur(7,  "Week 2 van je plan: "+(w2.thema||(s&&s.titel)||""), mailOpvolger(2, w2, p, s));
+  if(w4) stuur(21, "Week 4 van je plan: "+(w4.thema||"")+" en je meetpunt", mailOpvolger(4, w4, p, s));
+}
+
 async function mailPlan(){
   const inp = $("mailAdres"), knop = $("mailKnop"), status = $("mailStatus");
   if(!inp || !knop || !status) return;
@@ -3201,6 +3388,7 @@ async function mailPlan(){
     if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
     status.style.color="#4A6B1E"; status.textContent="Verstuurd naar "+email+".";
     knop.textContent = "Nog een keer sturen";
+    planOpvolgers(email, S.plan, S.chosen);
     // Eerst de invoer-pop-up sluiten, anders staan er twee over elkaar.
     const mp = $("mailPop");
     if(mp && mp.classList.contains("aan")){ mp.classList.remove("aan"); setTimeout(()=> mp.classList.add("hidden"), 320); }
@@ -3241,6 +3429,7 @@ async function mailAlles(){
     if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
     status.style.color="#D6EBA8"; status.textContent="Verstuurd naar "+email+".";
     knop.textContent = "Nog een keer sturen";
+    planOpvolgers(email, plans[0], scen[0]);
     toonMailOk("Je rapport en alle drie de plannen zijn onderweg naar "+email+". Kijk in je inbox, en anders even in de spam.");
   }catch(e){ status.style.color="#F3C9C2"; status.textContent = e.message; }
   knop.disabled = false;
