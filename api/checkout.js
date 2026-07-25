@@ -6,8 +6,9 @@
 // Optioneel:
 //   STRIPE_PRICE_ID     - overschrijft de prijs-id hieronder, bijvoorbeeld om in
 //                         testmodus een test-prijs te gebruiken.
-//   STRIPE_PROMO_CODES  - op "uit" zetten verbergt het kortingscodeveld op de
-//                         betaalpagina. Standaard staat het veld aan.
+//   STRIPE_PROMO_CODES  - op "aan" zetten toont het kortingscodeveld op de
+//                         betaalpagina. Standaard staat dat veld uit; de
+//                         verborgen kortingslink (?code=...) werkt altijd.
 // (STRIPE_PUBLIC_KEY is voor de browser en wordt hier niet gebruikt.)
 // De browser praat NOOIT rechtstreeks met Stripe met de secret key.
 
@@ -70,11 +71,12 @@ export default async function handler(req, res) {
   const key = process.env.STRIPE_PRIVATE_KEY;
   if (!key) { res.status(500).json({ error: "Betaalconfiguratie ontbreekt (STRIPE_PRIVATE_KEY)." }); return; }
   const prijsId = (process.env.STRIPE_PRICE_ID || PRIJS_ID_STANDAARD || "").trim();
-  // Kortingsveld staat aan tenzij het uitdrukkelijk uitgezet is.
-  const promoUit = ["uit", "off", "nee", "false", "0"].indexOf(
+  // Kortingsveld staat standaard UIT: bezoekers zonder code gaan er anders naar
+  // zoeken en komen niet terug. Zet STRIPE_PROMO_CODES op "aan" om het veld weer
+  // te tonen. De verborgen kortingslink (?code=...) werkt altijd, ook nu.
+  const promoAan = ["aan", "on", "ja", "true", "1"].indexOf(
     String(process.env.STRIPE_PROMO_CODES || "").trim().toLowerCase()
   ) >= 0;
-  const promoAan = !promoUit;
 
   // Kortingscode uit de link, meegestuurd door de browser.
   let body = req.body;

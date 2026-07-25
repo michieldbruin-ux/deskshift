@@ -9,10 +9,17 @@
 <meta property="og:description" content="Zeven korte secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
 <meta property="og:url" content="https://deskshift.pro">
 <meta property="og:locale" content="nl_NL">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://deskshift.pro/brand/deskshift-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Deskshift. Je werk past in drie dagen. Niemand vraagt wat je met de rest doet.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://deskshift.pro/brand/deskshift-og.png">
 <meta name="twitter:title" content="Deskshift">
 <meta name="twitter:description" content="Zeven korte secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23404E3B'/><rect x='7.5' y='7.5' width='7' height='7' rx='1.6' fill='%23BAC8B1'/><rect x='17.5' y='7.5' width='7' height='7' rx='1.6' fill='%237B9669'/><rect x='7.5' y='17.5' width='7' height='7' rx='1.6' fill='%237B9669'/><rect x='17.5' y='17.5' width='7' height='7' rx='1.6' fill='%23BAC8B1'/></svg>">
+<link rel="icon" type="image/svg+xml" href="/brand/deskshift-favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/brand/deskshift-favicon-32.png">
+<link rel="apple-touch-icon" href="/brand/deskshift-appicoon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -571,7 +578,11 @@
 
   .dsnav{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 22px}
   .brand{display:inline-flex;align-items:center;gap:9px;font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:18px;letter-spacing:-.01em;color:var(--ink)}
-  .brand .mark{border-radius:6px;flex:0 0 auto}
+  /* Merkteken: twee verschoven balken, de "shift" uit de naam. Geen achtergrond
+     en geen ronding, precies zoals in de merkidentiteit. */
+  .brand .mark{flex:0 0 auto}
+  .brand-w{display:inline}
+  .brand-l{font-weight:500;color:var(--petrol)}
   .brand.small{font-size:15px}
   .nav-cta{min-height:40px;padding:9px 16px}
 
@@ -1097,7 +1108,7 @@
 
 <section id="landing">
   <nav class="dsnav" aria-label="Deskshift">
-    <span class="brand"><svg class="mark" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#152A1C"/><rect x="7" y="7" width="8" height="8" rx="2" fill="#D6EBA8"/><rect x="17" y="7" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="7" y="17" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="17" y="17" width="8" height="8" rx="2" fill="#D6EBA8"/></svg>Deskshift</span>
+    <span class="brand"><svg class="mark" width="21" height="21" viewBox="0 0 100 100" aria-hidden="true"><rect x="0" y="10" width="62" height="32" fill="#404E3B"/><rect x="38" y="58" width="62" height="32" fill="#7B9669"/></svg><span class="brand-w">Desk<span class="brand-l">shift</span></span></span>
     <button class="btn btn-sm nav-cta" onclick="document.getElementById('start').click()">Start gratis</button>
   </nav>
 
@@ -1244,16 +1255,16 @@
   </div>
 
   <div class="foot rv">
-    <span class="brand small"><svg class="mark" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#152A1C"/><rect x="7" y="7" width="8" height="8" rx="2" fill="#D6EBA8"/><rect x="17" y="7" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="7" y="17" width="8" height="8" rx="2" fill="#BFE35F"/><rect x="17" y="17" width="8" height="8" rx="2" fill="#D6EBA8"/></svg>Deskshift</span>
+    <span class="brand small"><svg class="mark" width="18" height="18" viewBox="0 0 100 100" aria-hidden="true"><rect x="0" y="10" width="62" height="32" fill="#404E3B"/><rect x="38" y="58" width="62" height="32" fill="#7B9669"/></svg><span class="brand-w">Desk<span class="brand-l">shift</span></span></span>
     <p class="muted">Voor mensen van wie het werk te klein is geworden. Geen cookies, geen tracking.</p>
     <p class="footlinks"><a href="/privacy">Privacyverklaring</a> <span aria-hidden="true">&middot;</span> <a href="/terms">Algemene voorwaarden</a></p>
     <p class="muted" style="margin-top:6px">Deskshift geeft geen loopbaan-, medisch, juridisch of financieel advies. Je blijft zelf verantwoordelijk voor je keuzes.</p>
   </div>
 
-  <div class="row devrow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
+  <div class="row devrow hidden" id="devrow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
     <button class="btn btn-ghost btn-sm" id="demo">Testmodus: direct naar de uitkomst</button>
     <button class="btn btn-ghost btn-sm" id="demoLoop">Testmodus: door de intake lopen</button>
-    <span class="muted" style="font-size:13px">Alleen voor jezelf tijdens het bouwen.</span>
+    <span class="muted" style="font-size:13px">Testmodus staat aan op dit toestel. Zet uit met ?test=0</span>
   </div>
 </section>
 
@@ -2462,6 +2473,29 @@ async function ontgrendel(){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
+/* ---------- testmodus, niet zichtbaar voor bezoekers ---------- */
+// De testknoppen staan standaard verborgen. Open de site één keer met ?test=1 om
+// ze op dit toestel aan te zetten; dat blijft bewaard, ook na sluiten. Met
+// ?test=0 zet je ze weer uit. Bezoekers zien er nooit iets van.
+const TEST_KEY = "deskshift_test_v1";
+function testmodus(){
+  let aan = false;
+  try{ aan = localStorage.getItem(TEST_KEY) === "1"; }catch(e){}
+  let u; try{ u = new URL(window.location.href); }catch(e){ return aan; }
+  const t = u.searchParams.get("test");
+  if(t === "1" || t === "0"){
+    aan = t === "1";
+    try{ aan ? localStorage.setItem(TEST_KEY,"1") : localStorage.removeItem(TEST_KEY); }catch(e){}
+    u.searchParams.delete("test");
+    try{ history.replaceState(null,"", u.pathname + (u.search||"")); }catch(e){}
+  }
+  return aan;
+}
+function zetTestmodus(){
+  const rij = document.getElementById("devrow");
+  if(rij && testmodus()) rij.classList.remove("hidden");
+}
+
 /* ---------- betaling via Stripe ---------- */
 const BETAAL_KEY = "deskshift_betaal_v1";
 const CODE_KEY = "deskshift_code_v1";
@@ -2985,20 +3019,27 @@ function planWarm(){
 // mailclients aankunnen). Opbouw: waar je nu staat -> wat mist en wat de kansen
 // zijn -> dan pas het stappenplan.
 const MK = { ink:"#404E3B", lime:"#7B9669", limeL:"#BAC8B1", paper:"#F3F5F1", petrol:"#4F6360", accent:"#5F7A50", lijn:"#CFD6CB" };
-// Logo zonder SVG (mailclients slikken die vaak niet): vier gekleurde vlakjes
-// op een donkere ronde tegel, net als het merkteken op de site.
+// Het merkteken zonder SVG, want mailclients slikken die vaak niet: twee
+// verschoven balken, precies zoals in de merkidentiteit. Op de donkere header
+// staat de bovenste balk wit en de onderste in het groen.
 function mailLogo(){
-  return `<table role="presentation" cellpadding="0" cellspacing="0" style="background:${MK.ink};border-radius:9px;padding:6px">
-    <tr><td style="width:11px;height:11px;background:${MK.limeL};border-radius:2px;font-size:0;line-height:0">&nbsp;</td><td style="width:4px;font-size:0">&nbsp;</td><td style="width:11px;height:11px;background:${MK.lime};border-radius:2px;font-size:0;line-height:0">&nbsp;</td></tr>
-    <tr><td style="height:4px;font-size:0">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-    <tr><td style="width:11px;height:11px;background:${MK.lime};border-radius:2px;font-size:0;line-height:0">&nbsp;</td><td style="font-size:0">&nbsp;</td><td style="width:11px;height:11px;background:${MK.limeL};border-radius:2px;font-size:0;line-height:0">&nbsp;</td></tr>
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
+    <tr>
+      <td style="width:17px;height:9px;background:#ffffff;font-size:0;line-height:0">&nbsp;</td>
+      <td style="width:10px;font-size:0;line-height:0">&nbsp;</td>
+    </tr>
+    <tr><td colspan="2" style="height:4px;font-size:0;line-height:0">&nbsp;</td></tr>
+    <tr>
+      <td style="width:10px;font-size:0;line-height:0">&nbsp;</td>
+      <td style="width:17px;height:9px;background:${MK.lime};font-size:0;line-height:0">&nbsp;</td>
+    </tr>
   </table>`;
 }
 function mailHeader(sub){
   return `<tr><td style="background:${MK.ink};padding:22px 26px">
     <table role="presentation" cellpadding="0" cellspacing="0"><tr>
       <td style="vertical-align:middle">${mailLogo()}</td>
-      <td style="vertical-align:middle;padding-left:12px;font:bold 20px/1 Arial;color:#ffffff;letter-spacing:-.3px">Deskshift</td>
+      <td style="vertical-align:middle;padding-left:12px;font:bold 20px/1 Arial;color:#ffffff;letter-spacing:-.3px">Desk<span style="font-weight:normal;color:${MK.limeL}">shift</span></td>
     </tr></table>
     <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1.4px;text-transform:uppercase;color:${MK.limeL};margin-top:12px">${esc(sub)}</div>
   </td></tr>`;
@@ -3326,6 +3367,7 @@ function aflevering(p, s){
 // Kortingscode uit de link opvangen en de terugkeer van de Stripe-betaalpagina
 // afhandelen. Moet ná alle definities, want dit leunt op de sleutels en de
 // render-functies hierboven.
+try{ zetTestmodus(); }catch(e){}
 try{ vangKortingscode(); }catch(e){}
 try{ checkBetaalTerugkeer(); }catch(e){}
 </script>
