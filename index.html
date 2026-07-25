@@ -1437,7 +1437,9 @@
 </div>
 
 <script>
-const MODEL = "claude-sonnet-5";
+// Welk model gebruikt wordt, bepaalt de server (zie api/chat.js). De browser
+// stuurt bewust geen modelnaam mee: dat werd server-side toch genegeerd en het
+// zette onze modelkeuze onnodig in de paginabron.
 const KEY = "deskshift:draft";
 // Lokale opslag zodat 'ga verder' werkt. Blijft op dit toestel (localStorage), gaat nergens heen.
 if(!window.storage){
@@ -2118,7 +2120,7 @@ function schikIn(plane, d){
 
 /* ---------- API ---------- */
 async function ask(system, messages, tools, maxTokens, tier){
-  const body = {model:MODEL, max_tokens:maxTokens||1000, system:system, messages:messages};
+  const body = {max_tokens:maxTokens||1000, system:system, messages:messages};
   // 'licht' laat de server het goedkope model kiezen voor mechanische stapjes.
   // Zonder tier kiest de server het zware model: bij twijfel kwaliteit.
   if(tier) body.tier = tier;
@@ -2739,7 +2741,7 @@ Belangrijk voor het niveau:
 - Een richting beschrijft wat voor werk iemand gaat doen en wat het hem oplevert, bijvoorbeeld "intern begeleider worden voor nieuwe collega's" of "een tweede vakgebied opbouwen naast je huidige".
 - Sluit aan bij wat deze persoon goed kan en graag doet: ${P.sweet.join(", ")||"onbekend"}.
 - Elke richting moet binnen zes weken een eerste zichtbaar resultaat kunnen opleveren.
-- Er is ongeveer ${P.ruimte} uur per week ruimte binnen de werkweek, en ongeveer ${P.eigen} uur eigen tijd daarbuiten. Ruimte binnen de werkweek blijft tijd van de werkgever: daar past leren, verkennen of iets opbouwen dat het werk ook dient. Alles wat puur voor eigen rekening is, hoort in de eigen uren.
+- Deze persoon ziet op zijn scherm dat er ongeveer ${P.slack} uur ruimte in de werkweek zit en ongeveer ${P.eigenBasis} uur eigen tijd per week. Noem geen andere getallen dan deze twee, anders spreekt je tekst het scherm tegen. Reken er intern wel op dat daarvan realistisch ongeveer ${P.ruimte} uur in de werkweek en ${P.eigen} uur eigen tijd echt besteed kan worden, want niet alle ruimte is vrij te besteden. Ruimte binnen de werkweek blijft tijd van de werkgever: daar past leren, verkennen of iets opbouwen dat het werk ook dient. Alles wat puur voor eigen rekening is, hoort in de eigen uren.
 ${feedback?("\nDe gebruiker gaf deze correctie op een eerdere poging. Neem die zwaar mee en wijk echt af van de vorige richting: "+feedback):""}
 
 Antwoord uitsluitend met geldige JSON:
