@@ -2563,7 +2563,7 @@ async function checkBetaalTerugkeer(){
     naarScenarios();
     toonBetaalBanner();
     if($("profielBox")) $("profielBox").innerHTML = "";
-    if($("scenBody")) $("scenBody").innerHTML = `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Je betaling is gelukt.</b> We konden je uitkomst op dit toestel niet automatisch terugvinden. Dat gebeurt als je in een andere browser terugkomt dan waarin je de intake deed. Open deze pagina opnieuw in die browser, dan staat je uitkomst er nog en wordt hij alsnog ontgrendeld.</div></div>`;
+    if($("scenBody")) $("scenBody").innerHTML = `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Je betaling is gelukt.</b> We konden je uitkomst op dit toestel niet automatisch terugvinden. Dat gebeurt als je in een andere browser terugkomt dan waarin je de intake deed. Open deze pagina opnieuw in die browser, dan staat je uitkomst er nog en wordt hij alsnog ontgrendeld. Lukt dat niet, mail dan <a href="mailto:plan@deskshift.pro" style="color:var(--limeT);font-weight:600">plan@deskshift.pro</a>, dan lossen we het op.</div></div>`;
     return false;
   }
   // Verificatie mislukt of geen betaling: herstel de paywall als het kan.
