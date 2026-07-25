@@ -1,5 +1,8 @@
-# Alleen nodig voor het opnemen van de video, niet voor de site
+# Alleen nodig voor het opnemen van de video's, niet voor de site
 node_modules/
 
-# Uitvoer van record-video.js, opnieuw te maken met: node record-video.js
+# Uitvoer van record-video.js, opnieuw te maken met: node record-video.js alles
 deskshift-video1.mp4
+deskshift-tiktok1.mp4
+deskshift-tiktok2.mp4
+deskshift-tiktok3.mp4
