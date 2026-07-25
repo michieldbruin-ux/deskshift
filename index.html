@@ -580,10 +580,13 @@
   .brand{display:inline-flex;align-items:center;gap:9px;font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:18px;letter-spacing:-.01em;color:var(--ink)}
   /* Merkteken: twee verschoven balken, de "shift" uit de naam. Geen achtergrond
      en geen ronding, precies zoals in de merkidentiteit. */
-  .brand .mark{flex:0 0 auto}
+  /* Het teken schaalt mee met de tekst, zodat één font-size beide vergroot. */
+  .brand .mark{flex:0 0 auto;width:1.2em;height:1.2em}
   .brand-w{display:inline}
   .brand-l{font-weight:500;color:var(--petrol)}
   .brand.small{font-size:15px}
+  /* Groter logo in de kop van de landing, meeschalend met de schermbreedte. */
+  .dsnav .brand{font-size:clamp(23px,4.8vw,29px);gap:11px}
   .nav-cta{min-height:40px;padding:9px 16px}
 
   .hero{padding:16px 2px 28px}
