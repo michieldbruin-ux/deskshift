@@ -57,12 +57,16 @@
 
   button{font-family:inherit;font-size:16px;cursor:pointer;border-radius:var(--r)}
   .btn{background:var(--ink);color:var(--chalk);border:1px solid var(--ink);padding:12px 22px;font-weight:600}
-  .btn:hover{background:var(--petrol)}
   .btn:disabled{opacity:.35;cursor:not-allowed}
   .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line);padding:11px 18px;font-weight:500}
-  .btn-ghost:hover{border-color:var(--ink)}
   .btn-lime{background:var(--lime);color:var(--ink);border-color:var(--limeL)}
-  .btn-lime:hover{background:#4E6742}
+  /* Hover alleen bij een echte muis. Een telefoon vuurt hover af bij een tik
+     en haalt hem er daarna niet af, dus blijft de kleur anders plakken. */
+  @media(hover:hover) and (pointer:fine){
+    .btn:hover{background:var(--petrol)}
+    .btn-ghost:hover{border-color:var(--ink)}
+    .btn-lime:hover{background:#4E6742}
+  }
   .btn-sm{font-size:14px;padding:7px 12px}
   :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -105,7 +109,7 @@
   @media(max-width:560px){.dual{grid-template-columns:1fr}}
 
   .opt{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:var(--r);margin-bottom:8px;cursor:pointer;background:var(--veld)}
-  .opt:hover{border-color:var(--ink)}
+  @media(hover:hover) and (pointer:fine){.opt:hover{border-color:var(--ink)}}
   .opt input{margin-top:4px;accent-color:var(--ink);width:17px;height:17px}
   .opt.sel{border-color:var(--ink);background:#fff}
 
@@ -116,7 +120,7 @@
   .rank li.dragging{opacity:.55;border-color:var(--ink)}
   .rank .lbl{flex:1}
   .mv{background:transparent;border:1px solid var(--line);width:30px;height:30px;line-height:1;color:var(--ink)}
-  .mv:hover{border-color:var(--ink)}
+  @media(hover:hover) and (pointer:fine){.mv:hover{border-color:var(--ink)}}
 
   /* horizontale strip */
   .strip{position:relative;width:100%;height:210px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;touch-action:none;margin-top:6px;
@@ -174,7 +178,7 @@
   .rev .q{flex:1}
   .rev .a{color:var(--petrol)}
   .pen{background:transparent;border:1px solid var(--line);width:32px;height:32px;flex:0 0 32px;color:var(--slate)}
-  .pen:hover{border-color:var(--ink);color:var(--ink)}
+  @media(hover:hover) and (pointer:fine){.pen:hover{border-color:var(--ink);color:var(--ink)}}
 
   .kaartjes{display:grid;gap:12px;grid-template-columns:1fr 1fr}
   @media(max-width:600px){.kaartjes{grid-template-columns:1fr}}
@@ -242,10 +246,13 @@
   .doel{background:rgba(123,150,105,.16);border-radius:var(--r);padding:10px 12px;margin:0 0 12px;font-size:15px}
   .doel .mono{display:block;margin-bottom:2px}
   /* Privacy-pop-up die verschijnt zodra de intake start */
-  .pop{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(21,42,28,.5);opacity:0;pointer-events:none;transition:opacity .3s var(--ease);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
-  .pop.aan{opacity:1;pointer-events:auto;-webkit-backdrop-filter:saturate(1.1) blur(6px);backdrop-filter:saturate(1.1) blur(6px)}
-  .pop-kaart{background:var(--chalk);border-radius:22px;padding:28px 26px 24px;max-width:452px;width:100%;box-shadow:0 30px 70px rgba(21,42,28,.35);transform:translateY(20px) scale(.95);opacity:0;transition:transform .5s var(--spring),opacity .35s var(--ease)}
-  .pop.aan .pop-kaart{transform:none;opacity:1}
+  /* De transitie op de dichte stand geldt voor het weggaan, die op .aan voor
+     het komen. Openen mag rustig, want daar leest iemand iets. Dichtgaan is het
+     antwoord op een klik die al gemaakt is en hoort dus kort te zijn. */
+  .pop{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(21,42,28,.5);opacity:0;pointer-events:none;transition:opacity .22s var(--ease);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
+  .pop.aan{opacity:1;pointer-events:auto;transition:opacity .36s var(--ease);-webkit-backdrop-filter:saturate(1.1) blur(6px);backdrop-filter:saturate(1.1) blur(6px)}
+  .pop-kaart{background:var(--chalk);border-radius:22px;padding:28px 26px 24px;max-width:452px;width:100%;box-shadow:0 30px 70px rgba(21,42,28,.35);transform:translateY(20px) scale(.95);opacity:0;transition:transform .18s var(--ease),opacity .15s var(--ease)}
+  .pop.aan .pop-kaart{transform:none;opacity:1;transition:transform .42s var(--ease),opacity .26s var(--ease)}
   .pop-badge{width:52px;height:52px;border-radius:15px;background:var(--lime);display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 0 0 6px rgba(191,227,95,.22)}
   .pop-kaart .mono{color:#4A6B1E;margin-bottom:4px}
   .pop-kaart h2{font-size:clamp(21px,5.4vw,26px);line-height:1.12;margin:2px 0 16px;letter-spacing:-.01em}
@@ -255,7 +262,7 @@
   .pop-lijst li::before{content:"";position:absolute;left:5px;top:7px;width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px rgba(191,227,95,.22)}
   .pop-slot{font-size:14px;color:var(--ink);margin:0 0 20px}
   .pop-kaart .btn{width:100%}
-  @media (prefers-reduced-motion:reduce){.pop,.pop-kaart{transition:opacity .2s linear}.pop.aan .pop-kaart{transform:none}}
+  @media (prefers-reduced-motion:reduce){.pop,.pop.aan,.pop-kaart,.pop.aan .pop-kaart{transition:opacity .2s linear}.pop.aan .pop-kaart{transform:none}}
   .okvink{position:relative;display:inline-flex;align-items:center;justify-content:center;width:104px;height:104px;margin:2px auto 14px;border-radius:50%;background:rgba(123,150,105,.16)}
   .okburst{position:absolute;inset:0;border-radius:50%;background:rgba(123,150,105,.4);opacity:0}
   .pop.aan #mailOk .okburst,#mailOk.aan .okburst{animation:okBurst .8s var(--ease) .05s both}
@@ -466,7 +473,10 @@
     --sh-2:0 2px 6px rgba(31,42,26,.05), 0 8px 20px rgba(31,42,26,.07);
     --sh-3:0 12px 34px rgba(31,42,26,.11), 0 3px 10px rgba(31,42,26,.06);
     --sh-ink:0 14px 36px rgba(31,42,26,.20);
-    --ease:cubic-bezier(.22,.61,.36,1);
+    /* Sterke ease-out: zet meteen de eerste helft van de afstand neer en laat
+       de rest uitlopen. De zwakkere variant komt traag op gang, precies op het
+       moment dat het oog kijkt, en leest daardoor als vertraging. */
+    --ease:cubic-bezier(.23,1,.32,1);
     --safe-b:env(safe-area-inset-bottom,0px);
   }
   html{-webkit-text-size-adjust:100%}
@@ -491,7 +501,7 @@
   /* Touch targets ≥44px + tik-feedback; hover alleen waar het kan */
   button,.btn,.btn-ghost,.btn-lime{min-height:44px;transition:transform .16s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease),border-color .2s var(--ease)}
   .btn{box-shadow:var(--sh-1)}
-  @media(hover:hover){
+  @media(hover:hover) and (pointer:fine){
     .btn:hover{background:var(--petrol);transform:translateY(-1px);box-shadow:var(--sh-2)}
     .btn-lime:hover{transform:translateY(-1px);box-shadow:var(--sh-2)}
   }
@@ -646,7 +656,7 @@
   .foot p{margin:8px 0 0}
   .footlinks{font-size:13px;color:var(--slate)}
   .footlinks a{color:var(--petrol);text-decoration:none;border-bottom:1px solid var(--line)}
-  .footlinks a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  @media(hover:hover) and (pointer:fine){.footlinks a:hover{color:var(--ink);border-bottom-color:var(--ink)}}
   .footlinks span{margin:0 6px;color:var(--line)}
   .devrow{opacity:.75}
 
@@ -678,7 +688,7 @@
   input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba(21,42,28,.14)}
   input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--ink);border:3px solid #fff;box-shadow:0 1px 4px rgba(21,42,28,.35)}
   .btn-lime{background:var(--lime);color:var(--limeT);border:0;font-weight:700}
-  .btn-lime:hover{background:#AFD64C}
+  @media(hover:hover) and (pointer:fine){.btn-lime:hover{background:#AFD64C}}
   .kaartje{border-radius:14px;border:1px solid var(--line-2);border-left:3px solid var(--lime)}
   .klap,.profiel,.paywall,.doelblok,.gratisstap,.basis{border-radius:18px;box-shadow:var(--sh-ink)}
   .urenkaart,.framebox,.coach,.blok{border-radius:16px}
@@ -742,10 +752,10 @@
   @media(min-width:860px){.railtop .railmerk{font-size:25px}}
   .homebtn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease),transform .12s var(--ease)}
   .homebtn:active{transform:scale(.97)}
-  @media(hover:hover){.homebtn:hover{border-color:var(--ink);background:var(--veld)}}
+  @media(hover:hover) and (pointer:fine){.homebtn:hover{border-color:var(--ink);background:var(--veld)}}
   .wisbtn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 13px;min-height:40px;font-size:12.5px;font-weight:600;color:var(--slate);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:border-color .15s var(--ease),color .15s var(--ease),transform .12s var(--ease)}
   .wisbtn:active{transform:scale(.97)}
-  @media(hover:hover){.wisbtn:hover{border-color:var(--warn);color:var(--warn)}}
+  @media(hover:hover) and (pointer:fine){.wisbtn:hover{border-color:var(--warn);color:var(--warn)}}
   .railmeta{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
   .railmeta .mono{font-size:10.5px}
   #railsectie{color:var(--ink)}
@@ -881,7 +891,7 @@
   .hlijst-licht{list-style:none;margin:0;padding:0;display:grid;gap:10px}
   .hlijst-licht li{display:flex;gap:13px;align-items:center;background:var(--chalk);border-radius:12px;padding:14px 16px;min-height:52px;box-shadow:inset 0 0 0 1px var(--line-2);cursor:pointer;font-size:15px;color:var(--ink);transition:box-shadow .15s var(--ease),transform .12s var(--ease)}
   .hlijst-licht li:active{transform:scale(.995)}
-  @media(hover:hover){.hlijst-licht li:hover{box-shadow:inset 0 0 0 1px var(--line)}}
+  @media(hover:hover) and (pointer:fine){.hlijst-licht li:hover{box-shadow:inset 0 0 0 1px var(--line)}}
   .vinkl{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid #C2CDBB;position:relative;transition:background .2s var(--ease),border-color .2s var(--ease),transform .2s var(--ease)}
   .hlijst-licht li.aan{box-shadow:inset 0 0 0 1.5px var(--ink)}
   .hlijst-licht li.aan .vinkl{background:var(--lime);border-color:var(--lime);transform:scale(1.06)}
@@ -976,7 +986,7 @@
   .machine{background:var(--ink);color:#fff;border-radius:18px;padding:22px 20px;box-shadow:0 14px 36px rgba(21,42,28,.20);margin-bottom:22px}
   .machine-kop{display:flex;align-items:center;gap:9px;margin-bottom:16px}
   .machine-terug{margin-left:auto;background:transparent;border:1px solid rgba(255,255,255,.28);color:#DCE7D4;border-radius:999px;padding:6px 14px;font-size:12.5px;cursor:pointer;min-height:34px}
-  .machine-terug:hover{border-color:rgba(255,255,255,.55);color:#fff}
+  @media(hover:hover) and (pointer:fine){.machine-terug:hover{border-color:rgba(255,255,255,.55);color:#fff}}
   .machine-kop .mono{color:var(--limeL)}
   .machine-dot{width:9px;height:9px;border-radius:50%;background:var(--lime);animation:mdotPuls 1.2s ease-in-out infinite}
   @keyframes mdotPuls{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
@@ -1078,9 +1088,12 @@
     .slot-cta{margin-top:64px}
   }
 
-  /* Micro-interacties: natuurlijke veer-easing overal gelijk */
-  .btn,.btn-ghost,.btn-lime,.homebtn{transition:transform .22s var(--spring),box-shadow .25s var(--spring),background .2s ease,border-color .2s ease}
-  @media(hover:hover){
+  /* Micro-interacties. De veer blijft voor de kaarten hieronder, maar niet voor
+     een knopdruk: die curve schiet door, dus de knop veert bij loslaten voorbij
+     zijn eigen maat en zakt terug. Een druk hoort binnen 100 tot 160ms klaar te
+     zijn. Let op dat deze regel die op .btn hierboven overschrijft. */
+  .btn,.btn-ghost,.btn-lime,.homebtn{transition:transform .14s var(--ease),box-shadow .2s var(--ease),background .2s ease,border-color .2s ease}
+  @media(hover:hover) and (pointer:fine){
     .trustkaart,.credkaart{transition:transform .25s var(--spring),box-shadow .25s var(--spring)}
     .trustkaart:hover,.credkaart:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--line-2),0 10px 24px rgba(21,42,28,.10)}
     .bon-kaart{transition:transform .3s var(--spring)}
