@@ -731,13 +731,15 @@
   /* Smal scherm: alleen het teken, en het past niet gecentreerd naast de twee
      knoppen, dus dan staat het gewoon in de regel mee. */
   @media(max-width:639px){.railmerk .rm-w{display:none}}
-  /* Ruim genoeg: knoppen links en rechts, het merk precies in het midden. */
+  /* Ruim genoeg: knoppen links en rechts, het merk precies in het midden en
+     wat groter, want daar is de ruimte ervoor. */
   @media(min-width:640px){
     .railtop{display:grid;grid-template-columns:1fr auto 1fr;gap:12px}
     .railtop .homebtn{justify-self:start}
-    .railtop .railmerk{justify-self:center}
+    .railtop .railmerk{justify-self:center;font-size:22px}
     .railtop .wisbtn{justify-self:end;margin-left:0}
   }
+  @media(min-width:860px){.railtop .railmerk{font-size:25px}}
   .homebtn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease),transform .12s var(--ease)}
   .homebtn:active{transform:scale(.97)}
   @media(hover:hover){.homebtn:hover{border-color:var(--ink);background:var(--veld)}}
