@@ -730,7 +730,7 @@
   .prijskol li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--petrol)}
   .prijskol li::before{content:"";position:absolute;left:2px;top:12px;width:8px;height:8px;border-radius:50%;background:var(--limeE)}
 
-  .railtop{display:flex;justify-content:flex-start;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+  .railtop{display:flex;justify-content:flex-start;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:nowrap}
   /* Merk in de kop van de intake. Op mobiel alleen het teken, zodat het geen
      regel extra kost naast de twee knoppen die daar toch al krap zitten. */
   .railmerk{display:inline-flex;align-items:center;gap:8px;font-family:"Archivo",sans-serif;
@@ -738,9 +738,24 @@
   .railmerk .mark{width:1.15em;height:1.15em;flex:0 0 auto}
   .railmerk .rm-l{font-weight:500;color:var(--petrol)}
   .railtop .wisbtn{margin-left:auto}
-  /* Smal scherm: alleen het teken, en het past niet gecentreerd naast de twee
-     knoppen, dus dan staat het gewoon in de regel mee. */
-  @media(max-width:639px){.railmerk .rm-w{display:none}}
+  /* Smal scherm: het teken wordt het anker links en de twee knoppen schuiven
+     ertegenaan rechts, zoals een gewone appbalk. Alledrie op een regel: het
+     merk verliest zijn woordmerk en de terugknop zijn staart. */
+  @media(max-width:639px){
+    .railtop{gap:8px}
+    .railtop .railmerk{order:-1;margin-right:auto;font-size:19px}
+    .railmerk .rm-w{display:none}
+    /* Niet laten krimpen: zonder dit knijpt de flexregel de knoppen samen en
+       breekt de tekst binnenin af, wat er als twee regels uitziet. */
+    .railtop .homebtn,.railtop .wisbtn{flex:0 0 auto;white-space:nowrap}
+    .railtop .homebtn{padding:8px 12px}
+    .railtop .wisbtn{margin-left:0;padding:8px 11px}
+    .hb-staart{display:none}
+  }
+  /* Onder de 380px is ook "mijn data" te veel. Het prullenbakteken en het
+     aria-label dragen de betekenis dan verder. Op 390px, de maat van de meeste
+     telefoons, blijft het label wel voluit staan. */
+  @media(max-width:379px){.wb-staart{display:none}}
   /* Ruim genoeg: knoppen links en rechts, het merk precies in het midden en
      wat groter, want daar is de ruimte ervoor. */
   @media(min-width:640px){
@@ -1384,12 +1399,12 @@
 <section id="intake" class="hidden">
   <div class="rail">
     <div class="railtop">
-      <button class="homebtn" id="homeBtn" type="button" aria-label="Terug naar de startpagina"><span aria-hidden="true">‹</span> Terug naar start</button>
+      <button class="homebtn" id="homeBtn" type="button" aria-label="Terug naar de startpagina"><span aria-hidden="true">‹</span> Terug<span class="hb-staart"> naar start</span></button>
       <span class="railmerk" aria-label="Deskshift">
         <svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect x="0" y="10" width="62" height="32" fill="#404E3B"/><rect x="38" y="58" width="62" height="32" fill="#7B9669"/></svg>
         <span class="rm-w" aria-hidden="true">Desk<span class="rm-l">shift</span></span>
       </span>
-      <button class="wisbtn" id="exitBtn" type="button" aria-label="Verwijder mijn data en stop"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Verwijder mijn data</button>
+      <button class="wisbtn" id="exitBtn" type="button" aria-label="Verwijder mijn data en stop"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Verwijder<span class="wb-staart"> mijn data</span></button>
     </div>
     <div class="railbalk"><span id="railvul"></span></div>
     <div class="railmeta"><span class="mono" id="railsectie"></span><span class="mono" id="resttijd"></span><span class="mono" id="railtel"></span></div>
