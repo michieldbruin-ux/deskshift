@@ -55,8 +55,8 @@ export default async function handler(req, res) {
   }
 
   // Mail is duurder om te misbruiken: houd het strak. Max 4 per minuut en 12 per
-  // uur per IP; een rapportmail plant er in dezelfde minuut twee opvolgers bij,
-  // en dan moet een tweede rapportpoging niet meteen tegen de limiet lopen.
+  // uur per IP; een rapportmail plant er in dezelfde minuut een opvolger bij, en
+  // dan moet een tweede poging niet meteen tegen de limiet lopen.
   if (teVaak(clientIp(req), [{ max: 4, ms: 60000 }, { max: 12, ms: 3600000 }])) {
     res.setHeader("Retry-After", "60");
     res.status(429).json({ error: "Even te veel verzoeken. Wacht een minuut en probeer het opnieuw." });
@@ -86,14 +86,14 @@ export default async function handler(req, res) {
   }
   const subject = (typeof onderwerp === "string" && onderwerp.trim().slice(0, 140)) || "Je Deskshift-plan";
 
-  // Optioneel uitgesteld verzenden, voor de opvolgers in week 2 en 4 van het
-  // plan. Minimaal een kwartier vooruit en hooguit 35 dagen; alles daarbuiten
-  // is geen opvolger van een rapport maar misbruik of een bug.
+  // Optioneel uitgesteld verzenden, voor de opvolger in week 2 van het plan.
+  // Minimaal een kwartier vooruit en hooguit 14 dagen; alles daarbuiten is geen
+  // opvolger van een rapport maar misbruik of een bug.
   let planTijd;
   if (scheduledAt !== undefined) {
     const t = Date.parse(scheduledAt);
     const nu = Date.now();
-    if (isNaN(t) || t < nu + 15 * 60000 || t > nu + 35 * 86400000) {
+    if (isNaN(t) || t < nu + 15 * 60000 || t > nu + 14 * 86400000) {
       res.status(400).json({ error: "Ongeldig verzendtijdstip." });
       return;
     }

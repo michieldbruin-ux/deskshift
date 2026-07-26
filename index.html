@@ -138,8 +138,20 @@
   .tray{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;min-height:20px}
   .tray .chip{position:static;box-shadow:none}
   /* Sorteren met schuiven: tik op de balk of sleep de knop (fijn op mobiel) */
-  .sortpoles{display:flex;justify-content:space-between;gap:12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin:2px 2px 18px}
+  /* De twee polen blijven bij het scrollen boven de lijst plakken, anders weet
+     je halverwege niet meer welke kant welke betekenis heeft. De negatieve
+     marges laten de balk tot de rand van de kaart lopen, zodat er onder het
+     randje niets doorheen schuift. */
+  .sortpoles{position:sticky;top:var(--railh,0px);z-index:6;display:flex;justify-content:space-between;gap:12px;
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;
+    text-wrap:balance;line-height:1.35;
+    color:var(--slate);background:var(--chalk);
+    margin:-26px -20px 14px;padding:16px 20px 10px;border-bottom:1px solid var(--line)}
+  /* De marges lopen mee met de padding van .step, anders blijft er links en
+     rechts een reepje kaart onder de balk door schuiven. */
+  @media(min-width:760px){.sortpoles{margin:-30px -28px 14px;padding:16px 28px 10px}}
   .sortpoles span:last-child{color:var(--petrol);text-align:right}
+  .sortpoles b{color:var(--ink);font-weight:700}
   .sortlijst{display:grid;gap:16px}
   .sortrij{display:grid;gap:9px}
   .sortlbl{font-size:15px;font-weight:500;color:var(--slate);transition:color .2s ease}
@@ -499,7 +511,12 @@
     --safe-b:env(safe-area-inset-bottom,0px);
   }
   html{-webkit-text-size-adjust:100%}
+  /* overflow-x:hidden maakt van html en body een scrollcontainer, en daarmee
+     werkt position:sticky nergens meer op de pagina. overflow-x:clip snijdt wel
+     af zonder die container te maken. De hidden-regel blijft als terugval voor
+     browsers die clip niet kennen; daar valt alleen het plakken weg. */
   html,body{overflow-x:hidden}
+  @supports (overflow-x:clip){ html,body{overflow-x:clip} }
   img,svg,canvas{max-width:100%;height:auto}
 
   /* Ruimer, mobiel-first kader (ruimte voor sticky CTA onderaan) */
@@ -1191,6 +1208,7 @@
         <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
       </div>
       <p class="micro">Gratis: je patroon in één zin, plus je profiel. €25: drie richtingen met een plan. Geen account.</p>
+      <p class="micro" style="margin-top:2px">Je antwoorden blijven op je eigen toestel, dus je kunt altijd verder waar je gebleven was.</p>
     </div>
 
     <figure class="hero-mock" data-para="0.09" aria-hidden="true">
@@ -1235,8 +1253,9 @@
     <p class="muted" style="margin:0 0 6px">Alles wordt opgebouwd uit jóuw antwoorden. Hoe eerlijker je bent, hoe scherper en waardevoller je plan.</p>
     <ol class="stepper" id="stepper">
       <li><span class="step-n">01</span><div class="step-b"><h3>Intake voor jouw situatie</h3><p>Een korte intake die helemaal over jou gaat. Geen eindeloze vragenlijst. Vijftien minuten op je telefoon.</p></div></li>
-      <li><span class="step-n">02</span><div class="step-b"><h3>Je gratis inzicht</h3><p>Direct het scherpste patroon uit je eigen antwoorden, in jouw eigen woorden terug. Voordat je iets betaalt.</p></div></li>
-      <li><span class="step-n">03</span><div class="step-b"><h3>Jouw drie richtingen</h3><p>Elk met een pasvorm-score en een plan van zes weken, doorgerekend op wat jij belangrijk vindt. Geen open einde.</p></div></li>
+      <li><span class="step-n">02</span><div class="step-b"><h3>Je schets, en jij corrigeert</h3><p>Vier observaties uit je eigen antwoorden. Per stuk geef je aan of het klopt. Wat je afwijst, verdwijnt uit de rest.</p></div></li>
+      <li><span class="step-n">03</span><div class="step-b"><h3>Je gratis inzicht</h3><p>Het scherpste patroon, met letterlijke citaten uit je eigen antwoorden en wat je zelf niet opschreef. Voordat je iets betaalt.</p></div></li>
+      <li><span class="step-n">04</span><div class="step-b"><h3>Jouw drie richtingen</h3><p>Vier laatste voorkeuren, dan drie richtingen met een pasvorm-score en een plan van zes weken. Geen open einde.</p></div></li>
     </ol>
   </div>
 
@@ -1299,7 +1318,8 @@
           <li><span>Waarom de andere richtingen afvielen, per richting</span></li>
           <li><span>Eén actie die je deze week al kunt doen</span></li>
           <li><span>Een plan van zes weken, week voor week</span><em>pdf</em></li>
-          <li><span>Kant-en-klare berichten om je richting intern voor te stellen</span></li>
+          <li><span>Kant-en-klare berichten om je richting voor te stellen, aan je leidinggevende of aan je netwerk</span></li>
+          <li><span>Een week later één herinnering met de acties van week twee</span><em>mail</em></li>
         </ul>
       </div>
     </div>
@@ -1309,9 +1329,9 @@
     <div class="mono" style="margin-bottom:10px">Voor de zekerheid</div>
     <details><summary>Is dit een cursus of coaching-traject?</summary><p>Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen.</p></details>
     <details><summary>Zit hier AI achter?</summary><p>Ja. Deskshift gebruikt AI om alleen jóuw antwoorden te analyseren. Geen mens leest ze. Het is geen kale chatbot: de intake en het plan zijn er strak omheen gebouwd, zodat de uitkomst over jou gaat en niet over iemand in het algemeen.</p></details>
-    <details><summary>Is dit niet gewoon een quiz of gimmick?</summary><p>Nee. Je vult een echte intake in en krijgt direct een inzicht uit je eigen antwoorden, in je eigen woorden terug. Daarna een plan dat je zelf uitvoert.</p></details>
+    <details><summary>Is dit niet gewoon een quiz of gimmick?</summary><p>Nee. Je vult een echte intake in en krijgt direct een inzicht uit je eigen antwoorden, in je eigen woorden terug. Je corrigeert onderweg zelf wat er niet klopt, en elk citaat wordt teruggelegd naast wat je echt hebt opgeschreven, zodat er niets in staat dat je nooit gezegd hebt. Daarna een plan dat je zelf uitvoert.</p></details>
     <details><summary>Wat als het antwoord is dat ik moet blijven waar ik zit?</summary><p>Dan zeggen we dat, en laten we zien hóe. Soms zit de scherpste richting in je huidige baan: een taak eruit, een tweede vakgebied erbij. Ook dat wordt een concreet plan van zes weken, geen "ga netwerken en praat met je manager".</p></details>
-    <details><summary>Wat krijg ik precies voor €25?</summary><p>Drie richtingen met een pasvorm-score, waarom de andere afvielen, je eerste stap voor deze week, en een plan van zes weken als pdf. De intake en het inzicht daarvoor zijn gratis.</p></details>
+    <details><summary>Wat krijg ik precies voor €25?</summary><p>Drie richtingen met een pasvorm-score, waarom de andere afvielen, je eerste stap voor deze week, en een plan van zes weken als pdf. Mail je het naar jezelf, dan volgt een week later één herinnering met de acties van week twee. De intake en het inzicht daarvoor zijn gratis.</p></details>
     <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Geen mens, nee. Je antwoorden staan op je eigen toestel en gaan alleen naar een AI-dienst die ze verwerkt om jouw inzicht en plan te maken. Verder nergens heen, ook niet naar je werkgever.</p></details>
     <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie richtingen.</p></details>
   </div>
@@ -1362,14 +1382,17 @@
 
 <div id="sortPop" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="sortPopTitel">
   <div class="pop-kaart">
-    <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="8" height="16" rx="2" fill="#152A1C"/><rect x="13" y="4" width="8" height="16" rx="2" fill="#BFE35F"/></svg></div>
+    <!-- Twee schuiven met de knop op een andere plek: hetzelfde onderwerp, twee
+         verschillende antwoorden. De vorige versie gebruikte lime op een lime
+         badge, waardoor de helft wegviel. Alles nu in inkt. -->
+    <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 8h18M3 16h18" stroke="#152A1C" stroke-width="1.8" stroke-linecap="round"/><circle cx="8.5" cy="8" r="3.1" fill="#152A1C"/><circle cx="15.5" cy="16" r="3.1" fill="#152A1C"/></svg></div>
     <div class="mono">Twee keer sorteren</div>
     <h2 id="sortPopTitel">Let op: twee verschillende vragen</h2>
     <ul class="pop-lijst">
-      <li><b>Eerst:</b> waar ben je goed in?</li>
-      <li><b>Daarna:</b> wat vind je leuk om te doen?</li>
+      <li><b>Eerst:</b> waar ben je <b>goed</b> in?</li>
+      <li><b>Daarna:</b> wat vind je <b>leuk</b> om te doen?</li>
     </ul>
-    <p class="pop-slot">Goed kunnen en leuk vinden zijn niet hetzelfde. We leggen je twee antwoorden over elkaar en zoeken waar ze allebei samenvallen. Daar zit je richting.</p>
+    <p class="pop-slot"><b>Goed</b> kunnen en <b>leuk</b> vinden zijn niet hetzelfde. We leggen je twee antwoorden over elkaar en zoeken waar ze allebei samenvallen. Daar zit je richting.</p>
     <button class="btn btn-lime btn-hero" id="sortPopOk">Duidelijk</button>
   </div>
 </div>
@@ -1390,7 +1413,7 @@
     <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="2.5" stroke="#152A1C" stroke-width="1.8"/><path d="m3.5 7 8.5 6 8.5-6" stroke="#152A1C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="mono">Bewaar het</div>
     <h2 id="mailPopTitel">Stuur dit plan naar je mail</h2>
-    <p class="pop-slot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. In week 2 en week 4 volgt één korte opvolger met de acties van die week uit je eigen plan. Geen nieuwsbrief, daarna niets meer.</p>
+    <p class="pop-slot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. Over een week volgt één korte herinnering met de acties van week twee uit je eigen plan. Geen nieuwsbrief, daarna niets meer.</p>
     <div class="mailrij" style="margin-bottom:6px">
       <input type="email" id="mailAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
       <button class="btn btn-lime" id="mailKnop">Versturen</button>
@@ -1666,6 +1689,17 @@ function railTeken(){
   const el = document.getElementById("railsectie");
   if(el) el.textContent = "Sectie " + (S.s+1) + "/" + SECTIES.length + " · " + SECTIES[S.s].naam;
 }
+// De kop van de intake plakt bovenaan. Zijn hoogte wisselt per scherm en per
+// sectie (de meta-regel breekt op smalle schermen), dus meten we hem en zetten
+// we hem als variabele. De polenbalk van de sorteervragen hangt eraan, zodat
+// die er precies onder blijft staan in plaats van eronder te verdwijnen.
+function railHoogte(){
+  const r = document.querySelector(".rail");
+  if(!r) return;
+  const h = Math.round(r.getBoundingClientRect().height);
+  if(h > 0) document.documentElement.style.setProperty("--railh", h + "px");
+}
+window.addEventListener("resize", railHoogte);
 const stap = () => SECTIES[S.s].stappen[S.q];
 
 /* Kleine spiegel bij drie sectie-overgangen: een observatie uit wat er al is
@@ -1719,6 +1753,7 @@ function toonStap(){
   const vul = document.getElementById("railvul"); if(vul) vul.style.width = Math.round(gedaan/totaal*100) + "%";
   $("back").disabled = (S.s===0 && S.q===0);
   $("next").textContent = (S.s===SECTIES.length-1 && S.q===sec.stappen.length-1) ? "Naar het overzicht" : "Volgende";
+  railHoogte();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -1869,7 +1904,10 @@ async function stripVeld(v, st){
       <input type="range" class="sortsl" min="0" max="100" step="1" value="${val}" aria-label="${esc(naam)}">
     </div>`;
   };
-  v.innerHTML = `<div class="sortpoles"><span>${st.links}</span><span>${st.rechts}</span></div>
+  // "goed" en "leuk" vet, want dat is het enige woord dat tussen de twee
+  // sorteringen verschilt. Escapen kan hier gewoon: het zijn onze eigen teksten.
+  const pool = t => esc(t).replace(/\b(goed|leuk)\b/gi, "<b>$1</b>");
+  v.innerHTML = `<div class="sortpoles"><span>${pool(st.links)}</span><span>${pool(st.rechts)}</span></div>
     <div class="sortlijst" id="sortlijst">${uniek.map(rij).join("")}</div>
     <div class="addrow"><input type="text" id="eigen" placeholder="Eigen onderwerp toevoegen"><button class="btn btn-ghost btn-sm" id="addc">Toevoegen</button></div>`;
   const lijst = $("sortlijst");
@@ -3115,7 +3153,7 @@ function toonRichtingen(){
         </ul>
         <button class="btn btn-lime pw-knop" id="betaalKnop"><span>Ontgrendel mijn drie richtingen</span><b>€25</b></button>
         <p class="pw-onder">Eenmalig, inclusief 21% btw. Geen abonnement, geen account. Meteen in beeld.</p>
-        <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Je antwoorden staan alleen in dit venster. Ga je nu weg, dan begin je straks weer bij vraag één.</span></p>
+        <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Je antwoorden blijven op dit toestel staan. Deze drie richtingen niet: die zijn nu voor jou berekend en worden opnieuw opgebouwd als je later terugkomt.</span></p>
       </div>`);
     const _pw = document.getElementById("paywall");
     if(_pw) _pw.insertAdjacentHTML("afterend", `<p class="slotcap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg><span>Hieronder je drie richtingen. Nu nog vervaagd. Ontgrendel om ze helemaal uitgewerkt te lezen.</span></p>`);
@@ -3352,41 +3390,40 @@ function mailHtmlBouw(p, s){
     </td></tr>`;
   return mailShell("Jouw rapport en plan van zes weken", inhoud);
 }
-/* ---------- opvolgers in week 2 en 4 ----------
-   Herkenning die terugkomt nadat de betaling al gedaan is: op dag 7 en dag 21
-   één korte mail met de acties van die week uit het eigen plan. Best effort:
-   kan de mailprovider uitgesteld verzenden niet aan, dan merkt de gebruiker
-   daar niets van, want het rapport zelf is dan al binnen. Geen nieuwsbrief,
-   na week 4 volgt niets meer. */
-function mailOpvolger(nr, w, p, s){
+/* ---------- de opvolger in week 2 ----------
+   Herkenning die terugkomt nadat de betaling al gedaan is: op dag 7 één korte
+   mail met de acties van week twee uit het eigen plan, plus waaraan je ziet dat
+   het werkt. Precies één, want meer wordt een nieuwsbrief. Best effort: kan de
+   mailprovider uitgesteld verzenden niet aan, dan merkt de gebruiker daar niets
+   van, want het rapport zelf is dan al binnen. */
+function mailOpvolger(w, p, s){
   const acties = (w.acties||[]).map(a=>
     `<tr><td style="padding:3px 0;font-size:14px;color:${MK.petrol}">&bull;&nbsp;&nbsp;${esc(a)}</td></tr>`).join("");
   const citaat = ((s&&s.citaten)||[]).filter(c=>c && citaatEcht(c, 3))[0];
-  const slot = nr >= 4
-    ? `<p style="font-size:14px;color:${MK.petrol};margin:14px 0 0"><b>Werkt het?</b> ${esc(p.meetpunt||"")}<br><b>Werkt het niet?</b> Dan is dit je eigen stopcriterium: ${esc(p.kill||(s&&s.kill)||"")}</p>`
-    : "";
   const inhoud = `<tr><td style="padding:22px 26px 8px">
-    <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Week ${nr} van je plan</div>
+    <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Week 2 van je plan</div>
     <h2 style="font-size:20px;margin:8px 0 6px;color:${MK.ink}">${esc(w.thema||(s&&s.titel)||"")}</h2>
     ${citaat?`<p style="font-size:14px;color:${MK.petrol};font-style:italic;margin:0 0 12px">Waarom je hieraan begon, in je eigen woorden: "${esc(citaat)}"</p>`:""}
     <table cellpadding="0" cellspacing="0" style="width:100%">${acties}</table>
     ${w.resultaat?`<p style="font-size:14px;color:${MK.ink};margin:12px 0 0"><b>Klaar aan het eind van deze week:</b> ${esc(w.resultaat)}</p>`:""}
-    ${slot}
-    <p style="font-size:13px;color:${MK.petrol};margin:16px 0 4px">Dit is een geplande opvolger van je eigen rapport. ${nr>=4?"Dit was de laatste; hierna mailen we je niet meer.":"Er volgt er nog één, in week 4."}</p>
+    ${p.meetpunt?`<p style="font-size:14px;color:${MK.petrol};margin:14px 0 0"><b>Waaraan je ziet dat het werkt:</b> ${esc(p.meetpunt)}</p>`:""}
+    <p style="font-size:13px;color:${MK.petrol};margin:16px 0 4px">Dit is de enige geplande opvolger van je eigen rapport. Hierna mailen we je niet meer.</p>
   </td></tr>`;
-  return mailShell("Week "+nr+" van je plan", inhoud);
+  return mailShell("Week 2 van je plan", inhoud);
 }
 function planOpvolgers(email, p, s){
   if(S.opvolgersGepland || !p) return;
-  const w2 = (p.weken||[])[1], w4 = (p.weken||[])[3];
-  if(!w2 && !w4) return;
+  const w2 = (p.weken||[])[1];
+  if(!w2) return;
   S.opvolgersGepland = true;
-  const stuur = (dagen, onderwerp, html) =>
-    fetch("/api/mail",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ email, onderwerp, html, scheduledAt:new Date(Date.now()+dagen*86400000).toISOString() })
-    }).catch(()=>{});
-  if(w2) stuur(7,  "Week 2 van je plan: "+(w2.thema||(s&&s.titel)||""), mailOpvolger(2, w2, p, s));
-  if(w4) stuur(21, "Week 4 van je plan: "+(w4.thema||"")+" en je meetpunt", mailOpvolger(4, w4, p, s));
+  fetch("/api/mail",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      email,
+      onderwerp:"Week 2 van je plan: "+(w2.thema||(s&&s.titel)||""),
+      html: mailOpvolger(w2, p, s),
+      scheduledAt: new Date(Date.now()+7*86400000).toISOString()
+    })
+  }).catch(()=>{});
 }
 
 async function mailPlan(){
