@@ -1333,6 +1333,7 @@
 
   <div class="row devrow hidden" id="devrow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
     <button class="btn btn-ghost btn-sm" id="demo">Testmodus: direct naar de uitkomst</button>
+    <button class="btn btn-ghost btn-sm" id="demoSchets">Testmodus: vanaf de schets</button>
     <button class="btn btn-ghost btn-sm" id="demoLoop">Testmodus: door de intake lopen</button>
     <span class="muted" style="font-size:13px">Testmodus staat aan op dit toestel. Zet uit met ?test=0</span>
   </div>
@@ -2139,6 +2140,21 @@ $("demo").onclick = async () => {
   show("scenarios");
   window.scrollTo({top:0,behavior:"smooth"});
   draaien();
+};
+// Vult de antwoorden en zet je op de schets. Vanaf daar loopt de hele keten die
+// om invoer van de gebruiker vraagt: klopt / klopt niet per kaart, het inzicht
+// dat daarop voortbouwt, de vier kalibratievragen en dan de richtingen. Dit is
+// de enige route waarlangs de oordelen op de schetskaarten te testen zijn;
+// "direct naar de uitkomst" slaat ze bewust over.
+$("demoSchets").onclick = async () => {
+  demoVul();
+  S.kalib = {};                     // kalibratie hoort op deze route zelf ingevuld te worden
+  S.betaald = false;
+  S.schets = null; S.schetsOordeel = {};
+  await bewaar();
+  ["landing","intake","review","insight","kalib","scenarios","action"].forEach(hide);
+  window.scrollTo({top:0,behavior:"smooth"});
+  $("toSummary").onclick();         // bouwt het transcript en toont de schets
 };
 $("demoLoop").onclick = async () => { demoVul(); S.s=0; S.q=0; await bewaar(); hide("landing"); show("intake"); toonStap(); };
 
