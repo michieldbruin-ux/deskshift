@@ -199,6 +199,10 @@
   .kaartje p{margin:0;font-size:16px}
   .klap{background:var(--ink);color:var(--chalk);border-radius:var(--r);padding:20px 22px;margin-top:14px;font-size:19px;font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:600;line-height:1.25}
 
+  /* Wie al betaald heeft, wil zijn eigen uitkomst als eerste zien staan en niet
+     onder een knop die een nieuwe intake start. */
+  #herstelBetaald{order:-1}
+
   /* Spiegel: kleine observatie uit eigen antwoorden bij een sectie-overgang.
      Staat in de donkere sectie-kaart, dus lichte tekst. */
   .spiegel{background:rgba(255,255,255,.08);border-left:3px solid var(--lime);border-radius:0 10px 10px 0;padding:12px 14px;margin-top:14px;font-size:14.5px;line-height:1.5;color:#E7ECE2}
@@ -1206,6 +1210,7 @@
       <div class="row cta-row">
         <button class="btn btn-hero" id="start">Start, het eerste inzicht is gratis</button>
         <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
+        <button class="btn btn-lime hidden" id="herstelBetaald">Open je uitkomst en plan</button>
       </div>
       <p class="micro">Gratis: je patroon in één zin, plus je profiel. €25: drie richtingen met een plan. Geen account.</p>
       <p class="micro" style="margin-top:2px">Je antwoorden blijven op je eigen toestel, dus je kunt altijd verder waar je gebleven was.</p>
@@ -1295,7 +1300,7 @@
     <h2 class="bloktitel" style="margin:8px 0 18px">Gemaakt om niets over je te onthouden</h2>
     <div class="trustgrid">
       <div class="trustkaart"><b>Geen account.</b><span>Geen mailadres, geen registratie, geen tracking. Je begint meteen.</span></div>
-      <div class="trustkaart"><b>Op je eigen toestel.</b><span>Je antwoorden worden alleen op dit toestel bewaard, zodat je later verder kunt. Wij houden geen profiel over je bij.</span></div>
+      <div class="trustkaart"><b>Op je eigen toestel.</b><span>Je antwoorden worden alleen op dit toestel bewaard, zodat je later verder kunt. Heb je betaald, dan blijft je uitkomst er 30 dagen staan, zodat je hem terugvindt als je het venster sluit. Wij houden geen profiel over je bij.</span></div>
       <div class="trustkaart"><b>Alleen voor je analyse.</b><span>Om je inzicht te maken gaan je antwoorden naar een AI-dienst (Anthropic) en worden daar alleen daarvoor gebruikt. Niet naar je werkgever of collega's.</span></div>
       <div class="trustkaart"><b>Eén knop wist alles.</b><span>Ook halverwege, definitief.</span></div>
     </div>
@@ -1514,7 +1519,7 @@
   <div id="mailAlles" class="mailblok hidden">
     <div class="mono" style="color:var(--limeL)">Houd het bij je</div>
     <h3 style="color:var(--chalk);margin:8px 0 4px">Stuur je uitkomst en alle drie de plannen naar je mail</h3>
-    <p style="color:#CBD6C2;margin:0 0 14px;font-size:15px">Je hebt betaald, dus je houdt toegang. Eén mail met je richtingen en de volledige plannen, netjes opgemaakt.</p>
+    <p style="color:#CBD6C2;margin:0 0 14px;font-size:15px">Je uitkomst staat 30 dagen op dit toestel, maar in je mail heb je hem overal bij je. Eén mail met je richtingen en de volledige plannen, netjes opgemaakt.</p>
     <div class="mailrij">
       <input type="email" id="mailAllesAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
       <button class="btn btn-lime" id="mailAllesKnop">Stuur alles naar mijn mail</button>
@@ -1550,6 +1555,19 @@
 // stuurt bewust geen modelnaam mee: dat werd server-side toch genegeerd en het
 // zette onze modelkeuze onnodig in de paginabron.
 const KEY = "deskshift:draft";
+/* Het archief van een geleverde uitkomst. Deze drie staan hier bovenaan en niet
+   bij de andere betaalcode, omdat de opstartcode ze al nodig heeft om te bepalen
+   welke knop er op de landing hoort. Een const verderop in het bestand is op dat
+   moment nog niet geïnitialiseerd, en leesOpname() vangt die fout stil af: dan
+   zou de herstelknop zonder enig spoor wegblijven.
+
+   BETAAL_KEY (verderop) is vervoer: die bestaat alleen om de omweg langs Stripe
+   te overleven en mag kort leven. UITKOMST_KEY is het geleverde product en blijft
+   staan, zodat iemand die zijn venster sluit niet met lege handen zit en zeker
+   niet nog een keer hoeft te betalen. */
+const UITKOMST_KEY = "deskshift_uitkomst_v1";
+const BEWAAR_VERVOER_MS = 6 * 3600 * 1000;
+const BEWAAR_UITKOMST_MS = 30 * 24 * 3600 * 1000;
 // Lokale opslag zodat 'ga verder' werkt. Blijft op dit toestel (localStorage), gaat nergens heen.
 if(!window.storage){
   window.storage = {
@@ -2064,7 +2082,7 @@ if($("homeBtn")) $("homeBtn").onclick = () => {
   try{ leesVeld(); }catch(e){}
   bewaar();
   ["intake","review","summary","insight","kalib","scenarios","action"].forEach(hide);
-  show("landing"); show("resume");
+  show("landing"); zetLandingKnoppen();
   window.scrollTo({top:0,behavior:"smooth"});
 };
 // "Verwijder mijn data": wist alles op dit toestel en sluit de intake. Dit is de
@@ -2085,8 +2103,11 @@ if($("exitBtn")) $("exitBtn").onclick = () => {
     S.gangAf = true; if(typeof gangStop === "function") gangStop();
     await wis();
     S.s=0; S.q=0; S.ant={}; S.pos={skill:{},energie:{}}; S.kaarten=[]; S.kalib={}; S.scenarios=[]; S.betaald=false; S.sortUitlegGezien=false;
+    // "Verwijder mijn data" wist ook de bewaarde uitkomst; anders staat er na een
+    // wisactie nog een knop die een net verwijderd rapport belooft.
+    S.plannen = {}; S.planProm = {}; wisBetaalSnapshot(); wisUitkomst();
     ["intake","review","summary","insight","kalib","scenarios","action"].forEach(hide);
-    show("landing"); hide("resume");
+    show("landing"); hide("resume"); hide("herstelBetaald");
     window.scrollTo({top:0,behavior:"smooth"});
   };
   const opToets = e => { if(e.key==="Escape"){ e.preventDefault(); sluit(); } };
@@ -2095,7 +2116,20 @@ if($("exitBtn")) $("exitBtn").onclick = () => {
   document.addEventListener("keydown", opToets);
   requestAnimationFrame(()=> nee.focus());
 };
-(async ()=>{ const d = await laad(); if(d && (d.s>0||d.q>0)) show("resume"); })();
+// Welke knop hoort er op de landing te staan: heeft dit toestel een betaalde
+// uitkomst, dan is dat de enige die telt. Anders de gewone "ga verder".
+async function zetLandingKnoppen(){
+  const bs = laadUitkomst();
+  if(bs){
+    hide("resume"); show("herstelBetaald");
+    const hb = $("herstelBetaald");
+    if(hb) hb.onclick = () => { if(!openBetaaldeUitkomst()) hb.classList.add("hidden"); };
+    return;
+  }
+  hide("herstelBetaald");
+  const d = await laad(); if(d && (d.s>0||d.q>0)) show("resume");
+}
+zetLandingKnoppen();
 
 /* herkenningslijst: zelf aantikken werkt sterker dan een lijst met vinkjes */
 (function(){
@@ -2701,7 +2735,7 @@ async function ontgrendel(){
   // proberen. Stil doorgaan gaf lege onderbouwingen zonder uitleg.
   if(!compleet) toonUitwerkingHerstel();
   // Duidelijke "je bent er"-banner: dit is de betaalde waarde.
-  if($("scenBody")) $("scenBody").insertAdjacentHTML("afterbegin", `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Ontgrendeld.</b> Dit is waar je voor betaalde: je drie richtingen, helemaal uitgewerkt en van jou. Bekijk ze rustig, kies wanneer je wilt, en stuur alles naar je mail zodat je het houdt.</div></div>`);
+  if($("scenBody")) $("scenBody").insertAdjacentHTML("afterbegin", `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Ontgrendeld.</b> Dit is waar je voor betaalde: je drie richtingen, helemaal uitgewerkt en van jou. Bekijk ze rustig en kies wanneer je wilt. Je uitkomst blijft 30 dagen op dit toestel bewaard, dus je kunt het venster gewoon sluiten en later terugkomen.</div></div>`);
   const mb = document.getElementById("mailAlles"); if(mb){ mb.classList.remove("hidden"); const mk=document.getElementById("mailAllesKnop"); if(mk) mk.onclick = mailAlles; }
   if(typeof planWarm === "function") planWarm(); // plannen meteen laten schrijven, ze staan klaar bij openen
   window.scrollTo({top:0,behavior:"smooth"});
@@ -2750,24 +2784,56 @@ function leesKortingscode(){
 }
 // Bewaar de uitkomst kort, zodat die na terugkeer van Stripe hersteld kan worden
 // (de pagina herlaadt en het werkgeheugen is dan leeg).
-function bewaarBetaalSnapshot(){
-  try{
-    localStorage.setItem(BETAAL_KEY, JSON.stringify({
-      v:1, ts:Date.now(), scenarios:S.scenarios, topKand:S.topKand, rest:S.rest,
-      profiel:S.profiel, pg:S.pg, transcript:S.transcript
-    }));
-  }catch(e){}
+/* Twee opnamen, twee sleutels; zie de uitleg bij UITKOMST_KEY bovenaan. Ze
+   gescheiden houden is nodig: begint iemand later een nieuwe intake, dan mag de
+   vervoersopname van die tweede poging het al geleverde rapport niet
+   overschrijven voordat er opnieuw betaald is. */
+function inhoudOpname(){
+  return { v:2, ts:Date.now(), scenarios:S.scenarios, topKand:S.topKand, rest:S.rest,
+           profiel:S.profiel, pg:S.pg, transcript:S.transcript, plannen:S.plannen || {} };
 }
-function laadBetaalSnapshot(){
+function leesOpname(sleutel, maxMs){
   try{
-    const raw = localStorage.getItem(BETAAL_KEY); if(!raw) return null;
+    const raw = localStorage.getItem(sleutel); if(!raw) return null;
     const s = JSON.parse(raw);
     if(!s || !Array.isArray(s.scenarios) || !s.scenarios.length) return null;
-    if(s.ts && Date.now()-s.ts > 6*3600*1000){ localStorage.removeItem(BETAAL_KEY); return null; }
+    if(s.ts && Date.now()-s.ts > maxMs){ localStorage.removeItem(sleutel); return null; }
     return s;
   }catch(e){ return null; }
 }
+function bewaarBetaalSnapshot(){ try{ localStorage.setItem(BETAAL_KEY, JSON.stringify(inhoudOpname())); }catch(e){} }
+function laadBetaalSnapshot(){ return leesOpname(BETAAL_KEY, BEWAAR_VERVOER_MS); }
 function wisBetaalSnapshot(){ try{ localStorage.removeItem(BETAAL_KEY); }catch(e){} }
+
+function bewaarUitkomst(){ try{ localStorage.setItem(UITKOMST_KEY, JSON.stringify(inhoudOpname())); }catch(e){} }
+function laadUitkomst(){ return leesOpname(UITKOMST_KEY, BEWAAR_UITKOMST_MS); }
+function wisUitkomst(){ try{ localStorage.removeItem(UITKOMST_KEY); }catch(e){} }
+
+// De plannen staan als gewone objecten in de opname; zet ze terug als beloftes
+// zodat het openen van een richting geen nieuwe AI-aanroep kost.
+function herstelPlannen(snap){
+  S.plannen = (snap && snap.plannen) || {};
+  S.planProm = S.planProm || {};
+  Object.keys(S.plannen).forEach(k=>{
+    if(!S.planProm[k]) S.planProm[k] = Promise.resolve(S.plannen[k]);
+  });
+}
+// Zet de geleverde uitkomst terug zoals hij was, zonder iets opnieuw te laten
+// schrijven. Geeft terug of dat gelukt is.
+function openBetaaldeUitkomst(){
+  const snap = laadUitkomst();
+  if(!snap) return false;
+  herstelState(snap);
+  herstelPlannen(snap);
+  S.betaald = true;
+  ["landing","intake","review","summary","insight","kalib","action"].forEach(hide);
+  show("scenarios");
+  toonRichtingen();
+  const mb = $("mailAlles");
+  if(mb){ mb.classList.remove("hidden"); const mk = $("mailAllesKnop"); if(mk) mk.onclick = mailAlles; }
+  window.scrollTo({top:0,behavior:"smooth"});
+  return true;
+}
 function herstelState(snap){
   S.scenarios = snap.scenarios||[]; S.topKand = snap.topKand||S.scenarios;
   S.rest = snap.rest||[]; S.profiel = snap.profiel||S.profiel; S.pg = snap.pg||S.pg;
@@ -2818,9 +2884,15 @@ async function checkBetaalTerugkeer(){
   const snap = laadBetaalSnapshot();
   const naarScenarios = () => { ["landing","intake","review","summary","insight","kalib","action"].forEach(hide); show("scenarios"); };
   if(paid && snap){
-    herstelState(snap); wisBetaalSnapshot();
+    herstelState(snap);
+    herstelPlannen(snap);
+    // Meteen in het archief zetten, nog vóór het uitschrijven. Wie in deze
+    // seconden zijn venster sluit, kan straks alsnog bij zijn uitkomst.
+    bewaarUitkomst(); wisBetaalSnapshot();
     naarScenarios();
     await ontgrendel();
+    // Nu met de volledige uitwerking erin, zodat een herstel later compleet is.
+    bewaarUitkomst();
     toonBetaalBanner();
     return true;
   }
@@ -2834,8 +2906,8 @@ async function checkBetaalTerugkeer(){
     if($("scenBody")) $("scenBody").innerHTML = `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Je betaling is gelukt.</b> We konden je uitkomst op dit toestel niet automatisch terugvinden. Dat gebeurt als je in een andere browser terugkomt dan waarin je de intake deed. Open deze pagina opnieuw in die browser, dan staat je uitkomst er nog en wordt hij alsnog ontgrendeld. Lukt dat niet, mail dan <a href="mailto:plan@deskshift.pro" style="color:var(--limeT);font-weight:600">plan@deskshift.pro</a>, dan lossen we het op.</div></div>`;
     return false;
   }
-  // Verificatie mislukt of geen betaling: herstel de paywall als het kan.
-  wisBetaalSnapshot();
+  // Verificatie mislukt of geen betaling: herstel de paywall als het kan. De
+  // opname blijft staan, zodat een herlaadpoging niet ook nog de richtingen kost.
   if(snap){ herstelState(snap); naarScenarios(); toonRichtingen(); }
   return false;
 }
@@ -3153,7 +3225,7 @@ function toonRichtingen(){
         </ul>
         <button class="btn btn-lime pw-knop" id="betaalKnop"><span>Ontgrendel mijn drie richtingen</span><b>€25</b></button>
         <p class="pw-onder">Eenmalig, inclusief 21% btw. Geen abonnement, geen account. Meteen in beeld.</p>
-        <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Je antwoorden blijven op dit toestel staan. Deze drie richtingen niet: die zijn nu voor jou berekend en worden opnieuw opgebouwd als je later terugkomt.</span></p>
+        <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Deze drie richtingen zijn nu voor jou berekend. Betaal je, dan blijven ze 30 dagen op dit toestel staan. Doe je dat niet, dan worden ze opnieuw opgebouwd als je later terugkomt.</span></p>
       </div>`);
     const _pw = document.getElementById("paywall");
     if(_pw) _pw.insertAdjacentHTML("afterend", `<p class="slotcap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg><span>Hieronder je drie richtingen. Nu nog vervaagd. Ontgrendel om ze helemaal uitgewerkt te lezen.</span></p>`);
@@ -3263,7 +3335,14 @@ function planPromise(s){
   const key = (s && s.titel) || "x";
   if(!S.planProm[key]){
     const msgs = bericht(`Gekozen pad: ${s.titel} (${s.id}). ${s.pitch||""} ${s.doel||""} Er is ongeveer ${s.uren||4} uur per week beschikbaar. Schrijf het plan.`);
-    S.planProm[key] = askJSON(P3, msgs, null, 5000).then(zuiverPlan);
+    S.planProm[key] = askJSON(P3, msgs, null, 5000).then(zuiverPlan).then(p=>{
+      // Het plan meteen bij de betaalde opname zetten: dan staat het er nog na
+      // het sluiten van het venster en hoeft het niet opnieuw geschreven.
+      S.plannen = S.plannen || {};
+      S.plannen[key] = p;
+      if(S.betaald) bewaarUitkomst();
+      return p;
+    });
   }
   return S.planProm[key];
 }
