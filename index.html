@@ -433,7 +433,7 @@
   /* Zwevende terugknop op het actiepad: op mobiel is die pagina lang, en dan
      staat de gewone terugknop alleen helemaal onderaan. Zit in #action, dus hij
      verdwijnt vanzelf zodra die sectie verborgen is. */
-  .zweefterug{position:fixed;left:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;display:none;align-items:center;gap:7px;
+  .zweefterug{position:fixed;left:12px;top:12px;z-index:30;display:none;align-items:center;gap:7px;
     background:var(--ink);color:var(--chalk);border:0;border-radius:999px;padding:11px 17px 11px 13px;
     font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-weight:600;cursor:pointer;
     box-shadow:0 10px 26px rgba(64,78,59,.32)}
@@ -441,6 +441,10 @@
   /* Op elk formaat zichtbaar: het actiepad is een lange pagina en de terugweg
      hoort niet pas onderaan te staan. Stond eerder alleen onder 760px. */
   .zweefterug{display:inline-flex}
+  /* De knop staat linksboven vast. Op bredere schermen valt hij in de lege
+     marge naast de kaart, maar zodra die marge weg is loopt de kop van het
+     actiepad eronderdoor. Daar schuift de inhoud dus een regel omlaag. */
+  @media(max-width:1099px){#action{padding-top:52px}}
   @media print{.zweefterug{display:none!important}}
   /* Intake voelt als een app: op mobiel plakt de Vorige/Volgende-balk onderaan
      het scherm, zodat je nooit hoeft te scrollen om verder te kunnen. */
@@ -1538,9 +1542,12 @@
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button>
 
-<div id="printGebied" aria-hidden="true"></div>
-
 </div>
+
+<!-- Buiten .wrap, en dat is essentieel: de print-css zet .wrap op display:none
+     en een kind van een onzichtbare ouder is niet terug te zetten met
+     display:block. Stond dit hierbinnen, dan rolde er een leeg blad uit. -->
+<div id="printGebied" aria-hidden="true"></div>
 
 <script>
 // Welk model gebruikt wordt, bepaalt de server (zie api/chat.js). De browser
