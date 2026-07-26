@@ -438,7 +438,9 @@
     font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-weight:600;cursor:pointer;
     box-shadow:0 10px 26px rgba(64,78,59,.32)}
   .zweefterug:active{transform:translateY(1px)}
-  @media(max-width:759px){.zweefterug{display:inline-flex}}
+  /* Op elk formaat zichtbaar: het actiepad is een lange pagina en de terugweg
+     hoort niet pas onderaan te staan. Stond eerder alleen onder 760px. */
+  .zweefterug{display:inline-flex}
   @media print{.zweefterug{display:none!important}}
   /* Intake voelt als een app: op mobiel plakt de Vorige/Volgende-balk onderaan
      het scherm, zodat je nooit hoeft te scrollen om verder te kunnen. */
@@ -1418,7 +1420,7 @@
     <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="2.5" stroke="#152A1C" stroke-width="1.8"/><path d="m3.5 7 8.5 6 8.5-6" stroke="#152A1C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="mono">Bewaar het</div>
     <h2 id="mailPopTitel">Stuur dit plan naar je mail</h2>
-    <p class="pop-slot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. Over een week volgt één korte herinnering met de acties van week twee uit je eigen plan. Geen nieuwsbrief, daarna niets meer.</p>
+    <p class="pop-slot" id="mailPopSlot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. Over een week volgt één korte herinnering met de acties van week twee uit je eigen plan. Geen nieuwsbrief, daarna niets meer.</p>
     <div class="mailrij" style="margin-bottom:6px">
       <input type="email" id="mailAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
       <button class="btn btn-lime" id="mailKnop">Versturen</button>
@@ -1516,16 +1518,6 @@
   <div id="gang"></div>
   <div id="profielBox"></div>
   <div id="scenBody"></div>
-  <div id="mailAlles" class="mailblok hidden">
-    <div class="mono" style="color:var(--limeL)">Houd het bij je</div>
-    <h3 style="color:var(--chalk);margin:8px 0 4px">Stuur je uitkomst en alle drie de plannen naar je mail</h3>
-    <p style="color:#CBD6C2;margin:0 0 14px;font-size:15px">Je uitkomst staat 30 dagen op dit toestel, maar in je mail heb je hem overal bij je. Eén mail met je richtingen en de volledige plannen, netjes opgemaakt.</p>
-    <div class="mailrij">
-      <input type="email" id="mailAllesAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
-      <button class="btn btn-lime" id="mailAllesKnop">Stuur alles naar mijn mail</button>
-    </div>
-    <p id="mailAllesStatus" class="mailstatus"></p>
-  </div>
   <div id="afvallers"></div>
   <div id="herzien"></div>
   <div class="row" style="margin-top:18px"><button class="btn btn-ghost" data-terug="kalib">Terug</button></div>
@@ -2047,10 +2039,19 @@ function openPop(popId, knopId, next){
 function openPrivacy(next){ openPop("privacyPop", "popStart", next); }
 function toonSortUitleg(){ openPop("sortPop", "sortPopOk"); }
 // Mailfunctie als pop-up, geopend vanaf de knop naast "Download als pdf".
-function openMailPop(){
+// Eén pop-up voor twee soorten mail: het geopende plan, of de hele uitkomst met
+// alle drie de plannen. Zelfde velden, andere kop en andere verzendfunctie.
+function openMailPop(modus){
+  const alles = modus === "alles";
   const pop = $("mailPop"); if(!pop) return;
   const st = $("mailStatus"); if(st){ st.textContent = ""; }
-  const mk = $("mailKnop"); if(mk){ mk.textContent = "Versturen"; mk.disabled = false; mk.onclick = mailPlan; }
+  const tt = $("mailPopTitel");
+  if(tt) tt.textContent = alles ? "Stuur je uitkomst naar je mail" : "Stuur dit plan naar je mail";
+  const sl = $("mailPopSlot");
+  if(sl) sl.textContent = alles
+    ? "Eén mail met je profiel, je drie richtingen en de volledige plannen van zes weken. Over een week volgt één korte herinnering met de acties van week twee. Geen nieuwsbrief, daarna niets meer."
+    : "Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. Over een week volgt één korte herinnering met de acties van week twee uit je eigen plan. Geen nieuwsbrief, daarna niets meer.";
+  const mk = $("mailKnop"); if(mk){ mk.textContent = "Versturen"; mk.disabled = false; mk.onclick = alles ? mailAlles : mailPlan; }
   pop.classList.remove("hidden");
   requestAnimationFrame(()=> pop.classList.add("aan"));
   const sluit = () => {
@@ -2736,7 +2737,6 @@ async function ontgrendel(){
   if(!compleet) toonUitwerkingHerstel();
   // Duidelijke "je bent er"-banner: dit is de betaalde waarde.
   if($("scenBody")) $("scenBody").insertAdjacentHTML("afterbegin", `<div class="ontgrendeld"><span class="og-vink" aria-hidden="true">&#10003;</span><div><b>Ontgrendeld.</b> Dit is waar je voor betaalde: je drie richtingen, helemaal uitgewerkt en van jou. Bekijk ze rustig en kies wanneer je wilt. Je uitkomst blijft 30 dagen op dit toestel bewaard, dus je kunt het venster gewoon sluiten en later terugkomen.</div></div>`);
-  const mb = document.getElementById("mailAlles"); if(mb){ mb.classList.remove("hidden"); const mk=document.getElementById("mailAllesKnop"); if(mk) mk.onclick = mailAlles; }
   if(typeof planWarm === "function") planWarm(); // plannen meteen laten schrijven, ze staan klaar bij openen
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -2829,8 +2829,6 @@ function openBetaaldeUitkomst(){
   ["landing","intake","review","summary","insight","kalib","action"].forEach(hide);
   show("scenarios");
   toonRichtingen();
-  const mb = $("mailAlles");
-  if(mb){ mb.classList.remove("hidden"); const mk = $("mailAllesKnop"); if(mk) mk.onclick = mailAlles; }
   window.scrollTo({top:0,behavior:"smooth"});
   return true;
 }
@@ -3160,7 +3158,10 @@ function onderbouwingHtml(s){
 }
 function toonRichtingen(){
   const rest = S.rest || [];
-  $("scenBody").innerHTML = `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
+  // Betaald: download en mail meteen bovenaan, zodat het niet pas onderaan de
+  // pagina te vinden is. Komt zowel na het ontgrendelen als na een herstel.
+  $("scenBody").innerHTML = (S.betaald ? uitkomstActiesHtml() : "") +
+      `<h2 style="margin:6px 0 4px">Drie richtingen, gewogen</h2>
       <p class="muted" style="margin-bottom:18px">De cijfers komen uit je eigen antwoorden. Bekijk ze alle drie en ga gerust heen en terug, niets ligt vast.</p>` +
       S.scenarios.map((s,i)=>`
       <div class="card${s.totaal<55?" weak":""}">
@@ -3232,6 +3233,7 @@ function toonRichtingen(){
     const bk = $("betaalKnop"); if(bk) bk.onclick = startBetaling;
   }
   frameTeken();
+  zetUitkomstActies();
   $("scenBody").querySelectorAll("[data-uit]").forEach(b=>b.onclick=()=>{
     const d = $("det"+b.dataset.uit); d.classList.toggle("hidden");
     b.textContent = d.classList.contains("hidden") ? "Onderbouwing" : "Verberg onderbouwing";
@@ -3544,14 +3546,15 @@ function mailHtmlAlles(scen, plans){
   }).join("");
   return mailShell("Jouw rapport en drie richtingen", mailRapport() + secties);
 }
+// Draait nu in dezelfde pop-up als mailPlan, dus met dezelfde velden.
 async function mailAlles(){
-  const inp = $("mailAllesAdres"), knop = $("mailAllesKnop"), status = $("mailAllesStatus");
+  const inp = $("mailAdres"), knop = $("mailKnop"), status = $("mailStatus");
   if(!inp || !knop || !status) return;
   const email = (inp.value||"").trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ status.style.color="#F3C9C2"; status.textContent="Vul een geldig e-mailadres in."; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ status.style.color="#8A2B21"; status.textContent="Vul een geldig e-mailadres in."; return; }
   const scen = S.scenarios||[];
-  if(!scen.length){ status.style.color="#F3C9C2"; status.textContent="Er zijn nog geen richtingen."; return; }
-  knop.disabled = true; status.style.color="#CBD6C2"; status.textContent="Plannen verzamelen en versturen…";
+  if(!scen.length){ status.style.color="#8A2B21"; status.textContent="Er zijn nog geen richtingen."; return; }
+  knop.disabled = true; status.style.color="var(--slate)"; status.textContent="Plannen verzamelen en versturen…";
   try{
     const plans = await Promise.all(scen.map(s=> planPromise(s).catch(()=>({})) ));
     const html = mailHtmlAlles(scen, plans);
@@ -3559,12 +3562,56 @@ async function mailAlles(){
       body:JSON.stringify({ email, onderwerp:"Je Deskshift-uitkomst en drie plannen", html })});
     const d = await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
-    status.style.color="#D6EBA8"; status.textContent="Verstuurd naar "+email+".";
+    status.style.color="#4A6B1E"; status.textContent="Verstuurd naar "+email+".";
     knop.textContent = "Nog een keer sturen";
     planOpvolgers(email, plans[0], scen[0]);
-    toonMailOk("Je rapport en alle drie de plannen zijn onderweg naar "+email+". Kijk in je inbox, en anders even in de spam.");
-  }catch(e){ status.style.color="#F3C9C2"; status.textContent = e.message; }
+    const mp = $("mailPop");
+    if(mp && mp.classList.contains("aan")){ mp.classList.remove("aan"); setTimeout(()=> mp.classList.add("hidden"), 320); }
+    setTimeout(()=> toonMailOk("Je rapport en alle drie de plannen zijn onderweg naar "+email+". Kijk in je inbox, en anders even in de spam."), 220);
+  }catch(e){ status.style.color="#8A2B21"; status.textContent = e.message; }
   knop.disabled = false;
+}
+
+/* ---------- downloaden en mailen vanaf de uitkomstpagina ---------- */
+// Dezelfde twee acties als op het actiepad, maar dan voor de hele uitkomst.
+function uitkomstActiesHtml(){
+  return `<div class="row" id="uitkomstActies" style="margin:0 0 20px">
+      <button class="btn" id="dlAllesKnop" type="button">Download als pdf</button>
+      <button class="btn btn-lime" id="mailAllesKnop" type="button">Stuur naar mijn mail</button>
+    </div>`;
+}
+function printAllesHtml(scen, plans){
+  return `<div class="printkop"><div class="mono">Deskshift &middot; jouw uitkomst en drie plannen</div>
+      <h1 style="font-size:28px;margin:10px 0 4px">${esc((S.profiel&&S.profiel.archetype)||"Jouw uitkomst")}</h1></div>` +
+    scen.map((s,i)=>{
+      const p = plans[i] || {};
+      return `<div style="break-before:${i?"page":"auto"}">
+        <div class="mono" style="margin-top:${i?0:10}px">Richting ${i+1}${s.totaal?" &middot; pasvorm "+esc(String(s.totaal)):""}</div>
+        <h2 style="font-size:22px;margin:6px 0 10px">${esc(s.titel||"")}</h2>
+        ${s.pitch?`<p style="margin:0 0 12px">${esc(s.pitch)}</p>`:""}
+        ${p.weken ? planHtml(p, s) : `<p>Dit plan was nog niet opgehaald.</p>`}
+      </div>`;
+    }).join("");
+}
+async function downloadAlles(){
+  const knop = $("dlAllesKnop");
+  const scen = S.scenarios || [];
+  if(!scen.length) return;
+  const oud = knop ? knop.textContent : "";
+  if(knop){ knop.disabled = true; knop.textContent = "Plannen verzamelen…"; }
+  try{
+    const plans = await Promise.all(scen.map(s=> planPromise(s).catch(()=>({})) ));
+    $("printGebied").innerHTML = printAllesHtml(scen, plans);
+    window.print();
+  }catch(e){
+    if(knop) knop.textContent = "Lukte niet, probeer opnieuw";
+  }finally{
+    if(knop){ knop.disabled = false; if(knop.textContent === "Plannen verzamelen…") knop.textContent = oud; }
+  }
+}
+function zetUitkomstActies(){
+  const dl = $("dlAllesKnop"); if(dl) dl.onclick = downloadAlles;
+  const ma = $("mailAllesKnop"); if(ma) ma.onclick = ()=> openMailPop("alles");
 }
 async function kies(s){
   S.chosen = s; hide("scenarios"); show("action");
