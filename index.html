@@ -146,10 +146,12 @@
     font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;
     text-wrap:balance;line-height:1.35;
     color:var(--slate);background:var(--chalk);
-    margin:-26px -20px 14px;padding:16px 20px 10px;border-bottom:1px solid var(--line)}
-  /* De marges lopen mee met de padding van .step, anders blijft er links en
-     rechts een reepje kaart onder de balk door schuiven. */
-  @media(min-width:760px){.sortpoles{margin:-30px -28px 14px;padding:16px 28px 10px}}
+    margin:2px -20px 14px;padding:12px 20px 10px;border-bottom:1px solid var(--line)}
+  /* Alleen negatieve marges links en rechts, zodat de balk tot de rand van de
+     kaart loopt en er niets onder het randje door schuift. Boven stond hier
+     -26px, en die trok de balk over de laatste regel van de hint heen. Bij een
+     lange hint (de vraag noemt je functietitel) viel daar tekst achter weg. */
+  @media(min-width:760px){.sortpoles{margin:2px -28px 14px;padding:12px 28px 10px}}
   .sortpoles span:last-child{color:var(--petrol);text-align:right}
   .sortpoles b{color:var(--ink);font-weight:700}
   .sortlijst{display:grid;gap:16px}
@@ -1025,9 +1027,17 @@
   /* Gratis inzicht: één scherp inzicht i.p.v. een verzameling vormen */
   .insight-kop{font-size:clamp(26px,7vw,40px);line-height:1.12;letter-spacing:-.02em;color:var(--ink);margin:10px 0 14px}
   .insight-cit{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:clamp(17px,4.6vw,21px);line-height:1.4;color:var(--petrol);border-left:3px solid var(--lime);padding-left:16px;margin:0}
-  .insight-span{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin:24px 0 10px}
+  .insight-span{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin:0 0 10px}
   .insight-span .isp-kant{flex:1;min-width:130px;background:var(--ink);color:#EAF1E4;border-radius:12px;padding:15px 14px;text-align:center;font-weight:600;display:flex;align-items:center;justify-content:center}
   .insight-span .isp-vs{flex:0 0 auto;align-self:center;color:var(--slate)}
+  /* Op een smal scherm paste "kant, schuurt met, kant" niet naast elkaar en
+     brak het zo af dat de twee kanten ongelijk werden en het tussenwoord ernaast
+     hing. Onder elkaar zetten leest als één zin en blijft symmetrisch. */
+  @media(max-width:560px){
+    .insight-span{flex-direction:column;gap:7px}
+    .insight-span .isp-kant{width:100%;min-width:0}
+    .insight-span .isp-vs{align-self:center}
+  }
   .insight-spt{color:var(--petrol);margin:0}
   .insight-week{background:var(--veld);border-radius:16px;padding:18px;margin:24px 0;box-shadow:inset 0 0 0 1px rgba(21,42,28,.07)}
   .iw-top{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--petrol);margin-bottom:11px}
@@ -1038,7 +1048,19 @@
   .iw-fill{display:block;height:100%;width:var(--p);background:var(--ink);border-radius:8px;animation:iwFill 1.1s var(--ease) both}
   @keyframes iwFill{from{width:0}}
   .iw-cap{font-size:13.5px;color:var(--slate);margin:12px 0 0}
-  .insight-nudge{background:var(--ink);border-radius:16px;padding:18px 20px;margin-top:8px}
+  /* Genummerde tussenkopjes op de inzichtpagina. Vier gelijk ogende blokken
+     onder elkaar lezen als een muur; met een nummer ervoor zie je meteen hoeveel
+     er is en waar je bent. */
+  .ins-stap{display:flex;align-items:center;gap:9px;margin:26px 0 8px}
+  .insight-lead .ins-stap{margin-top:0}
+  .ins-nr{flex:0 0 auto;width:21px;height:21px;border-radius:50%;background:var(--ink);color:var(--chalk);
+    display:flex;align-items:center;justify-content:center;font-family:"Archivo",sans-serif;font-size:12px;font-weight:700}
+  .ins-stap .mono{margin:0}
+  .ins-wacht{margin:6px 0 0}
+  .ins-fout{color:var(--warn);margin:6px 0 0;font-size:15px}
+  .ins-opnieuw{appearance:none;border:0;background:none;padding:0;font:inherit;color:var(--petrol);
+    text-decoration:underline;cursor:pointer}
+  .insight-nudge{background:var(--ink);border-radius:16px;padding:18px 20px;margin-top:24px}
   .insight-nudge p{margin:0;color:#E7EEDF;font-size:15px;line-height:1.5}
   .insight-nudge b{color:#fff}
   @media (prefers-reduced-motion:reduce){.iw-fill{animation:none}}
@@ -1621,6 +1643,11 @@ const SECTIES = [
     stappen:[
       {id:"functie",type:"text",vraag:"Wat is je functietitel?",placeholder:"Bijvoorbeeld: adviseur bedrijfsvoering"},
       {id:"sector",type:"text",vraag:"In welke sector werk je?",placeholder:"Bijvoorbeeld: zorgverzekeraar"},
+      // Zonder deze vraag wordt de sector aangezien voor het vak. Een field
+      // manager in de IT-sector kreeg onderwerpen over hardware upgraden, terwijl
+      // die persoon HR-verantwoordelijk is voor gedetacheerde IT'ers. Functietitel
+      // en sector zeggen samen te weinig; dit zegt het wel.
+      {id:"dagelijks",type:"longtext",vraag:"Wat doe je op een gewone werkdag?",hint:"Twee of drie dingen waar je tijd echt aan opgaat. Hiermee schatten we je vak niet verkeerd in."},
       {id:"contract",type:"slider",vraag:"Hoeveel uur staat er in je contract?",min:16,max:45,def:40,unit:"uur"},
       {id:"kantoor",type:"slider",vraag:"Hoeveel dagen per week ben je op kantoor?",min:0,max:5,def:2,unit:"dagen"},
       {id:"rolduur",type:"schaal",vraag:"Hoe lang ben je al {functie}?",schaal:ROLDUUR,def:14}
@@ -1972,13 +1999,19 @@ function veldTeken(st){
 /* ---------- horizontale kaartsortering ---------- */
 /* ---------- kaartjes op maat van de rol ---------- */
 async function maakKaarten(){
-  const ctx = `Functie: ${S.ant.functie||"onbekend"}
-Sector: ${S.ant.sector||"onbekend"}
+  // Volgorde is hier niet willekeurig: wat deze persoon zelf over het eigen werk
+  // opschreef staat bovenaan, de functietitel en de sector onderaan. Zo leest het
+  // model eerst het vak en pas daarna het etiket.
+  const ctx = `Wat deze persoon op een gewone werkdag doet: ${S.ant.dagelijks||"niet ingevuld"}
 Zou uitbreiden: ${S.ant.leuk||"onbekend"}
 Zou weggeven: ${S.ant.minder||"onbekend"}
-Wil leren: ${S.ant.ontwikkelen||"onbekend"}`;
+Wil leren: ${S.ant.ontwikkelen||"onbekend"}
+Functietitel: ${S.ant.functie||"onbekend"}
+Sector van de werkgever: ${S.ant.sector||"onbekend"}`;
   try{
-    const d = await askJSON(`Je maakt onderwerpen voor een sorteeroefening. Op basis van de rol hieronder geef je zes concrete, herkenbare taken die in deze functie echt voorkomen. Specifiek, niet generiek. Geen algemene vaardigheden zoals "analyseren", "communiceren" of "samenwerken", die vragen we apart. Twee tot vier woorden per taak, Nederlands, zonder lidwoord, geen dubbele. Meng leuke en vervelende taken door elkaar.
+    const d = await askJSON(`Je maakt onderwerpen voor een sorteeroefening. Geef zes concrete, herkenbare taken die in het werk van deze persoon echt voorkomen. Specifiek, niet generiek. Geen algemene vaardigheden zoals "analyseren", "communiceren" of "samenwerken", die vragen we apart. Twee tot vier woorden per taak, Nederlands, zonder lidwoord, geen dubbele. Meng leuke en vervelende taken door elkaar.
+
+BELANGRIJK, hier gaat het het vaakst mis. De sector zegt wat de wérkgever doet, niet wat deze persoon doet. Iemand die HR-werk doet bij een IT-bedrijf is geen IT'er, en een financieel medewerker in de zorg verpleegt niemand. Ga uit van wat deze persoon zelf over de eigen dag en taken schrijft. Alleen als dat niets zegt, mag je op de functietitel afgaan. Verzin nooit vaktaken uit de sector die niet passen bij wat er beschreven staat.
 Antwoord uitsluitend met geldige JSON: {"kaarten":["taak","taak"]}`,
       [{role:"user",content:ctx}], null, 400, "licht"); // mechanisch lijstje: licht model
     if(d.kaarten && d.kaarten.length>=5) S.kaarten = d.kaarten.slice(0,6);
@@ -2270,6 +2303,7 @@ const DEMO = {
     jaren:8, werkgevers:4, patroon:"Ja, in vrijwel elke rol",
     cv:"(profieltekst meegegeven)",
     functie:"Strategic Partner Manager", sector:"HR-dienstverlening en flexbranche",
+    dagelijks:"Gesprekken met partners over samenwerkingen, businesscases doorrekenen, en intern afstemmen met sales en legal om afspraken rond te krijgen.",
     contract:40, kantoor:2, rolduur:"2 jaar",
     leuk:"Nieuwe partnerships opzetten. Het stuk waar nog niets ligt en ik het model zelf mag bedenken.",
     minder:"Terugkerend accountbeheer en het bijhouden van rapportages die niemand leest.",
@@ -2435,7 +2469,28 @@ async function ask(system, messages, tools, maxTokens, tier){
   if(tools) body.tools = tools;
   // Let op: dit roept ons EIGEN backend-endpoint aan (/api/chat), niet rechtstreeks Anthropic.
   // De API-sleutel staat alleen server-side, zie /api/chat.js en README-DEPLOY.md.
-  const r = await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  //
+  // Eigen tijdslimiet, want zonder deze hangt een verzoek net zo lang als de
+  // browser toestaat en dat is op mobiel Safari ruim een minuut. De functie zelf
+  // stopt na 60 seconden, dus alles daarboven is een dood verzoek waar we alleen
+  // maar op staan te wachten. Liever afbreken en opnieuw proberen.
+  const stop = ("AbortController" in window) ? new AbortController() : null;
+  const wekker = stop ? setTimeout(()=>stop.abort(), 65000) : null;
+  let r;
+  try{
+    r = await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(body), signal: stop ? stop.signal : undefined});
+  }catch(err){
+    // Een mislukte fetch geeft per browser een andere Engelse tekst: "Load
+    // failed" op Safari, "Failed to fetch" op Chrome, "NetworkError" op Firefox.
+    // Die kwam ongefilterd op het scherm. Eén Nederlandse zin die zegt wat er is.
+    const afgebroken = err && (err.name === "AbortError");
+    throw new Error(afgebroken
+      ? "Het duurde te lang. De verbinding is afgebroken."
+      : "Geen verbinding met de server.");
+  }finally{
+    if(wekker) clearTimeout(wekker);
+  }
   if(!r.ok){
     let msg = "De verbinding gaf een fout ("+r.status+").";
     try{ const e = await r.json(); if(e && e.error) msg = e.error; }catch(ignored){}
@@ -2612,6 +2667,7 @@ const TOON = `Je bent een kritische, eerlijke gesprekspartner, geen life coach. 
 Nooit suggereren dat iemand moet stoppen met zijn baan of iets drastisch moet veranderen. Nooit doen alsof deze gegevens gedeeld worden.
 Je kent het job demands-resources model, job crafting, de zelfdeterminatietheorie en flow, en gebruikt die kaders zonder ermee te pronken.
 Schrijf altijd in de je-vorm. Gebruik nooit hij, zij, hem of haar over de gebruiker, en gok nooit naar geslacht.
+De sector die is ingevuld zegt wat de werkgever doet, niet wat deze persoon doet. Iemand die HR-werk doet bij een IT-bedrijf is geen IT'er. Ga altijd uit van wat er staat bij wat deze persoon op een gewone werkdag doet en bij de eigen taken; de functietitel en de sector zijn alleen context. Vul nooit vakinhoud in die uit de sector komt maar nergens in de antwoorden terugkomt.
 Belangrijk over tijd: de uren die binnen de werkweek overblijven zijn geen vrije tijd. Het blijft betaalde tijd van de werkgever. Noem het ruimte in de werkweek, nooit vrije tijd, en stel binnen die uren alleen dingen voor die je aan je werkgever zou kunnen uitleggen, zoals leren, oefenen, verkennen of iets opbouwen dat de organisatie ook iets oplevert. Alles wat echt voor eigen rekening is, zoals een eigen project of iets met inkomsten, plan je in de eigen uren buiten werktijd.`;
 
 /* ---------- as-is schets als kaarten ---------- */
@@ -2662,51 +2718,120 @@ Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), 
   }
 };
 
+/* Het inzicht komt in stukken binnen in plaats van in één keer.
+   Waarom: dit was één zware call die alles tegelijk opleverde, en daar stond de
+   bezoeker veertig seconden lang naar een puntjesanimatie te kijken. Twee dingen
+   veranderd. Het urenblok wordt uit de eigen antwoorden gerekend en heeft dus
+   helemaal geen AI nodig: dat staat er meteen. En de rest is opgeknipt in twee
+   kleinere calls die naast elkaar lopen, waarvan de korte (je patroon in één zin)
+   als eerste terugkomt. Je leest dus al iets terwijl de rest nog binnenkomt.
+   Valt één van de twee uit, dan blijft de rest gewoon staan. */
+const P_INZICHT_KERN = TOON + `
+
+Geef de kern van deze intake in één zin. Geen advies, geen scenario's, geen aanmoediging.
+Onderaan de intake staan observaties die de gebruiker zelf als kloppend of niet kloppend beoordeelde. Herhaal die observaties niet: ga een laag dieper, en respecteer wat werd afgewezen.
+Het veld "citaat" bevat uitsluitend een woordelijk fragment uit de antwoorden; is er geen sterk fragment, laat het dan leeg.
+Antwoord uitsluitend met geldige JSON:
+{"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden"}`;
+
+const P_INZICHT_DIEPTE = TOON + `
+
+Geef de scherpste tegenstelling uit deze intake, plus wat deze persoon zelf niet opschreef. Geen advies, geen scenario's, geen aanmoediging.
+Onderaan de intake staan observaties die de gebruiker zelf als kloppend of niet kloppend beoordeelde. Herhaal die observaties niet: ga een laag dieper, en respecteer wat werd afgewezen.
+Het veld "onbenoemd" is het belangrijkste: iets dat deze persoon zelf nergens opschreef, maar dat uit twee verschillende antwoorden samen volgt. Verwijs kort naar beide antwoorden. Geen algemeenheid die op iedereen past.
+Antwoord uitsluitend met geldige JSON:
+{"spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"onbenoemd":"maximaal 26 woorden, in de je-vorm"}`;
+
+function inzichtWacht(tekst){
+  return `<div class="thinking ins-wacht">${esc(tekst)} <b></b><b></b><b></b><b></b></div>`;
+}
+function inzichtBlokFout(deel, bericht){
+  return `<p class="ins-fout">${esc(bericht)} <button type="button" class="ins-opnieuw" data-deel="${esc(deel)}">Opnieuw proberen</button></p>`;
+}
+
 $("toInsight").onclick = async () => {
   meet("inzicht");
   hide("summary"); show("insight");
   window.scrollTo({top:0,behavior:"smooth"});
   $("unlock").disabled = true;
-  $("insBody").innerHTML = `<div class="thinking">Zoekt het patroon in je antwoorden… <b></b><b></b><b></b><b></b></div>`;
-  try{
-    const d = await askJSON(TOON + `
-
-Geef het scherpste patroon uit deze intake. Geen advies, geen scenario's, geen aanmoediging.
-Onderaan de intake staan observaties die de gebruiker zelf als kloppend of niet kloppend beoordeelde. Herhaal die observaties niet: ga een laag dieper, en respecteer wat werd afgewezen.
-Het veld "onbenoemd" is het belangrijkste: iets dat deze persoon zelf nergens opschreef, maar dat uit twee verschillende antwoorden samen volgt. Verwijs kort naar beide antwoorden. Geen algemeenheid die op iedereen past.
-Het veld "citaat" bevat uitsluitend een woordelijk fragment uit de antwoorden; is er geen sterk fragment, laat het dan leeg.
-Antwoord uitsluitend met geldige JSON:
-{"kop":"de kern in maximaal 9 woorden, in de je-vorm","citaat":"letterlijk citaat uit de antwoorden, maximaal 15 woorden","spanning":{"links":"maximaal 4 woorden","rechts":"maximaal 4 woorden","tekst":"wat er tussen die twee schuurt, maximaal 16 woorden"},"onbenoemd":"maximaal 26 woorden, in de je-vorm","punten":[{"label":"twee of drie woorden","tekst":"maximaal 12 woorden"}]}
-Precies drie punten.`, bericht(), null, 1600);
-    // Een citaat dat niet woordelijk van de gebruiker is, vervalt.
-    if(d.citaat && !citaatEcht(d.citaat, 3)) d.citaat = "";
-    S.inzicht = d;
-    $("insBody").innerHTML = inzichtHtml(d);
-  }catch(e){
-    $("insBody").innerHTML = `<div class="err">${esc(e.message)}</div>
-      <button class="btn btn-ghost btn-sm" id="insRetry" style="margin-top:12px">Opnieuw proberen</button>`;
-    const rb=$("insRetry"); if(rb) rb.onclick=()=>$("toInsight").onclick();
-  }
-  $("unlock").disabled = false;
+  S.inzicht = S.inzicht || {};
+  $("insBody").innerHTML = inzichtHtml(S.inzicht, {kern:"wacht", diepte:"wacht"});
+  await inzichtOphalen({kern:true, diepte:true});
 };
 
-function inzichtHtml(d){
+// Haalt de gevraagde delen op en zet elk deel op het scherm zodra het er is.
+async function inzichtOphalen(welke){
+  const msg = bericht();
+  const taken = [];
+
+  if(welke.kern){
+    taken.push(askJSON(P_INZICHT_KERN, msg, null, 400).then(d=>{
+      // Een citaat dat niet woordelijk van de gebruiker is, vervalt.
+      if(d.citaat && !citaatEcht(d.citaat, 3)) d.citaat = "";
+      S.inzicht.kop = d.kop || "";
+      S.inzicht.citaat = d.citaat || "";
+      S.inzicht._kernFout = "";
+      // Zodra de kern er staat mag je door. De rest leest lekkerder als je hem
+      // afwacht, maar niemand hoeft daarop vast te zitten.
+      $("unlock").disabled = false;
+    }).catch(e=>{ S.inzicht._kernFout = e.message || "Dat lukte niet."; }));
+  }
+  if(welke.diepte){
+    taken.push(askJSON(P_INZICHT_DIEPTE, msg, null, 700).then(d=>{
+      S.inzicht.spanning = d.spanning || null;
+      S.inzicht.onbenoemd = d.onbenoemd || "";
+      S.inzicht._diepteFout = "";
+    }).catch(e=>{ S.inzicht._diepteFout = e.message || "Dat lukte niet."; }));
+  }
+
+  // Elk deel tekent zichzelf zodra het klaar is, dus niet wachten op allebei.
+  taken.forEach(t=>t.then(inzichtTeken));
+  await Promise.allSettled(taken);
+  inzichtTeken();
+  $("unlock").disabled = false;
+  bewaar();
+}
+
+function inzichtTeken(){
+  const d = S.inzicht || {};
+  const staat = {
+    kern:   d._kernFout   ? "fout" : (d.kop ? "klaar" : "wacht"),
+    diepte: d._diepteFout ? "fout" : ((d.spanning || d.onbenoemd) ? "klaar" : "wacht"),
+  };
+  $("insBody").innerHTML = inzichtHtml(d, staat);
+  $("insBody").querySelectorAll(".ins-opnieuw").forEach(b=>b.onclick=()=>{
+    const deel = b.dataset.deel;
+    if(deel === "kern"){ S.inzicht._kernFout = ""; S.inzicht.kop = ""; }
+    else { S.inzicht._diepteFout = ""; S.inzicht.spanning = null; S.inzicht.onbenoemd = ""; }
+    inzichtTeken();
+    inzichtOphalen({kern: deel === "kern", diepte: deel === "diepte"});
+  });
+}
+
+/* Vier blokken met een nummer ervoor, in een vaste leesvolgorde: eerst wat je
+   patroon is, dan de cijfers eronder, dan waar het schuurt, en als laatste het
+   scherpste stuk vlak voor de knop. Ze stonden er eerder alle vier even zwaar
+   op, zonder kop of nummer, en dan is in één oogopslag niet te zien waar je
+   naar kijkt. `staat` zegt per blok of het klaar is, nog laadt of is misgegaan. */
+function insLabel(nr, tekst){
+  return `<div class="ins-stap"><span class="ins-nr">${nr}</span><span class="mono">${esc(tekst)}</span></div>`;
+}
+function inzichtHtml(d, staat){
+  d = d || {}; staat = staat || {kern:"klaar", diepte:"klaar"};
   const contract = S.ant.contract||40, echt = Math.min(S.ant.echturen||0, contract);
   const ruimte = Math.max(0, contract-echt);
   const pct = contract ? Math.round(echt/contract*100) : 0;
   const sp = d.spanning||null;
   return `
     <div class="insight-lead">
-      <div class="mono">Jouw patroon, in één zin</div>
-      <h2 class="insight-kop">${esc(d.kop||"")}</h2>
-      ${d.citaat?`<p class="insight-cit">"${esc(d.citaat)}"</p>`:""}
+      ${insLabel(1, "Jouw patroon, in één zin")}
+      ${staat.kern === "wacht" ? inzichtWacht("Zoekt het patroon in je antwoorden…")
+        : staat.kern === "fout" ? inzichtBlokFout("kern", d._kernFout)
+        : `<h2 class="insight-kop">${esc(d.kop||"")}</h2>
+           ${d.citaat?`<p class="insight-cit">"${esc(d.citaat)}"</p>`:""}`}
     </div>
-    ${sp?`<div class="insight-span">
-      <span class="isp-kant">${esc(sp.links||"")}</span>
-      <span class="isp-vs mono">schuurt met</span>
-      <span class="isp-kant">${esc(sp.rechts||"")}</span>
-    </div>${sp.tekst?`<p class="insight-spt">${esc(sp.tekst)}</p>`:""}`:""}
-    ${d.onbenoemd?`<div class="insight-onb"><div class="mono">Wat je zelf niet opschreef</div><p>${esc(d.onbenoemd)}</p></div>`:""}
+
+    ${insLabel(2, "Je week, uit je eigen antwoorden")}
     <div class="insight-week">
       <div class="iw-top">
         <span><b>${echt}</b> van ${contract} uur echt werk</span>
@@ -2715,6 +2840,19 @@ function inzichtHtml(d){
       <div class="iw-bar" aria-hidden="true"><span class="iw-fill" style="--p:${pct}%"></span></div>
       <p class="iw-cap">Die ${ruimte} uur zijn geen luiheid. Dat is de ruimte waar je plan straks op bouwt.</p>
     </div>
+
+    ${insLabel(3, "Waar het bij jou schuurt")}
+    ${staat.diepte === "wacht" ? inzichtWacht("Legt je antwoorden naast elkaar…")
+      : staat.diepte === "fout" ? inzichtBlokFout("diepte", d._diepteFout)
+      : `${sp?`<div class="insight-span">
+          <span class="isp-kant">${esc(sp.links||"")}</span>
+          <span class="isp-vs mono">schuurt met</span>
+          <span class="isp-kant">${esc(sp.rechts||"")}</span>
+        </div>${sp.tekst?`<p class="insight-spt">${esc(sp.tekst)}</p>`:""}`:""}
+        ${d.onbenoemd?`
+          ${insLabel(4, "Wat je zelf niet opschreef")}
+          <div class="insight-onb"><p>${esc(d.onbenoemd)}</p></div>`:""}`}
+
     <div class="insight-nudge">
       <p><b>Dit is nog maar het patroon.</b> De volgende stap zet het om in drie richtingen die hier precies op passen, elk met een pasvorm-score en een plan van zes weken.</p>
     </div>`;
@@ -3351,7 +3489,7 @@ function toonRichtingen(){
         <p class="pwfomo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="#F3C9C2" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="#F3C9C2" stroke-width="1.7" stroke-linecap="round"/></svg><span>Deze drie richtingen zijn nu voor jou berekend. Betaal je, dan blijven ze 30 dagen op dit toestel staan. Doe je dat niet, dan worden ze opnieuw opgebouwd als je later terugkomt.</span></p>
       </div>`);
     const _pw = document.getElementById("paywall");
-    if(_pw) _pw.insertAdjacentHTML("afterend", `<p class="slotcap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg><span>Hieronder je drie richtingen. Nu nog vervaagd. Ontgrendel om ze helemaal uitgewerkt te lezen.</span></p>`);
+    if(_pw) _pw.insertAdjacentHTML("afterend", `<p class="slotcap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg><span>Hieronder je drie richtingen. Ontgrendel om ze helemaal uitgewerkt te lezen.</span></p>`);
     const bk = $("betaalKnop"); if(bk) bk.onclick = startBetaling;
   }
   frameTeken();
@@ -3508,11 +3646,29 @@ function mailHeader(sub){
 function mailFooter(){
   return `<tr><td style="background:${MK.paper};padding:18px 26px;font-size:12px;color:${MK.petrol}">Gemaakt met Deskshift, uit jouw eigen antwoorden. Geen account, geen tracking; wij bewaren je gegevens niet, dus bewaar deze mail zelf. Dit is geen loopbaan-, juridisch of financieel advies.</td></tr>`;
 }
-function mailShell(sub, inhoud){
+// Melding van de bijlage, direct onder de header. Hij ging al mee, maar dat was
+// alleen te zien door helemaal naar beneden te scrollen naar de paperclip. Wie
+// het plan wil printen of bewaren moet dat meteen bovenin zien staan.
+function mailBijlageMelding(naam){
+  return `<tr><td style="padding:16px 26px 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${MK.paper};border-radius:12px">
+      <tr>
+        <td style="padding:13px 15px;vertical-align:middle;width:26px">
+          <div style="width:18px;height:22px;border:2px solid ${MK.accent};border-radius:3px"></div>
+        </td>
+        <td style="padding:13px 15px 13px 0;font-size:14px;line-height:1.45;color:${MK.ink}">
+          <b>Deze mail heeft een pdf als bijlage: ${esc(naam)}.</b> Daar staat alles in wat je hieronder leest, klaar om te printen of te bewaren.
+        </td>
+      </tr>
+    </table>
+  </td></tr>`;
+}
+function mailShell(sub, inhoud, bijlageNaam){
   return `<!doctype html><html><body style="margin:0;background:${MK.paper};font-family:Arial,Helvetica,sans-serif;color:${MK.ink}">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${MK.paper};padding:24px 12px"><tr><td align="center">
     <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:18px;overflow:hidden">
       ${mailHeader(sub)}
+      ${bijlageNaam ? mailBijlageMelding(bijlageNaam) : ""}
       ${inhoud}
       ${mailFooter()}
     </table></td></tr></table></body></html>`;
@@ -3591,7 +3747,7 @@ function mailHtmlBouw(p, s){
       ${mailContext(s)}
       ${mailPlanBlok(p, s)}
     </td></tr>`;
-  return mailShell("Jouw rapport en plan van zes weken", inhoud);
+  return mailShell("Jouw rapport en plan van zes weken", inhoud, "deskshift-plan.pdf");
 }
 /* ---------- pdf schrijven zonder bibliotheek ----------
    Een pdf is een tekstformaat, en voor tekst met de standaard Helvetica hoeft er
@@ -3852,6 +4008,21 @@ function pdfAllePlannen(scen, plans, profiel){
     d.tekst(String(p.label||"").toUpperCase(), {grootte:8, vet:true, kleur:[0.482,0.588,0.412], na:1});
     d.tekst(p.tekst||"", {grootte:10.5, na:6});
   });
+  // Wat je al hebt liggen, en de uren waar de rest op rust. Stond hier niet in,
+  // terwijl het de onderbouwing is van elke richting die erna komt.
+  const bg = (profiel && profiel.bagage) || [];
+  if(bg.length){
+    d.ruim(2);
+    d.tekst("WAT JE AL HEBT LIGGEN", {grootte:8, vet:true, kleur:[0.482,0.588,0.412], na:1});
+    d.tekst(bg.join("  ·  "), {grootte:10.5, na:6});
+  }
+  const P = S.pg || profielGetallen() || {};
+  if(P.slack !== undefined){
+    d.tekst("Berekend uit jouw antwoorden: ongeveer " + P.slack + " uur ruimte in je werkweek en "
+            + P.eigenBasis + " uur eigen tijd per week. Je sterkste drijfveer is "
+            + ((P.rang && P.rang[0]) || "onbekend") + ".",
+            {grootte:9.5, kleur:[0.310,0.388,0.376], na:4});
+  }
   (scen||[]).forEach((s,i)=>{
     d.pagina();
     d.label("Richting "+(i+1)+(s && s.totaal ? "  ·  pasvorm "+s.totaal : ""));
@@ -3935,7 +4106,7 @@ function mailHtmlAlles(scen, plans){
       ${mailPlanBlok(p, s)}
     </td></tr>`;
   }).join("");
-  return mailShell("Jouw rapport en drie richtingen", mailRapport() + secties);
+  return mailShell("Jouw rapport en drie richtingen", mailRapport() + secties, "deskshift-uitkomst.pdf");
 }
 // Draait nu in dezelfde pop-up als mailPlan, dus met dezelfde velden.
 async function mailAlles(){
@@ -3973,9 +4144,34 @@ function uitkomstActiesHtml(){
       <button class="btn btn-lime" id="mailAllesKnop" type="button">Stuur naar mijn mail</button>
     </div>`;
 }
+// "Wat de intake laat zien" voor de download. Dit stond er niet in, waardoor het
+// gedownloade rapport meteen met richting 1 begon en de onderbouwing miste: de
+// punten uit je profiel, wat je al hebt liggen, en de uren waar alles op rust.
+// Bewust niet profielHtml hergebruiken, want dat blok is donker en dat kost bij
+// het printen een halve inktcartridge.
+function printProfielHtml(){
+  const prof = S.profiel || {}, P = S.pg || profielGetallen() || {};
+  const punten = (prof.punten||[]).map(k=>
+    `<div style="margin:0 0 9px">
+      <div class="mono" style="margin:0 0 1px">${esc(k.label||"")}</div>
+      <div>${esc(k.tekst||"")}</div>
+    </div>`).join("");
+  const bagage = (prof.bagage||[]).map(b=>esc(b)).join(" &middot; ");
+  if(!punten && !bagage) return "";
+  // Het archetype staat al als titel bovenaan de eerste pagina, dus hier niet
+  // nog een keer.
+  return `<div style="break-after:page">
+    <div class="mono" style="margin-top:16px">Wat de intake laat zien</div>
+    <div style="height:10px"></div>
+    ${punten}
+    ${bagage?`<div style="margin:14px 0 0"><div class="mono" style="margin:0 0 3px">Wat je al hebt liggen</div><div>${bagage}</div></div>`:""}
+    <p style="margin:14px 0 0;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${esc(String(P.slack||0))} uur ruimte in je werkweek en ${esc(String(P.eigenBasis||0))} uur eigen tijd per week. Je sterkste drijfveer is ${esc((P.rang&&P.rang[0])||"")}.</p>
+  </div>`;
+}
 function printAllesHtml(scen, plans){
   return `<div class="printkop"><div class="mono">Deskshift &middot; jouw uitkomst en drie plannen</div>
       <h1 style="font-size:28px;margin:10px 0 4px">${esc((S.profiel&&S.profiel.archetype)||"Jouw uitkomst")}</h1></div>` +
+    printProfielHtml() +
     scen.map((s,i)=>{
       const p = plans[i] || {};
       return `<div style="break-before:${i?"page":"auto"}">
