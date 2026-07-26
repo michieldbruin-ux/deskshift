@@ -3478,6 +3478,273 @@ function mailHtmlBouw(p, s){
     </td></tr>`;
   return mailShell("Jouw rapport en plan van zes weken", inhoud);
 }
+/* ---------- pdf schrijven zonder bibliotheek ----------
+   Een pdf is een tekstformaat, en voor tekst met de standaard Helvetica hoeft er
+   geen letter ingebed te worden. Daarmee past dit bij de rest van deze site: één
+   bestand, geen buildstap, geen afhankelijkheid. De uitvoer is een paar tientallen
+   kilobytes met selecteerbare tekst.
+
+   Beperking die je terugziet: Archivo en IBM Plex zitten er niet in, dus de
+   bijlage is Helvetica. Het printvenster (Download als pdf) gebruikt wel de
+   huisstijlletters; die twee zien er dus niet identiek uit. */
+
+// Breedtes per teken uit de standaard Helvetica-metriek, duizendsten van de
+// letterhoogte, voor teken 32 tot 126. Nodig om regels op de juiste plek af te
+// breken; zonder deze tabel loopt tekst over de marge heen.
+const HELV = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+const HELVB = [278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584];
+
+// WinAnsi wijkt tussen 128 en 159 af van Unicode. Alleen de tekens die in deze
+// teksten voorkomen, de rest valt terug op een vraagteken.
+const WINANSI = {0x20AC:0x80,0x201A:0x82,0x2026:0x85,0x2020:0x86,0x02C6:0x88,0x2039:0x8B,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2022:0x95,0x2013:0x96,0x2014:0x97,0x203A:0x9B};
+
+function pdfByte(cp){
+  if(WINANSI[cp] !== undefined) return WINANSI[cp];
+  if(cp >= 32 && cp <= 255) return cp;
+  return 63; // vraagteken
+}
+// Tekstbreedte in punten bij een gegeven lettergrootte.
+function pdfBreedte(t, grootte, vet){
+  const tab = vet ? HELVB : HELV;
+  let som = 0;
+  for(const ch of String(t)){
+    const b = pdfByte(ch.codePointAt(0));
+    // Accenttekens krijgen de breedte van hun grondletter; dat scheelt een
+    // tabel van 224 waarden en het verschil is verwaarloosbaar.
+    const i = (b >= 32 && b <= 126) ? b - 32 : (b >= 0xC0 ? (b >= 0xE0 ? 'a'.charCodeAt(0) - 32 : 'A'.charCodeAt(0) - 32) : 'n'.charCodeAt(0) - 32);
+    som += tab[i] || 500;
+  }
+  return som * grootte / 1000;
+}
+// Naar een pdf-string: haakjes en backslash moeten ontsnapt, de rest als byte.
+function pdfStr(t){
+  let uit = "";
+  for(const ch of String(t)){
+    const b = pdfByte(ch.codePointAt(0));
+    const c = String.fromCharCode(b);
+    if(c === "(" || c === ")" || c === "\\") uit += "\\" + c;
+    else uit += c;
+  }
+  return uit;
+}
+// Woorden afbreken op de beschikbare breedte.
+function pdfRegels(t, breedte, grootte, vet){
+  const woorden = String(t||"").split(/\s+/).filter(Boolean);
+  const uit = [];
+  let regel = "";
+  for(const w of woorden){
+    const proef = regel ? regel + " " + w : w;
+    if(pdfBreedte(proef, grootte, vet) <= breedte) regel = proef;
+    else { if(regel) uit.push(regel); regel = w; }
+  }
+  if(regel) uit.push(regel);
+  return uit.length ? uit : [""];
+}
+
+/* Een pdf opbouwen. Werkt met een cursor van boven naar beneden en breekt zelf
+   af naar een nieuwe pagina. Kleuren zijn de huisstijl. */
+function pdfDoc(){
+  const B = 595.28, H = 841.89;          // A4 in punten
+  const MAR = 56, TOP = 64, BODEM = 60;
+  const KOL = B - MAR * 2;
+  const INK = [0.251,0.306,0.231];       // #404E3B
+  const LIME = [0.482,0.588,0.412];      // #7B9669
+  const GRIJS = [0.310,0.388,0.376];     // #4F6360
+  const paginas = [];
+  let stroom = "", y = H - TOP;
+
+  const nieuw = () => { if(stroom) paginas.push(stroom); stroom = ""; y = H - TOP; };
+  const ruimte = (nodig) => { if(y - nodig < BODEM) nieuw(); };
+  const kleur = (c) => { stroom += c[0].toFixed(3)+" "+c[1].toFixed(3)+" "+c[2].toFixed(3)+" rg\n"; };
+  const vlak = (x, yy, w, h, c) => {
+    kleur(c);
+    stroom += x.toFixed(2)+" "+yy.toFixed(2)+" "+w.toFixed(2)+" "+h.toFixed(2)+" re f\n";
+  };
+  // spatie is letterspatiëring via Tc: dat rendert gespatieerd maar houdt de
+  // tekst één woord, dus zoeken en kopiëren blijft werken. Losse spaties
+  // tussen de letters zetten zou dat kapotmaken.
+  const zet = (t, x, yy, grootte, vet, c, spatie) => {
+    kleur(c || INK);
+    stroom += "BT /"+(vet?"F2":"F1")+" "+grootte+" Tf "+(spatie?spatie.toFixed(2):"0")+" Tc "+
+              "1 0 0 1 "+x.toFixed(2)+" "+yy.toFixed(2)+" Tm ("+pdfStr(t)+") Tj ET\n";
+  };
+
+  return {
+    // Een blok tekst met automatische afbreking en paginasprong.
+    tekst(t, opt){
+      const o = opt || {};
+      const grootte = o.grootte || 10.5, vet = !!o.vet, lh = o.lh || grootte * 1.42;
+      const x = MAR + (o.indent || 0), breedte = KOL - (o.indent || 0);
+      const regels = pdfRegels(t, breedte, grootte, vet);
+      for(const r of regels){
+        ruimte(lh);
+        zet(r, x, y - grootte, grootte, vet, o.kleur);
+        y -= lh;
+      }
+      if(o.na) y -= o.na;
+      return this;
+    },
+    // Klein kapitaal-label in de mono-stijl van de site, hier gespatieerd.
+    label(t, opt){
+      const o = opt || {};
+      ruimte(16);
+      zet(String(t).toUpperCase(), MAR + (o.indent || 0), y - 8, 7.5, true, o.kleur || GRIJS, 1.3);
+      y -= 16;
+      return this;
+    },
+    // Opsomming met een lime bolletje.
+    punt(t){
+      const grootte = 10.5, lh = 15;
+      const regels = pdfRegels(t, KOL - 16, grootte, false);
+      ruimte(lh * regels.length);
+      vlak(MAR + 2, y - 7, 3.2, 3.2, LIME);
+      regels.forEach((r, i) => { zet(r, MAR + 16, y - grootte, grootte, false, INK); if(i < regels.length-1) y -= lh; });
+      y -= lh;
+      return this;
+    },
+    // Donker vlak met lichte tekst, zoals het doelblok op het scherm.
+    doelblok(label, kop, onder){
+      const kopR = pdfRegels(kop, KOL - 36, 16, true);
+      const ondR = onder ? pdfRegels(onder, KOL - 36, 10, false) : [];
+      const hoogte = 22 + kopR.length * 21 + (ondR.length ? 8 + ondR.length * 14 : 0) + 18;
+      ruimte(hoogte + 10);
+      vlak(MAR, y - hoogte, KOL, hoogte, INK);
+      let yy = y - 20;
+      zet(String(label).toUpperCase(), MAR + 18, yy, 7.5, true, [0.729,0.784,0.659], 1.3);
+      yy -= 20;
+      for(const r of kopR){ zet(r, MAR + 18, yy, 16, true, [1,1,1]); yy -= 21; }
+      if(ondR.length){ yy -= 4; for(const r of ondR){ zet(r, MAR + 18, yy, 10, false, [0.863,0.886,0.839]); yy -= 14; } }
+      y -= hoogte + 16;
+      return this;
+    },
+    lijn(){ ruimte(12); vlak(MAR, y - 4, KOL, 0.7, [0.812,0.839,0.796]); y -= 14; return this; },
+    ruim(n){ y -= (n || 10); return this; },
+    pagina(){ nieuw(); return this; },
+
+    // Alles samenvoegen tot een geldige pdf. Objecten, xref en trailer.
+    bouw(){
+      nieuw();
+      const obj = [];
+      obj[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+      obj[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
+      obj[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+      const kids = [];
+      let n = 5;
+      paginas.forEach((s) => {
+        const pagObj = n, inhObj = n + 1;
+        kids.push(pagObj + " 0 R");
+        obj[pagObj] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 "+B.toFixed(2)+" "+H.toFixed(2)+"] "+
+                      "/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents "+inhObj+" 0 R >>";
+        obj[inhObj] = "<< /Length "+s.length+" >>\nstream\n"+s+"endstream";
+        n += 2;
+      });
+      obj[2] = "<< /Type /Pages /Count "+paginas.length+" /Kids ["+kids.join(" ")+"] >>";
+
+      let uit = "%PDF-1.4\n";
+      const plek = [];
+      for(let i = 1; i < n; i++){
+        if(obj[i] === undefined) continue;
+        plek[i] = uit.length;
+        uit += i + " 0 obj\n" + obj[i] + "\nendobj\n";
+      }
+      const xref = uit.length;
+      uit += "xref\n0 " + n + "\n0000000000 65535 f \n";
+      for(let i = 1; i < n; i++){
+        const p = plek[i] === undefined ? 0 : plek[i];
+        uit += String(p).padStart(10, "0") + " 00000 n \n";
+      }
+      uit += "trailer\n<< /Size "+n+" /Root 1 0 R >>\nstartxref\n"+xref+"\n%%EOF";
+      return uit;   // latin1-string: elk teken is precies één byte
+    }
+  };
+}
+
+/* Het plan van één richting als pdf. */
+function pdfPlan(d, plan, scen){
+  d.label("Deskshift, jouw plan van zes weken");
+  d.tekst(scen.titel || "Je plan", {grootte:20, vet:true, lh:25, na:6});
+  if(scen.pitch) d.tekst(scen.pitch, {grootte:11, kleur:[0.310,0.388,0.376], na:12});
+  d.doelblok("Je doel over zes weken", plan.doel || scen.titel || "", plan.waarom || "");
+  const acties = (plan.weken||[]).reduce((n,w)=>n+((w.acties||[]).length),0);
+  d.tekst((scen.uren||"?")+" uur per week   ·   6 weken looptijd   ·   "+acties+" acties",
+          {grootte:9.5, vet:true, kleur:[0.310,0.388,0.376], na:14});
+
+  (plan.weken||[]).forEach((w)=>{
+    d.lijn();
+    d.label("Week "+(w.nr||""), {kleur:[0.482,0.588,0.412]});
+    if(w.thema) d.tekst(w.thema, {grootte:13, vet:true, lh:17, na:4});
+    (w.acties||[]).forEach(a=>d.punt(a));
+    if(w.omdat) d.tekst("In jouw woorden: “"+String(w.omdat).replace(/^["“„]|["”]$/g,"")+"”",
+                        {grootte:9.5, kleur:[0.310,0.388,0.376], na:2});
+    if(w.resultaat) d.tekst("Klaar aan het eind: "+w.resultaat, {grootte:9.5, vet:true, na:6});
+  });
+
+  d.ruim(6); d.lijn();
+  if(plan.meetpunt){ d.label("Zo weet je of het werkt"); d.tekst(plan.meetpunt, {na:8}); }
+  if(plan.kill || scen.kill){ d.label("Wanneer je stopt"); d.tekst(plan.kill || scen.kill, {na:8}); }
+  if(plan.steun){ d.label("Wie je erbij betrekt"); d.tekst(plan.steun, {na:8}); }
+
+  if(plan.script && plan.script.opening){
+    d.ruim(4); d.label("Het gesprek met je leidinggevende");
+    d.tekst(plan.script.opening, {na:6});
+    (plan.script.tegenwerpingen||[]).forEach(t=>{
+      if(t && t.bezwaar) d.tekst("“"+t.bezwaar+"”", {grootte:10, vet:true, na:2});
+      if(t && t.antwoord) d.tekst(t.antwoord, {grootte:10, kleur:[0.310,0.388,0.376], na:6});
+    });
+  }
+  if(plan.bronnen && plan.bronnen.length){
+    d.ruim(4); d.label("Waar je begint");
+    plan.bronnen.forEach(b=>{ if(b && b.naam) d.punt(b.naam + (b.wat?" · "+b.wat:"") + (b.tijd?" · "+b.tijd:"")); });
+  }
+  if(plan.validatie && plan.validatie.length){
+    d.ruim(4); d.label("Toetsen voordat je doorgaat");
+    plan.validatie.forEach((v,i)=>{ if(!v) return;
+      if(v.toets) d.tekst((i+1)+". "+v.toets, {grootte:10, vet:true, na:2});
+      if(v.stop) d.tekst("Stoppen als: "+v.stop, {grootte:10, kleur:[0.310,0.388,0.376], na:6});
+    });
+  }
+  if(plan.berichten && plan.berichten.length){
+    d.ruim(4); d.label("Klaar om te versturen");
+    plan.berichten.forEach(b=>{ if(!b) return;
+      if(b.titel) d.tekst(b.titel, {grootte:10, vet:true, na:2});
+      if(b.tekst) d.tekst(b.tekst, {grootte:10, kleur:[0.310,0.388,0.376], na:8});
+    });
+  }
+  return d;
+}
+
+// Eén plan als pdf, en alle drie de richtingen als pdf. Geven een latin1-string
+// terug; btoa() maakt daar de base64 van die de mailer als bijlage meestuurt.
+function pdfEenPlan(plan, scen){
+  return pdfPlan(pdfDoc(), plan || {}, scen || {}).bouw();
+}
+/* De pdf klaarzetten als bijlage voor /api/mail. Faalt het bouwen om welke reden
+   dan ook, dan gaat de mail zonder bijlage de deur uit; de inhoud staat toch al
+   in het bericht zelf. Beter een mail zonder pdf dan geen mail. */
+function pdfBijlage(bouw, naam){
+  try{
+    const rauw = bouw();
+    if(!rauw || rauw.indexOf("%PDF-") !== 0) return undefined;
+    return [{ naam: naam + ".pdf", inhoud: btoa(rauw) }];
+  }catch(e){ return undefined; }
+}
+function pdfAllePlannen(scen, plans, profiel){
+  const d = pdfDoc();
+  d.label("Deskshift, jouw uitkomst");
+  d.tekst((profiel && profiel.archetype) || "Jouw drie richtingen", {grootte:22, vet:true, lh:27, na:8});
+  (profiel && profiel.punten || []).forEach(p=>{
+    if(!p) return;
+    d.tekst(String(p.label||"").toUpperCase(), {grootte:8, vet:true, kleur:[0.482,0.588,0.412], na:1});
+    d.tekst(p.tekst||"", {grootte:10.5, na:6});
+  });
+  (scen||[]).forEach((s,i)=>{
+    d.pagina();
+    d.label("Richting "+(i+1)+(s && s.totaal ? "  ·  pasvorm "+s.totaal : ""));
+    pdfPlan(d, (plans||[])[i] || {}, s || {});
+  });
+  return d.bouw();
+}
+
 /* ---------- de opvolger in week 2 ----------
    Herkenning die terugkomt nadat de betaling al gedaan is: op dag 7 één korte
    mail met de acties van week twee uit het eigen plan, plus waaraan je ziet dat
@@ -3524,7 +3791,8 @@ async function mailPlan(){
   try{
     const html = mailHtmlBouw(S.plan, S.chosen);
     const r = await fetch("/api/mail",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ email, onderwerp:"Je Deskshift-plan: "+((S.chosen&&S.chosen.titel)||""), html })});
+      body:JSON.stringify({ email, onderwerp:"Je Deskshift-plan: "+((S.chosen&&S.chosen.titel)||""), html,
+        bijlagen: pdfBijlage(()=>pdfEenPlan(S.plan, S.chosen), "deskshift-plan") })});
     const d = await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
     status.style.color="#4A6B1E"; status.textContent="Verstuurd naar "+email+".";
@@ -3566,7 +3834,8 @@ async function mailAlles(){
     const plans = await Promise.all(scen.map(s=> planPromise(s).catch(()=>({})) ));
     const html = mailHtmlAlles(scen, plans);
     const r = await fetch("/api/mail",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ email, onderwerp:"Je Deskshift-uitkomst en drie plannen", html })});
+      body:JSON.stringify({ email, onderwerp:"Je Deskshift-uitkomst en drie plannen", html,
+        bijlagen: pdfBijlage(()=>pdfAllePlannen(scen, plans, S.profiel), "deskshift-uitkomst") })});
     const d = await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||"Versturen mislukt.");
     status.style.color="#4A6B1E"; status.textContent="Verstuurd naar "+email+".";

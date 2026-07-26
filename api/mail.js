@@ -73,12 +73,13 @@ export default async function handler(req, res) {
 
   let body = req.body;
   if (typeof body === "string") {
-    if (body.length > 220000) { res.status(413).json({ error: "Verzoek te groot." }); return; }
+    // Ruimer dan voorheen, want er kan nu een pdf als base64 in zitten.
+    if (body.length > 900000) { res.status(413).json({ error: "Verzoek te groot." }); return; }
     try { body = JSON.parse(body); } catch { body = {}; }
   }
   body = body || {};
 
-  const { email, onderwerp, html, scheduledAt } = body;
+  const { email, onderwerp, html, scheduledAt, bijlagen } = body;
   if (!geldigMail(email)) { res.status(400).json({ error: "Ongeldig e-mailadres." }); return; }
   if (typeof html !== "string" || !html || html.length > 200000) {
     res.status(400).json({ error: "Ongeldige of te grote inhoud." });
@@ -100,6 +101,40 @@ export default async function handler(req, res) {
     planTijd = new Date(t).toISOString();
   }
 
+  // Bijlagen, strak gehouden zodat dit endpoint geen open bestandsrelay wordt:
+  // hooguit drie pdf's, alleen een veilige bestandsnaam, alleen echt base64, en
+  // samen niet meer dan vijf megabyte na decoderen.
+  let bijlage;
+  if (bijlagen !== undefined) {
+    if (!Array.isArray(bijlagen) || bijlagen.length > 3) {
+      res.status(400).json({ error: "Ongeldige bijlagen." }); return;
+    }
+    let totaal = 0;
+    bijlage = [];
+    for (const b of bijlagen) {
+      const naam = b && typeof b.naam === "string" ? b.naam : "";
+      const inhoud = b && typeof b.inhoud === "string" ? b.inhoud : "";
+      if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,79}\.pdf$/.test(naam)) {
+        res.status(400).json({ error: "Ongeldige bestandsnaam voor een bijlage." }); return;
+      }
+      if (!/^[A-Za-z0-9+/]+={0,2}$/.test(inhoud) || inhoud.length % 4 !== 0) {
+        res.status(400).json({ error: "Ongeldige bijlage-inhoud." }); return;
+      }
+      const bytes = Math.floor(inhoud.length * 3 / 4);
+      totaal += bytes;
+      if (totaal > 5 * 1024 * 1024) {
+        res.status(413).json({ error: "Bijlagen samen te groot." }); return;
+      }
+      // Moet ook echt een pdf zijn: %PDF- staat aan het begin, en dat is in
+      // base64 altijd "JVBERi0".
+      if (!inhoud.startsWith("JVBERi0")) {
+        res.status(400).json({ error: "Een bijlage is geen pdf." }); return;
+      }
+      bijlage.push({ name: naam, content: inhoud });
+    }
+    if (!bijlage.length) bijlage = undefined;
+  }
+
   try {
     const upstream = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -109,7 +144,7 @@ export default async function handler(req, res) {
         to: [{ email }],
         subject,
         htmlContent: html,
-      }, planTijd ? { scheduledAt: planTijd } : {})),
+      }, planTijd ? { scheduledAt: planTijd } : {}, bijlage ? { attachment: bijlage } : {})),
     });
     const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
