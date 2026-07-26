@@ -19,6 +19,7 @@ tiktok-3.html
 *.zip
 
 # Werkbestanden voor de repo, geen onderdeel van het product
+meting.sql
 CLAUDE.md
 README-DEPLOY.md
 .claude/

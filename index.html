@@ -1679,6 +1679,85 @@ const esc = s => String(s)
   .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
   .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 
+/* ---------- meting: waar haakt iemand af ---------- */
+/* Er gaat geen cookie in, geen antwoord, geen mailadres en geen IP. Wat er wordt
+   verstuurd is een willekeurig sessienummer, de naam van een stap, en hoeveel
+   milliseconden na de eerste stap die stap bereikt werd. Daar is een funnel van
+   te maken en verder niets: uit "vraag.dromen.droom2" valt niet op te maken wat
+   iemand heeft geantwoord, alleen dat die vraag in beeld kwam.
+
+   Het sessienummer staat in sessionStorage en is weg zodra de tab sluit. Het
+   bestaat alleen om twee stappen van dezelfde bezoeker aan elkaar te knopen en
+   is nergens anders bekend, dus het is niet te herleiden naar een persoon.
+
+   Stappen worden gebundeld verstuurd, en direct als het tabblad naar de
+   achtergrond gaat. Dat laatste is precies het moment waarop je een afhaker
+   anders kwijt bent. Alles staat in een try/catch en niets wordt afgewacht: een
+   meting mag nooit iets zijn waar de bezoeker last van heeft. */
+const MEET_KEY = "deskshift_meting_v1";
+const MEET_URL = "/api/stap";
+let _meetSes = null;              // {id, t0}
+let _meetBuffer = [];
+let _meetTimer = null;
+let _meetUit = null;              // in testmodus niet meten, dat vervuilt de funnel
+const _meetGehad = new Set();
+
+function meetSessie(){
+  if(_meetSes) return _meetSes;
+  let id = "", t0 = 0;
+  try{
+    const r = JSON.parse(sessionStorage.getItem(MEET_KEY) || "null");
+    if(r && /^[a-z0-9]{8,32}$/.test(r.id||"") && +r.t0 > 0){ id = r.id; t0 = +r.t0; }
+  }catch(e){}
+  if(!id){
+    // Willekeurig, niet afgeleid van iets van deze persoon of dit toestel.
+    const b = new Uint8Array(8);
+    try{ crypto.getRandomValues(b); }catch(e){ for(let i=0;i<8;i++) b[i] = Math.floor(Math.random()*256); }
+    id = Array.from(b, x => x.toString(16).padStart(2,"0")).join("");
+    t0 = Date.now();
+    try{ sessionStorage.setItem(MEET_KEY, JSON.stringify({id:id, t0:t0})); }catch(e){}
+  }
+  _meetSes = {id:id, t0:t0};
+  return _meetSes;
+}
+
+function meetStuur(afscheid){
+  if(!_meetBuffer.length) return;
+  if(_meetTimer){ clearTimeout(_meetTimer); _meetTimer = null; }
+  const lading = JSON.stringify({ sessie: meetSessie().id, stappen: _meetBuffer });
+  _meetBuffer = [];
+  try{
+    // sendBeacon overleeft het wegklikken van het tabblad, een fetch niet altijd.
+    if(afscheid && navigator.sendBeacon){
+      const blob = new Blob([lading], {type:"application/json"});
+      if(navigator.sendBeacon(MEET_URL, blob)) return;
+    }
+    fetch(MEET_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:lading, keepalive:true}).catch(()=>{});
+  }catch(e){}
+}
+
+function meet(stap){
+  try{
+    /* Testmodus pas hier uitlezen en niet bij het laden van het script:
+       testmodus() staat verderop en leest TEST_KEY, een const die op dat moment
+       nog niet bestaat. De fout zou stil in de try/catch verdwijnen en dan meet
+       je stil door in testmodus. De eerste meting valt na de opstartcode, dus
+       daar is het wel veilig. */
+    if(_meetUit === null){ try{ _meetUit = testmodus(); }catch(e){ _meetUit = false; } }
+    if(_meetUit) return;
+    if(_meetGehad.has(stap)) return;   // een stap telt één keer per sessie
+    _meetGehad.add(stap);
+    _meetBuffer.push({ stap: stap, ms: Math.max(0, Date.now() - meetSessie().t0) });
+    if(_meetBuffer.length >= 20){ meetStuur(false); return; }
+    if(_meetTimer) clearTimeout(_meetTimer);
+    _meetTimer = setTimeout(function(){ meetStuur(false); }, 1500);
+  }catch(e){}
+}
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState === "hidden") meetStuur(true);
+});
+window.addEventListener("pagehide", function(){ meetStuur(true); });
+
 /* dynamische tekst */
 function tpl(str){
   return String(str||"").replace(/\{(\w+)\}/g, (m,k)=>{
@@ -1759,6 +1838,9 @@ function spiegelHtml(){
 function toonStap(){
   railTeken();
   const sec = SECTIES[S.s], st = sec.stappen[S.q];
+  // Per vraag meten, want daar zit het afhaken. Alleen dat de vraag in beeld
+  // kwam, nooit wat er is ingevuld.
+  meet("vraag." + sec.id + "." + st.id);
   let html = "";
   if(S.q === 0){
     html += `<div class="opener"><div class="mono">Sectie ${S.s+1} van ${SECTIES.length} · ${sec.naam}</div>
@@ -2030,7 +2112,7 @@ document.addEventListener("keydown", e=>{
   if(t==="TEXTAREA" || t==="INPUT" || t==="BODY" || t==="DIV"){ e.preventDefault(); $("next").click(); }
 });
 
-async function startIntake(){ await wis(); S.s=0; S.q=0; S.ant={}; S.pos={skill:{},energie:{}}; S.kaarten=[]; hide("landing"); show("intake"); toonStap(); }
+async function startIntake(){ meet("intake.start"); await wis(); S.s=0; S.q=0; S.ant={}; S.pos={skill:{},energie:{}}; S.kaarten=[]; hide("landing"); show("intake"); toonStap(); }
 // Herbruikbare pop-up met veer-animatie. Sluit op de knop, op Enter of Escape.
 function openPop(popId, knopId, next){
   const pop = document.getElementById(popId), knop = document.getElementById(knopId);
@@ -2089,6 +2171,7 @@ function toonMailOk(tekst){
 // boven de landing). De pop-up sluit gewoon; de gebruiker staat dan op vraag 1.
 $("start").onclick = async () => { await startIntake(); openPrivacy(()=>{}); };
 $("resume").onclick = async () => {
+  meet("intake.hervat");
   const d = await laad();
   if(d){ S.s=d.s; S.q=d.q; S.ant=d.ant||{}; S.pos=d.pos||{skill:{},energie:{}}; S.kaarten=d.kaarten||[]; S.cvNaam=d.cvNaam||""; S.cvTekst=d.cvTekst||""; }
   hide("landing"); show("intake"); toonStap(); // zonder opslag: verder waar je in het geheugen was
@@ -2260,6 +2343,7 @@ function leesbaar(st){
   return esc(a) + (st.unit&&st.type==="slider"?(" "+st.unit):"");
 }
 function naarReview(){
+  meet("overzicht");
   hide("intake"); show("review");
   $("revBody").innerHTML = SECTIES.map((sec,si)=>
     `<h3 style="margin:26px 0 4px">${sec.naam}</h3>` + sec.stappen.map((st,qi)=>
@@ -2526,6 +2610,7 @@ Belangrijk over tijd: de uren die binnen de werkweek overblijven zijn geen vrije
 
 /* ---------- as-is schets als kaarten ---------- */
 $("toSummary").onclick = async () => {
+  meet("schets");
   bouwTranscript();
   hide("review"); show("summary");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -2552,13 +2637,18 @@ Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), 
         </div></div>`).join("")}</div>
       ${d.klap?`<div class="klap">${esc(d.klap)}</div>`:""}
       <p class="muted" style="margin-top:14px">Tik per kaart aan of het klopt. Wat je bevestigt of afwijst, scherpt de volgende stap aan.</p>`;
+    meet("schets.klaar");
     $("sumBody").querySelectorAll("[data-oordeel]").forEach(b=>b.onclick=()=>{
+      // Of de schets herkend wordt is meer dan een funnelstap: het is een cijfer
+      // op de kwaliteit van de analyse. Alleen klopt of niet, niet welke kaart.
+      meet(b.dataset.w === "1" ? "schets.klopt" : "schets.kloptniet");
       S.schetsOordeel[+b.dataset.oordeel] = (b.dataset.w === "1");
       b.closest(".oordeel").querySelectorAll("button").forEach(x=>x.classList.remove("aan"));
       b.classList.add("aan");
     });
     show("sumRow");
   }catch(e){
+    meet("schets.fout");
     $("sumBody").innerHTML = `<div class="err">${esc(e.message)}</div>
       <button class="btn btn-ghost btn-sm" id="sumRetry" style="margin-top:12px">Opnieuw proberen</button>`;
     const rb=$("sumRetry"); if(rb) rb.onclick=()=>$("toSummary").onclick();
@@ -2567,6 +2657,7 @@ Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), 
 };
 
 $("toInsight").onclick = async () => {
+  meet("inzicht");
   hide("summary"); show("insight");
   window.scrollTo({top:0,behavior:"smooth"});
   $("unlock").disabled = true;
@@ -2640,6 +2731,7 @@ const KALIB = [
 S.kalib = {};
 
 $("unlock").onclick = () => {
+  meet("kalibratie");
   hide("insight"); show("kalib");
   $("kalibBody").innerHTML = KALIB.map((k,i)=>`
     <div class="step"><div class="qnum mono">Keuze ${i+1} van ${KALIB.length}</div><h3>${k.vraag}</h3>
@@ -2661,6 +2753,7 @@ $("kalibKlaar").onclick = () => {
     $("kalibBody").insertAdjacentHTML("beforeend", `<div class="err">Maak alle vier de keuzes. Ze wegen allemaal mee.</div>`);
     return;
   }
+  meet("kalibratie.klaar");
   hide("kalib"); show("scenarios"); draaien(); window.scrollTo({top:0,behavior:"smooth"});
 };
 // Het profiel-blok als HTML. Los, zodat we het ook kunnen herbouwen na terugkeer
@@ -2864,6 +2957,7 @@ async function startBetaling(){
   };
   try{
     if(bk) bk.disabled = true; zet("Veilig betalen openen…");
+    meet("afrekenen");
     bewaarBetaalSnapshot();
     const r = await fetch("/api/checkout", {method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ code: leesKortingscode() })});
@@ -2885,6 +2979,7 @@ async function checkBetaalTerugkeer(){
   const opschonen = () => { u.searchParams.delete("betaald"); u.searchParams.delete("sid"); try{ history.replaceState(null,"", u.pathname + (u.search||"")); }catch(e){} };
   if(betaald !== "1" || !sid){
     // Betaling afgebroken: herstel de uitkomst met paywall, geen ontgrendeling.
+    meet("afrekenen.af");
     opschonen();
     const snap = laadBetaalSnapshot();
     if(snap){ herstelState(snap); ["landing","intake","review","summary","insight","kalib"].forEach(hide); show("scenarios"); toonRichtingen(); }
@@ -2896,6 +2991,7 @@ async function checkBetaalTerugkeer(){
   const snap = laadBetaalSnapshot();
   const naarScenarios = () => { ["landing","intake","review","summary","insight","kalib","action"].forEach(hide); show("scenarios"); };
   if(paid && snap){
+    meet("betaald");
     herstelState(snap);
     herstelPlannen(snap);
     // Meteen in het archief zetten, nog vóór het uitschrijven. Wie in deze
@@ -3171,6 +3267,10 @@ function onderbouwingHtml(s){
     + (rijen.length ? `<dl class="kv">${rijen.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join("")}</dl>` : "");
 }
 function toonRichtingen(){
+  // Twee losse stappen, want dit is het scherpste punt van de trechter: hier
+  // staat de paywall. Wie hier komt zonder te betalen is de grootste groep die
+  // je nog kunt winnen.
+  meet(S.betaald ? "richtingen.betaald" : "paywall");
   const rest = S.rest || [];
   // Betaald: download en mail meteen bovenaan, zodat het niet pas onderaan de
   // pagina te vinden is. Komt zowel na het ontgrendelen als na een herstel.
@@ -3796,6 +3896,7 @@ async function mailPlan(){
   const email = (inp.value||"").trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ status.style.color="#8A2B21"; status.textContent="Vul een geldig e-mailadres in."; return; }
   if(!S.plan || !S.chosen){ status.style.color="#8A2B21"; status.textContent="Open eerst een plan."; return; }
+  meet("mail.plan");
   knop.disabled = true; status.style.color="var(--slate)"; status.textContent="Versturen…";
   try{
     const html = mailHtmlBouw(S.plan, S.chosen);
@@ -3838,6 +3939,7 @@ async function mailAlles(){
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ status.style.color="#8A2B21"; status.textContent="Vul een geldig e-mailadres in."; return; }
   const scen = S.scenarios||[];
   if(!scen.length){ status.style.color="#8A2B21"; status.textContent="Er zijn nog geen richtingen."; return; }
+  meet("mail.alles");
   knop.disabled = true; status.style.color="var(--slate)"; status.textContent="Plannen verzamelen en versturen…";
   try{
     const plans = await Promise.all(scen.map(s=> planPromise(s).catch(()=>({})) ));
@@ -3882,6 +3984,7 @@ async function downloadAlles(){
   const knop = $("dlAllesKnop");
   const scen = S.scenarios || [];
   if(!scen.length) return;
+  meet("download.alles");
   const oud = knop ? knop.textContent : "";
   if(knop){ knop.disabled = true; knop.textContent = "Plannen verzamelen…"; }
   try{
@@ -3899,6 +4002,7 @@ function zetUitkomstActies(){
   const ma = $("mailAllesKnop"); if(ma) ma.onclick = ()=> openMailPop("alles");
 }
 async function kies(s){
+  meet("plan.open");
   S.chosen = s; hide("scenarios"); show("action");
   $("actTitle").textContent = s.titel;
   const key = (s && s.titel) || "x";
@@ -4076,6 +4180,9 @@ function aflevering(p, s){
 // afhandelen. Moet ná alle definities, want dit leunt op de sleutels en de
 // render-functies hierboven.
 try{ zetTestmodus(); }catch(e){}
+// De eerste meting staat bewust ná zetTestmodus(): meet() leest daar of de
+// testmodus aanstaat, en dat kan pas als TEST_KEY bestaat.
+try{ meet("landing"); }catch(e){}
 try{ vangKortingscode(); }catch(e){}
 try{ checkBetaalTerugkeer(); }catch(e){}
 </script>

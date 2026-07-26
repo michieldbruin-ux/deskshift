@@ -13,6 +13,9 @@
     },
     "api/verify.js": {
       "maxDuration": 15
+    },
+    "api/stap.js": {
+      "maxDuration": 10
     }
   },
   "headers": [

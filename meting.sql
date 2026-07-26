@@ -1,0 +1,87 @@
+-- Meting van afhaken in de intake van Deskshift.
+-- Dit is wat er in de database staat. Al toegepast, hier voor de vindbaarheid.
+--
+-- Wat hier in gaat: een tijdstip, een willekeurig sessienummer, de naam van de
+-- stap, en hoeveel milliseconden na de eerste stap die stap bereikt werd.
+-- Wat hier NIET in gaat: antwoorden, mailadressen, IP-adressen, user agents.
+-- Er komt ook geen cookie aan te pas: het sessienummer staat in sessionStorage
+-- en is weg zodra de tab sluit. Het bestaat alleen om twee stappen van dezelfde
+-- bezoeker aan elkaar te knopen, en is nergens anders bekend.
+--
+-- De tabel staat in het bestaande Supabase-project (VendorRadar) en heet daarom
+-- deskshift_meting en niet meting: zo blijft duidelijk waar hij bij hoort. Een
+-- eigen project kost 10 euro per maand en dat is te veel voor een tellertabel.
+-- Verhuizen is dit bestand opnieuw uitvoeren op een ander project en twee
+-- environment variables in Vercel omzetten.
+--
+-- Hij staat in het schema public omdat PostgREST alleen dat schema standaard
+-- doorgeeft, en dat is nodig om er vanuit api/stap.js in te kunnen schrijven.
+
+create table if not exists public.deskshift_meting (
+  id      bigserial primary key,
+  ts      timestamptz not null default now(),
+  sessie  text        not null,
+  stap    text        not null,
+  ms      integer
+);
+
+create index if not exists deskshift_meting_ts_idx   on public.deskshift_meting (ts desc);
+create index if not exists deskshift_meting_stap_idx on public.deskshift_meting (stap);
+
+-- Bewust GEEN unieke index op (sessie, stap). Met RLS en zonder select-policy
+-- faalt "on conflict do nothing", en zonder die clausule laat een index een
+-- tweede aanbieding van dezelfde batch met een 409 stranden, waardoor de hele
+-- batch verloren gaat. De view hieronder groepeert al per (sessie, stap), dus
+-- een dubbele regel schuift de funnel niet op. Liever dubbel dan gemist.
+
+alter table public.deskshift_meting enable row level security;
+
+-- De browser praat niet rechtstreeks met de database: api/stap.js doet dat, met
+-- de publieke sleutel. Die sleutel mag alleen toevoegen, nooit lezen of wijzigen.
+-- Er is dus geen select-policy, en zonder select-policy geeft de API niets terug.
+-- Lezen doe je in de SQL-editor, met een sleutel die niet in een deploy zit.
+drop policy if exists deskshift_meting_toevoegen on public.deskshift_meting;
+create policy deskshift_meting_toevoegen
+  on public.deskshift_meting for insert to anon
+  with check (true);
+
+-- De funnel als leesbare tabel. De volgorde komt uit de gemiddelde ms sinds de
+-- eerste stap, dus die klopt automatisch mee als de vragen veranderen. Geen
+-- vaste lijst met stapnamen die je bij elke wijziging moet bijwerken.
+create or replace view public.deskshift_funnel as
+with per_sessie as (
+  select sessie, stap, min(ms) as ms
+  from public.deskshift_meting
+  where ts > now() - interval '30 days'
+  group by sessie, stap
+), geteld as (
+  select stap,
+         count(*)                       as sessies,
+         round(avg(ms) / 1000.0)::int   as gem_seconden
+  from per_sessie
+  group by stap
+)
+select stap,
+       sessies,
+       gem_seconden,
+       round(100.0 * sessies / max(sessies) over (), 1) as pct_van_start,
+       sessies - lead(sessies) over (order by gem_seconden) as verloren_hierna
+from geteld
+order by gem_seconden;
+
+comment on view public.deskshift_funnel is
+  'Afhaken in de Deskshift-intake over de laatste 30 dagen. pct_van_start is ten opzichte van de drukste stap, verloren_hierna is hoeveel sessies de volgende stap niet haalden.';
+
+-- Bewaartermijn van 90 dagen, echt afgedwongen en niet alleen opgeschreven in
+-- de privacyverklaring. Draait elke nacht.
+create extension if not exists pg_cron with schema cron;
+
+create or replace function public.deskshift_meting_opruimen()
+returns void language sql security definer set search_path = public as $$
+  delete from public.deskshift_meting where ts < now() - interval '90 days';
+$$;
+
+select cron.unschedule('deskshift-meting-opruimen')
+  where exists (select 1 from cron.job where jobname = 'deskshift-meting-opruimen');
+
+select cron.schedule('deskshift-meting-opruimen', '17 3 * * *', 'select public.deskshift_meting_opruimen()');
