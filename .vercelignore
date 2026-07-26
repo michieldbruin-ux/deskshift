@@ -1,0 +1,30 @@
+# Wat Vercel NIET mee hoeft te nemen bij een deploy.
+# Alles wat hier niet in staat wordt geupload en is dus publiek op te vragen op
+# het domein. Deze lijst houdt het gereedschap en de bronbestanden eruit: die
+# horen bij het maken van de content, niet bij de site.
+
+# Gereedschap voor het opnemen en renderen van de video's
+record-video.js
+render-content.js
+node_modules/
+
+# Bronbestanden en uitvoer van de content. De bestanden die Instagram wel moet
+# kunnen ophalen staan in social/ en blijven dus wel staan.
+content/
+video-1.html
+tiktok-1.html
+tiktok-2.html
+tiktok-3.html
+*.mp4
+*.zip
+
+# Werkbestanden voor de repo, geen onderdeel van het product
+CLAUDE.md
+README-DEPLOY.md
+.claude/
+skills-lock.json
+
+# package.json blijft er bewust WEL in. Hij bevat niets geheims, en de
+# serverless functies in api/ gebruiken ESM (export default). Weghalen zou de
+# manier kunnen veranderen waarop Vercel dat detecteert, en dat risico is niet
+# waard voor een betaalendpoint dat werkt.

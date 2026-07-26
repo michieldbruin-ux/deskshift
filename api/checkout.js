@@ -55,9 +55,15 @@ function siteBasis(req) {
 export default async function handler(req, res) {
   if (req.method !== "POST") { res.status(405).json({ error: "Alleen POST is toegestaan." }); return; }
 
+  // Herkomstcheck. Gemeten in een echte browser: een POST naar /api/* draagt
+  // altijd een Origin, ook nu Referrer-Policy op no-referrer staat en er dus
+  // nooit een Referer meekomt. "Geen van beide aanwezig" is daarom geen echte
+  // bezoeker maar een script, en dat weigeren we. Let op: dit is een drempel en
+  // geen slot, want een Origin is te vervalsen. Het sluit wel de situatie waarin
+  // dit endpoint voor iedereen met een curl zonder headers open stond.
   const originOk = hostToegestaan(req.headers.origin);
   const refererOk = hostToegestaan(req.headers.referer);
-  if (originOk === false || (originOk === null && refererOk === false)) {
+  if (originOk === false || refererOk === false || (!originOk && !refererOk)) {
     res.status(403).json({ error: "Verzoek niet toegestaan." });
     return;
   }

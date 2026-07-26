@@ -9,7 +9,7 @@
 // script kan headers vervalsen), wel een drempel tegen willekeurig misbruik.
 const TOEGESTAAN = [/(^|\.)deskshift\.pro$/i, /\.vercel\.app$/i, /^localhost$/i, /^127\.0\.0\.1$/];
 function hostToegestaan(waarde) {
-  if (!waarde) return null; // header afwezig: niet blokkeren (mobiel strippt soms Referer)
+  if (!waarde) return null; // header afwezig: hier nog geen oordeel, zie de handler
   try { return TOEGESTAAN.some((re) => re.test(new URL(waarde).hostname)); }
   catch { return false; }
 }
@@ -41,10 +41,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Herkomstcheck: als Origin/Referer aanwezig is, moet die van onze site komen.
+  // Herkomstcheck. Gemeten in een echte browser: een POST naar /api/* draagt
+  // altijd een Origin, ook nu Referrer-Policy op no-referrer staat en er dus
+  // nooit een Referer meekomt. "Geen van beide aanwezig" is daarom geen echte
+  // bezoeker maar een script, en dat weigeren we. Let op: dit is een drempel en
+  // geen slot, want een Origin is te vervalsen. Het sluit wel de situatie waarin
+  // dit endpoint voor iedereen met een curl zonder headers open stond.
   const originOk = hostToegestaan(req.headers.origin);
   const refererOk = hostToegestaan(req.headers.referer);
-  if (originOk === false || (originOk === null && refererOk === false)) {
+  if (originOk === false || refererOk === false || (!originOk && !refererOk)) {
     res.status(403).json({ error: "Verzoek niet toegestaan." });
     return;
   }
@@ -81,10 +86,14 @@ export default async function handler(req, res) {
   // Payload-limieten: aantal berichten, totale grootte en system-lengte begrenzen.
   if (messages.length > 40) { res.status(413).json({ error: "Te veel berichten." }); return; }
   try {
-    if (JSON.stringify(messages).length > 180000) { res.status(413).json({ error: "Verzoek te groot." }); return; }
+    if (JSON.stringify(messages).length > 60000) { res.status(413).json({ error: "Verzoek te groot." }); return; }
   } catch { res.status(400).json({ error: "Ongeldig verzoek." }); return; }
-  const veiligSystem = typeof system === "string" ? system.slice(0, 20000) : undefined;
-  const veiligeMaxTokens = Math.min(Number(max_tokens) || 1000, 8192);
+  // Plafonds op wat de app zelf vraagt, met marge. Dit beperkt vooral wat dit
+  // endpoint waard is als iemand het als gratis AI-proxy probeert te gebruiken:
+  // de langste echte systeemprompt is ongeveer 4000 tekens en de zwaarste call
+  // vraagt 5000 tokens.
+  const veiligSystem = typeof system === "string" ? system.slice(0, 8000) : undefined;
+  const veiligeMaxTokens = Math.min(Number(max_tokens) || 1000, 6000);
 
   // Het model wordt hier SERVER-SIDE bepaald. We nemen bewust GEEN model of
   // tools uit de browser over, zodat dit endpoint alleen de intake-taak kan
