@@ -2,4 +2,53 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
+# De crawlers van de AI-systemen expliciet welkom. Dit staat er niet voor de
+# sier: sommige van deze bots gaan uit van "niet genoemd is niet toegestaan", en
+# een regel per user-agent is de enige manier om dat hard te maken.
+#
+# Let op de werking van robots.txt: een bot volgt uitsluitend de groep die het
+# best op zijn eigen naam past en negeert de groep met *. Daarom staat
+# Disallow: /api/ hieronder bij elke bot opnieuw. Zonder die regel zouden juist
+# deze bots wel in /api/ mogen, terwijl alle andere dat niet mogen.
+
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+
 Sitemap: https://deskshift.pro/sitemap.xml

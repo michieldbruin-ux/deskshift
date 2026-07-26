@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Deskshift</title>
-<meta name="description" content="Een korte, zelfstandige online intake voor wie vastloopt op te weinig uitdaging in het werk. Zeven secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
+<meta name="description" content="Deskshift is een online tool die kenniswerkers die hun werk sneller af hebben dan hun contracturen helpt om die ruimte om te zetten in een concreet plan, op basis van hun eigen antwoorden. Gratis inzicht, daarna eenmalig 25 euro voor drie richtingen en een plan van zes weken.">
 <meta name="theme-color" content="#ECEEE6">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Deskshift">
@@ -1212,7 +1212,10 @@
     <div class="hero-tekst">
       <div class="mono eyebrow">Voor professionals die te snel klaar zijn</div>
       <h1>Je werk past in drie dagen.<br>Niemand vraagt wat je met <em>de rest</em> doet.</h1>
-      <p class="lead"><strong class="ds-pop">Deskshift</strong> bouwt uit jóuw antwoorden een persoonlijk plan voor die ruimte, in vijftien minuten.</p>
+      <!-- "die ruimte" verwees terug naar de kop hierboven. Nu benoemt deze zin
+           zelf waar het over gaat, zodat hij ook los van de kop te begrijpen is.
+           Dat helpt een AI-systeem dat één zin uit de pagina overneemt. -->
+      <p class="lead"><strong class="ds-pop">Deskshift</strong> bouwt uit jóuw antwoorden een persoonlijk plan voor de ruimte die in je werkweek zit, in vijftien minuten.</p>
       <div class="row cta-row">
         <button class="btn btn-hero" id="start">Start, het eerste inzicht is gratis</button>
         <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
@@ -1357,8 +1360,11 @@
 
   <div class="foot rv">
     <span class="brand small"><svg class="mark" width="18" height="18" viewBox="0 0 100 100" aria-hidden="true"><rect x="0" y="10" width="62" height="32" fill="#404E3B"/><rect x="38" y="58" width="62" height="32" fill="#7B9669"/></svg><span class="brand-w">Desk<span class="brand-l">shift</span></span></span>
-    <p class="muted">Voor mensen van wie het werk te klein is geworden. Geen cookies, geen tracking.</p>
-    <p class="footlinks"><a href="/privacy">Privacyverklaring</a> <span aria-hidden="true">&middot;</span> <a href="/terms">Algemene voorwaarden</a></p>
+    <!-- "geen tracking" stond hier, en dat is sinds de anonieme funnelmeting niet
+         meer helemaal waar te maken. Advertentietrackers zijn er nog steeds niet,
+         en dat is wel precies te zeggen. -->
+    <p class="muted">Voor mensen van wie het werk te klein is geworden. Geen cookies, geen advertentietrackers.</p>
+    <p class="footlinks"><a href="/vragen/">Vragen</a> <span aria-hidden="true">&middot;</span> <a href="/privacy">Privacyverklaring</a> <span aria-hidden="true">&middot;</span> <a href="/terms">Algemene voorwaarden</a></p>
     <p class="muted" style="margin-top:6px">Deskshift geeft geen loopbaan-, medisch, juridisch of financieel advies. Je blijft zelf verantwoordelijk voor je keuzes.</p>
   </div>
 
@@ -4185,4 +4191,107 @@ try{ zetTestmodus(); }catch(e){}
 try{ meet("landing"); }catch(e){}
 try{ vangKortingscode(); }catch(e){}
 try{ checkBetaalTerugkeer(); }catch(e){}
+</script>
+
+<!-- Gestructureerde data. Staat hier aan het eind, na alles wat het beschrijft.
+     De vragen en antwoorden hieronder zijn woordelijk gelijk aan de uitklapbare
+     vragen op de pagina zelf; ze zijn er letterlijk uit overgenomen en niet
+     opnieuw geformuleerd. Verandert de zichtbare tekst, verander dan ook deze,
+     anders staat er een antwoord dat nergens op de pagina te vinden is. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is dit een cursus of coaching-traject?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Zit hier AI achter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja. Deskshift gebruikt AI om alleen jóuw antwoorden te analyseren. Geen mens leest ze. Het is geen kale chatbot: de intake en het plan zijn er strak omheen gebouwd, zodat de uitkomst over jou gaat en niet over iemand in het algemeen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is dit niet gewoon een quiz of gimmick?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nee. Je vult een echte intake in en krijgt direct een inzicht uit je eigen antwoorden, in je eigen woorden terug. Je corrigeert onderweg zelf wat er niet klopt, en elk citaat wordt teruggelegd naast wat je echt hebt opgeschreven, zodat er niets in staat dat je nooit gezegd hebt. Daarna een plan dat je zelf uitvoert."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wat als het antwoord is dat ik moet blijven waar ik zit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dan zeggen we dat, en laten we zien hóe. Soms zit de scherpste richting in je huidige baan: een taak eruit, een tweede vakgebied erbij. Ook dat wordt een concreet plan van zes weken, geen \"ga netwerken en praat met je manager\"."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wat krijg ik precies voor €25?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Drie richtingen met een pasvorm-score, waarom de andere afvielen, je eerste stap voor deze week, en een plan van zes weken als pdf. Mail je het naar jezelf, dan volgt een week later één herinnering met de acties van week twee. De intake en het inzicht daarvoor zijn gratis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Ziet iemand anders mijn antwoorden?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Geen mens, nee. Je antwoorden staan op je eigen toestel en gaan alleen naar een AI-dienst die ze verwerkt om jouw inzicht en plan te maken. Verder nergens heen, ook niet naar je werkgever."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Moet ik meteen betalen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie richtingen."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Deskshift",
+  "url": "https://deskshift.pro",
+  "logo": "https://deskshift.pro/brand/deskshift-appicoon-512.png",
+  "description": "Deskshift bouwt uit je eigen antwoorden een persoonlijk plan voor de ruimte die in je werkweek zit, voor mensen van wie het werk te klein is geworden.",
+  "email": "plan@deskshift.pro",
+  "priceRange": "\u20ac25"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Deskshift",
+  "url": "https://deskshift.pro",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Elke browser",
+  "inLanguage": "nl-NL",
+  "description": "Een online intake van vijftien minuten voor kenniswerkers die hun werk sneller af hebben dan hun contracturen. Op basis van je eigen antwoorden volgt eerst een gratis inzicht, daarna drie richtingen met een plan van zes weken.",
+  "offers": {
+    "@type": "Offer",
+    "price": "25",
+    "priceCurrency": "EUR",
+    "description": "Eenmalig, geen abonnement. Drie richtingen met een pasvorm-score en een plan van zes weken als pdf."
+  },
+  "publisher": { "@type": "Organization", "name": "Deskshift", "url": "https://deskshift.pro" }
+}
 </script>
