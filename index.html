@@ -1670,7 +1670,14 @@ const $ = i => document.getElementById(i);
 const _mobBar = () => document.getElementById("mobielCta");
 const show = i => { const el=$(i); if(!el) return; el.classList.remove("hidden"); if(i!=="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
 const hide = i => { const el=$(i); if(el) el.classList.add("hidden"); if(i==="landing"){ const b=_mobBar(); if(b) b.classList.add("hidden"); } };
-const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+/* Escapen voor HTML. De aanhalingstekens moeten hier ook in: esc() wordt op
+   diverse plekken binnen een attribuut gebruikt, en zonder die twee kan een
+   waarde uit het attribuut breken en er een event-handler bij plakken. Dat is
+   geen theorie: een eigen sorteeronderwerp met een quote erin injecteerde
+   werkende onfocus- en autofocus-attributen. */
+const esc = s => String(s)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 
 /* dynamische tekst */
 function tpl(str){
@@ -3210,7 +3217,9 @@ function toonRichtingen(){
     const stukjes = [];
     if(pg.slack > 0) stukjes.push(`je ${pg.slack} uur ruimte in de werkweek`);
     if(+S.ant.avonden > 0) stukjes.push(`je ${S.ant.avonden} vrije avond${+S.ant.avonden===1?"":"en"}`);
-    if((pg.sweet||[]).length) stukjes.push(`wat je goed kunt én leuk vindt (${pg.sweet.slice(0,2).join(", ").toLowerCase()})`);
+    // esc(), want deze namen komen uit de sorteerkaarten en die zijn deels door
+    // de gebruiker zelf getypt en deels door de AI verzonnen.
+    if((pg.sweet||[]).length) stukjes.push(`wat je goed kunt én leuk vindt (${esc(pg.sweet.slice(0,2).join(", ").toLowerCase())})`);
     const basisregel = stukjes.length
       ? `Gebouwd op ${stukjes.join(", ")}, en op wat je in je eigen woorden schreef. Zes richtingen afgewogen, drie overgebleven.`
       : `Gewogen uit ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en je vier keuzes. Zes richtingen afgewogen, drie overgebleven.`;
