@@ -466,7 +466,6 @@
     .intake-nav #next{min-height:46px;padding-left:24px;padding-right:24px;font-weight:600}
     #intake{padding-bottom:84px}
   }
-  #printGebied{display:none}
   .herken{background:var(--ink);border-radius:var(--r);padding:24px 24px 20px;margin:22px 0}
   .herken .mono{color:var(--limeL)}
   .herken h3{color:var(--chalk)}
@@ -493,16 +492,8 @@
   .faq details[open] summary::after{content:"–"}
   .faq p{margin:10px 0 0;color:var(--petrol)}
   .klaar{background:rgba(123,150,105,.16);border-radius:var(--r);padding:12px 14px;margin-top:12px;font-size:15px}
-  @media print{
-    body{background:#fff}
-    .wrap{display:none}
-    #printGebied{display:block;padding:0 6mm}
-    .doelblok,.wknr b{background:#fff!important;color:#000!important;border:1px solid #000}
-    .doelblok h2,.doelblok p{color:#000!important}
-    .uitkomst,.qdlabel{background:#f2f2f2!important}
-    .wk{break-inside:avoid}
-    .printkop{margin-bottom:14px}
-  }
+  /* Geen printopmaak meer: download en mailbijlage gaan allebei door de eigen
+     pdf-generator, dus het printvenster van de browser wordt nergens gebruikt. */
   .hidden{display:none}
   .body ul{margin:6px 0 12px;padding-left:20px}
   .body li{margin-bottom:5px}
@@ -1586,7 +1577,6 @@
 <!-- Buiten .wrap, en dat is essentieel: de print-css zet .wrap op display:none
      en een kind van een onzichtbare ouder is niet terug te zetten met
      display:block. Stond dit hierbinnen, dan rolde er een leeg blad uit. -->
-<div id="printGebied" aria-hidden="true"></div>
 
 <script>
 // Welk model gebruikt wordt, bepaalt de server (zie api/chat.js). De browser
@@ -2772,6 +2762,9 @@ Werkt deze persoon voor zichzelf, blijkend uit de functietitel of de antwoorden,
 $("toSummary").onclick = async () => {
   meet("schets");
   bouwTranscript();
+  // Nieuwe schets betekent een nieuw inzicht: een eerder gestarte call is nu
+  // gebaseerd op oude antwoorden en gooien we weg.
+  _inzichtWarm = null; S.inzicht = null;
   hide("review"); show("summary");
   window.scrollTo({top:0,behavior:"smooth"});
   hide("sumRow");
@@ -2803,6 +2796,9 @@ Precies vier kaarten. Elke kaart één observatie, geen bijzinnen.`, bericht(), 
       // op de kwaliteit van de analyse. Alleen klopt of niet, niet welke kaart.
       meet(b.dataset.w === "1" ? "schets.klopt" : "schets.kloptniet");
       S.schetsOordeel[+b.dataset.oordeel] = (b.dataset.w === "1");
+      // Vanaf hier draait het inzicht alvast op de achtergrond, zodat de
+      // volgende pagina niet begint met wachten.
+      inzichtWarm();
       b.closest(".oordeel").querySelectorAll("button").forEach(x=>x.classList.remove("aan"));
       b.classList.add("aan");
     });
@@ -2847,6 +2843,34 @@ function inzichtBlokFout(deel, bericht){
   return `<p class="ins-fout">${esc(bericht)} <button type="button" class="ins-opnieuw" data-deel="${esc(deel)}">Opnieuw proberen</button></p>`;
 }
 
+/* Alvast beginnen op de schetspagina.
+
+   De meting liet zien dat het inzicht de traagste stap van de hele trechter is:
+   gemiddeld ruim vier minuten tussen aankomen en doorklikken. Een deel daarvan
+   is lezen, maar het wachten stond ervoor. Op de schetspagina zit een bezoeker
+   een halve minuut kaarten te beoordelen, en dat is precies genoeg tijd om de
+   twee calls op de achtergrond te laten lopen.
+
+   Startmoment is bewust de eerste beoordeling en niet het openen van de schets:
+   de prompt gebruikt wat je goed- of afkeurde, en met nul oordelen zou dat
+   stukje wegvallen. Bij de eerste klik staat er iets, en heb je meestal nog
+   tien tot twintig seconden voor je verder gaat. Beoordeelt iemand niets, dan
+   start het gewoon bij de knop, precies zoals eerst. */
+let _inzichtWarm = null;
+
+function inzichtStart(){
+  const msg = bericht();
+  const p = { kern: askJSON(P_INZICHT_KERN, msg, null, 400),
+              diepte: askJSON(P_INZICHT_DIEPTE, msg, null, 700) };
+  // Vangnet tegen een unhandled rejection zolang niemand er nog op wacht.
+  p.kern.catch(()=>{}); p.diepte.catch(()=>{});
+  return p;
+}
+function inzichtWarm(){
+  if(_inzichtWarm) return;
+  try{ _inzichtWarm = inzichtStart(); }catch(e){ _inzichtWarm = null; }
+}
+
 $("toInsight").onclick = async () => {
   meet("inzicht");
   hide("summary"); show("insight");
@@ -2859,11 +2883,15 @@ $("toInsight").onclick = async () => {
 
 // Haalt de gevraagde delen op en zet elk deel op het scherm zodra het er is.
 async function inzichtOphalen(welke){
-  const msg = bericht();
+  // Draait er al iets van de schetspagina, gebruik dat dan. Alleen als beide
+  // delen gevraagd worden, want bij een losse herkansing hoort een verse call.
+  const warm = (welke.kern && welke.diepte) ? _inzichtWarm : null;
+  _inzichtWarm = null;
+  const msg = warm ? null : bericht();
   const taken = [];
 
   if(welke.kern){
-    taken.push(askJSON(P_INZICHT_KERN, msg, null, 400).then(d=>{
+    taken.push((warm ? warm.kern : askJSON(P_INZICHT_KERN, msg, null, 400)).then(d=>{
       // Een citaat dat niet woordelijk van de gebruiker is, vervalt.
       if(d.citaat && !citaatEcht(d.citaat, 3)) d.citaat = "";
       S.inzicht.kop = d.kop || "";
@@ -2875,7 +2903,7 @@ async function inzichtOphalen(welke){
     }).catch(e=>{ S.inzicht._kernFout = e.message || "Dat lukte niet."; }));
   }
   if(welke.diepte){
-    taken.push(askJSON(P_INZICHT_DIEPTE, msg, null, 700).then(d=>{
+    taken.push((warm ? warm.diepte : askJSON(P_INZICHT_DIEPTE, msg, null, 700)).then(d=>{
       S.inzicht.spanning = d.spanning || null;
       S.inzicht.onbenoemd = d.onbenoemd || "";
       S.inzicht._diepteFout = "";
@@ -3145,8 +3173,11 @@ function leesKortingscode(){
    vervoersopname van die tweede poging het al geleverde rapport niet
    overschrijven voordat er opnieuw betaald is. */
 function inhoudOpname(){
+  // inzicht hoort erbij: dat is de situatieschets die vooraan in het rapport en
+  // in de pdf staat. Zonder dit begon een hersteld rapport zonder context.
   return { v:2, ts:Date.now(), scenarios:S.scenarios, topKand:S.topKand, rest:S.rest,
-           profiel:S.profiel, pg:S.pg, transcript:S.transcript, plannen:S.plannen || {} };
+           profiel:S.profiel, pg:S.pg, inzicht:S.inzicht, transcript:S.transcript,
+           plannen:S.plannen || {} };
 }
 function leesOpname(sleutel, maxMs){
   try{
@@ -3191,6 +3222,7 @@ function openBetaaldeUitkomst(){
 function herstelState(snap){
   S.scenarios = snap.scenarios||[]; S.topKand = snap.topKand||S.scenarios;
   S.rest = snap.rest||[]; S.profiel = snap.profiel||S.profiel; S.pg = snap.pg||S.pg;
+  S.inzicht = snap.inzicht || S.inzicht;
   S.transcript = snap.transcript || S.transcript;
   if(S.profiel && S.pg && $("profielBox")) $("profielBox").innerHTML = profielHtml(S.profiel, S.pg);
 }
@@ -4133,9 +4165,26 @@ function pdfDoc(){
       y -= hoogte + 16;
       return this;
     },
+    // Regel met tekst links en tekst rechts uitgelijnd op dezelfde hoogte.
+    // Voor de inhoudsopgave: titel links, pasvorm en paginanummer rechts.
+    rij(links, rechts, opt){
+      const o = opt || {};
+      const grootte = o.grootte || 10.5;
+      ruimte(19);
+      zet(links, MAR, y - grootte, grootte, !!o.vet, o.kleur);
+      if(rechts){
+        const w = pdfBreedte(rechts, grootte, false);
+        zet(rechts, MAR + KOL - w, y - grootte, grootte, false, GRIJS);
+      }
+      y -= 19;
+      return this;
+    },
     lijn(){ ruimte(12); vlak(MAR, y - 4, KOL, 0.7, [0.812,0.839,0.796]); y -= 14; return this; },
     ruim(n){ y -= (n || 10); return this; },
     pagina(){ nieuw(); return this; },
+    // Op welke pagina staan we nu? Nodig voor de inhoudsopgave, die in twee
+    // rondes wordt gebouwd: eerst tellen, dan met de echte nummers erin.
+    paginaNr(){ return paginas.length + 1; },
 
     // Alles samenvoegen tot een geldige pdf. Objecten, xref en trailer.
     bouw(){
@@ -4237,6 +4286,24 @@ function pdfEenPlan(plan, scen){
 /* De pdf klaarzetten als bijlage voor /api/mail. Faalt het bouwen om welke reden
    dan ook, dan gaat de mail zonder bijlage de deur uit; de inhoud staat toch al
    in het bericht zelf. Beter een mail zonder pdf dan geen mail. */
+/* De download was tot nu toe het printvenster van de browser. Dat leverde een
+   ander bestand op dan de mailbijlage: dertien pagina's in plaats van negen, met
+   de datum en de url van de browser in de kantlijn, en met veel lucht omdat de
+   schermopmaak niet voor papier is gemaakt. Nu gaat de download door dezelfde
+   generator als de bijlage, dus wat je downloadt en wat je mailt is één bestand. */
+function pdfDownload(bouw, naam){
+  const rauw = bouw();
+  if(!rauw || rauw.indexOf("%PDF-") !== 0) throw new Error("pdf niet gebouwd");
+  // De generator geeft een latin1-string terug: elk teken is precies één byte.
+  const bytes = new Uint8Array(rauw.length);
+  for(let i = 0; i < rauw.length; i++) bytes[i] = rauw.charCodeAt(i) & 0xFF;
+  const url = URL.createObjectURL(new Blob([bytes], {type:"application/pdf"}));
+  const a = document.createElement("a");
+  a.href = url; a.download = naam + ".pdf";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 8000);
+}
+
 function pdfBijlage(bouw, naam){
   try{
     const rauw = bouw();
@@ -4244,33 +4311,87 @@ function pdfBijlage(bouw, naam){
     return [{ naam: naam + ".pdf", inhoud: btoa(rauw) }];
   }catch(e){ return undefined; }
 }
-function pdfAllePlannen(scen, plans, profiel){
-  const d = pdfDoc();
+/* Het voorblad: waar je nu staat, en wat er in dit document zit.
+
+   Het rapport begon met een archetype en dan meteen richting 1. Wie het een week
+   later opent weet dan niet meer waar het over ging. Dit blok zet er de
+   situatieschets voor die je op het scherm al kreeg (je patroon in één zin, je
+   week, waar het schuurt, wat je zelf niet opschreef), plus een inhoudsopgave
+   met paginanummers. */
+function pdfVoorblad(d, profiel, scen, nummers){
+  const prof = profiel || {}, inz = S.inzicht || {};
+  const P = S.pg || profielGetallen() || {};
+  const u = urenBeeld();
+  const LIME = [0.482,0.588,0.412], GRIJS = [0.310,0.388,0.376];
+
   d.label("Deskshift, jouw uitkomst");
-  d.tekst((profiel && profiel.archetype) || "Jouw drie richtingen", {grootte:22, vet:true, lh:27, na:8});
-  (profiel && profiel.punten || []).forEach(p=>{
+  d.tekst(prof.archetype || "Jouw drie richtingen", {grootte:24, vet:true, lh:29, na:16});
+
+  if(inz.kop){
+    d.doelblok("Jouw patroon, in één zin", inz.kop, inz.citaat ? "In je eigen woorden: “"+String(inz.citaat).replace(/^["“„]|["”]$/g,"")+"”" : "");
+  }
+
+  d.label("Je week, uit je eigen antwoorden");
+  d.tekst(u.over > 0
+      ? u.echt+" van "+u.contract+" uur echt werk, dus "+u.over+" uur méér dan je contract"
+      : u.echt+" van "+u.contract+" uur echt werk, "+u.slack+" uur ruimte in je week",
+    {grootte:13, vet:true, na:10});
+
+  if(inz.spanning && (inz.spanning.links || inz.spanning.rechts)){
+    d.label("Waar het bij jou schuurt");
+    d.tekst((inz.spanning.links||"") + "   schuurt met   " + (inz.spanning.rechts||""), {grootte:12, vet:true, na:3});
+    if(inz.spanning.tekst) d.tekst(inz.spanning.tekst, {grootte:10.5, kleur:GRIJS, na:10});
+  }
+  if(inz.onbenoemd){
+    d.label("Wat je zelf niet opschreef");
+    d.tekst(inz.onbenoemd, {grootte:10.5, na:12});
+  }
+
+  d.lijn();
+  d.label("Wat de intake laat zien");
+  (prof.punten||[]).forEach(p=>{
     if(!p) return;
-    d.tekst(String(p.label||"").toUpperCase(), {grootte:8, vet:true, kleur:[0.482,0.588,0.412], na:1});
+    d.tekst(String(p.label||"").toUpperCase(), {grootte:8, vet:true, kleur:LIME, na:1});
     d.tekst(p.tekst||"", {grootte:10.5, na:6});
   });
-  // Wat je al hebt liggen, en de uren waar de rest op rust. Stond hier niet in,
-  // terwijl het de onderbouwing is van elke richting die erna komt.
-  const bg = (profiel && profiel.bagage) || [];
+  const bg = prof.bagage || [];
   if(bg.length){
     d.ruim(2);
-    d.tekst("WAT JE AL HEBT LIGGEN", {grootte:8, vet:true, kleur:[0.482,0.588,0.412], na:1});
+    d.tekst("WAT JE AL HEBT LIGGEN", {grootte:8, vet:true, kleur:LIME, na:1});
     d.tekst(bg.join("  ·  "), {grootte:10.5, na:6});
   }
-  const P = S.pg || profielGetallen() || {};
-  if(P.slack !== undefined){
-    d.tekst(urenZin(P), {grootte:9.5, kleur:[0.310,0.388,0.376], na:4});
+  if(P.slack !== undefined || P.over !== undefined){
+    d.tekst(urenZin(P), {grootte:9.5, kleur:GRIJS, na:6});
   }
+
+  d.ruim(4); d.lijn();
+  d.label("Wat er in dit document staat");
   (scen||[]).forEach((s,i)=>{
-    d.pagina();
-    d.label("Richting "+(i+1)+(s && s.totaal ? "  ·  pasvorm "+s.totaal : ""));
-    pdfPlan(d, (plans||[])[i] || {}, s || {});
+    const nr = (nummers||[])[i];
+    d.rij((i+1)+".  "+((s && s.titel) || "Richting "+(i+1)),
+          (s && s.totaal ? "pasvorm "+s.totaal+"   ·   " : "") + "pagina " + (nr || "  "),
+          {vet:true});
   });
-  return d.bouw();
+}
+
+function pdfAllePlannen(scen, plans, profiel){
+  // Twee rondes: de eerste alleen om te tellen op welke pagina elke richting
+  // begint, de tweede met die nummers in de inhoudsopgave. De plaatshouder
+  // heeft evenveel regels als het echte nummer, dus de opmaak schuift niet.
+  const bouwEen = (nummers) => {
+    const d = pdfDoc();
+    pdfVoorblad(d, profiel, scen, nummers);
+    const paginas = [];
+    (scen||[]).forEach((s,i)=>{
+      d.pagina();
+      paginas.push(d.paginaNr());
+      d.label("Richting "+(i+1)+(s && s.totaal ? "  ·  pasvorm "+s.totaal : ""));
+      pdfPlan(d, (plans||[])[i] || {}, s || {});
+    });
+    return { doc:d, paginas:paginas };
+  };
+  const tellen = bouwEen((scen||[]).map(()=>0));
+  return bouwEen(tellen.paginas).doc.bouw();
 }
 
 /* ---------- de opvolger in week 2 ----------
@@ -4386,44 +4507,6 @@ function uitkomstActiesHtml(){
       <button class="btn btn-lime" id="mailAllesKnop" type="button">Stuur naar mijn mail</button>
     </div>`;
 }
-// "Wat de intake laat zien" voor de download. Dit stond er niet in, waardoor het
-// gedownloade rapport meteen met richting 1 begon en de onderbouwing miste: de
-// punten uit je profiel, wat je al hebt liggen, en de uren waar alles op rust.
-// Bewust niet profielHtml hergebruiken, want dat blok is donker en dat kost bij
-// het printen een halve inktcartridge.
-function printProfielHtml(){
-  const prof = S.profiel || {}, P = S.pg || profielGetallen() || {};
-  const punten = (prof.punten||[]).map(k=>
-    `<div style="margin:0 0 9px">
-      <div class="mono" style="margin:0 0 1px">${esc(k.label||"")}</div>
-      <div>${esc(k.tekst||"")}</div>
-    </div>`).join("");
-  const bagage = (prof.bagage||[]).map(b=>esc(b)).join(" &middot; ");
-  if(!punten && !bagage) return "";
-  // Het archetype staat al als titel bovenaan de eerste pagina, dus hier niet
-  // nog een keer.
-  return `<div style="break-after:page">
-    <div class="mono" style="margin-top:16px">Wat de intake laat zien</div>
-    <div style="height:10px"></div>
-    ${punten}
-    ${bagage?`<div style="margin:14px 0 0"><div class="mono" style="margin:0 0 3px">Wat je al hebt liggen</div><div>${bagage}</div></div>`:""}
-    <p style="margin:14px 0 0;font-size:13px">${esc(urenZin(P))}</p>
-  </div>`;
-}
-function printAllesHtml(scen, plans){
-  return `<div class="printkop"><div class="mono">Deskshift &middot; jouw uitkomst en drie plannen</div>
-      <h1 style="font-size:28px;margin:10px 0 4px">${esc((S.profiel&&S.profiel.archetype)||"Jouw uitkomst")}</h1></div>` +
-    printProfielHtml() +
-    scen.map((s,i)=>{
-      const p = plans[i] || {};
-      return `<div style="break-before:${i?"page":"auto"}">
-        <div class="mono" style="margin-top:${i?0:10}px">Richting ${i+1}${s.totaal?" &middot; pasvorm "+esc(String(s.totaal)):""}</div>
-        <h2 style="font-size:22px;margin:6px 0 10px">${esc(s.titel||"")}</h2>
-        ${s.pitch?`<p style="margin:0 0 12px">${esc(s.pitch)}</p>`:""}
-        ${p.weken ? planHtml(p, s) : `<p>Dit plan was nog niet opgehaald.</p>`}
-      </div>`;
-    }).join("");
-}
 async function downloadAlles(){
   const knop = $("dlAllesKnop");
   const scen = S.scenarios || [];
@@ -4433,8 +4516,7 @@ async function downloadAlles(){
   if(knop){ knop.disabled = true; knop.textContent = "Plannen verzamelen…"; }
   try{
     const plans = await Promise.all(scen.map(s=> planPromise(s).catch(()=>({})) ));
-    $("printGebied").innerHTML = printAllesHtml(scen, plans);
-    window.print();
+    pdfDownload(()=>pdfAllePlannen(scen, plans, S.profiel), "deskshift-uitkomst");
   }catch(e){
     if(knop) knop.textContent = "Lukte niet, probeer opnieuw";
   }finally{
@@ -4455,8 +4537,6 @@ async function kies(s){
   window.scrollTo({top:0,behavior:"smooth"});
   try{
     S.plan = await planPromise(s);
-    $("printGebied").innerHTML = `<div class="printkop"><div class="mono">Deskshift · jouw plan van zes weken</div>
-      <h1 style="font-size:30px;margin:10px 0 4px">${esc(s.titel)}</h1></div>` + planHtml(S.plan, s);
     $("actBody").innerHTML = aflevering(S.plan, s) + `
       <div class="planstart">
         <div class="mono">Alvast in beeld</div>
@@ -4474,7 +4554,7 @@ async function kies(s){
       const t = $("voortgang"); if(t){ t.style.width = Math.round(af/alle.length*100)+"%"; }
       const n = $("voortgangN"); if(n){ n.textContent = af+" van "+alle.length+" gedaan"; }
     });
-    $("pdfKnop").onclick = () => window.print();
+    $("pdfKnop").onclick = () => pdfDownload(()=>pdfEenPlan(S.plan, s), "deskshift-plan");
     // De mailfunctie zit in een pop-up, naast de pdf-knop.
     const mpk = $("mailPopKnop"); if(mpk) mpk.onclick = openMailPop;
   }catch(e){
