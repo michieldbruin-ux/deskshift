@@ -44,12 +44,12 @@ const TALEN = {
   en: {
     pad: "/en",
     locale: "en",
-    // Nog geen product in de catalogus voor deze markt: zonder deze variabele
-    // gaat het via price_data hieronder. Bewust NIET terugvallen op de
-    // Nederlandse prijs-id, want dan rekent Stripe stilletjes euro's af.
-    prijsId: () => (process.env.STRIPE_PRICE_ID_EN || "").trim(),
-    valuta: "gbp",
-    centen: 1900,
+    // Eigen product in de catalogus, in dollars. Bewust NIET terugvallen op de
+    // Nederlandse prijs-id als deze faalt, want dan rekent Stripe stilletjes
+    // euro's af onder een Nederlandse productnaam op de bon van de klant.
+    prijsId: () => (process.env.STRIPE_PRICE_ID_EN || "price_1TxmRf46s0kCbhKWTETw64Fv").trim(),
+    valuta: "usd",
+    centen: 2900,
     naam: "Deskshift, three directions and a six-week plan",
   },
 };

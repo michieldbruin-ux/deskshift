@@ -1038,10 +1038,17 @@
   .bon2 li em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#4A6B1E;white-space:nowrap}
 
   /* Founder-note als citaat. De lime streep zit op .maker-quote, dus die van
-     het buitenblok gaat eraf (anders staan er twee lijntjes naast elkaar). */
+     het buitenblok gaat eraf (anders staan er twee lijntjes naast elkaar).
+
+     Bewust NIET schuingedrukt. Cursief is bedoeld voor een enkele regel; drie
+     alinea's van vijftig woorden schuin leest langzamer en gaat er op een telefoon
+     uitzien als een fout in de opmaak. De lime streep en het mono-kopje zetten dit
+     blok al apart. Wat cursief wel zou willen zeggen, namelijk dat hier iemand
+     spreekt en niet de site, doet de eerste alinea nu met een grotere maat. */
   .maker{padding:16px 2px;border-left:0}
   .maker-quote{border-left:3px solid var(--lime);padding:4px 0 4px 18px}
   .maker-quote p{margin:8px 0 0;font-size:16px;line-height:1.6;color:var(--ink)}
+  .maker-quote p:first-of-type{font-size:17.5px;line-height:1.5;margin-top:10px}
 
   /* Slot-CTA band (full-bleed donker) */
   .slot-cta{position:relative;left:50%;margin-left:-50vw;width:100vw;background:var(--ink);color:#fff;padding:56px 20px;margin-top:26px;text-align:center;background-image:radial-gradient(100% 140% at 50% 0%,rgba(191,227,95,.10),transparent 62%)}
@@ -1226,14 +1233,14 @@
 
   /* ============================================================
      Deskshift v9 - parallax alleen op desktop (op mobiel schoof de
-     mock over de tekst), plus teller-animatie voor de EUR 25
+     mock over de tekst), plus teller-animatie voor de prijs
      ============================================================ */
   @media(max-width:819px){
     [data-para]{transform:none!important}
     .hero{gap:36px}
   }
 
-  /* EUR 25 als rollende teller: eindstand staat in CSS, JS zet alleen de
+  /* De prijs als rollende teller: eindstand staat in CSS, JS zet alleen de
      startstand klaar en laat de cijfers los zodra de sectie in beeld is */
   .price-groot{display:inline-flex;align-items:flex-start;line-height:1}
   .pd{display:inline-block;height:1em;overflow:hidden}
@@ -1267,7 +1274,7 @@
 
   <header class="hero">
     <div class="hero-tekst">
-      <div class="mono eyebrow">For people who finish early and say nothing</div>
+      <div class="mono eyebrow">For people who have too little to do and say nothing</div>
       <h1>Your job fits into three days.<br>Nobody asks what you do with <em>the rest</em>.</h1>
       <!-- Deze zin benoemt zelf waar het over gaat en leunt niet op de kop
            erboven, zodat hij ook los te begrijpen is. Dat helpt een AI-systeem
@@ -1278,7 +1285,7 @@
         <button class="btn btn-ghost hidden" id="resume">Pick up where you left off</button>
         <button class="btn btn-lime hidden" id="herstelBetaald">Open your results and plan</button>
       </div>
-      <p class="micro">Free: your pattern in one sentence, plus your profile. £19: three directions with a plan. No account.</p>
+      <p class="micro">Free: your pattern in one sentence, plus your profile. $29: three directions with a plan. No account.</p>
       <p class="micro" style="margin-top:2px">Your answers stay on your own device, so you can always carry on where you stopped.</p>
     </div>
 
@@ -1368,8 +1375,8 @@
     <div class="prijs-dark-in">
       <div class="prijs-links">
         <div class="mono">What it costs, and what actually lands on your screen</div>
-        <div class="price-groot" id="prijsGroot" aria-label="19 pounds"><span aria-hidden="true">£</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:1"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:9"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
-        <p class="prijs-onder" style="margin:0 0 12px">One payment. No subscription, no account, nothing sold to you afterwards.</p>
+        <div class="price-groot" id="prijsGroot" aria-label="29 US dollars"><span aria-hidden="true">$</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:9"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
+        <p class="prijs-onder" style="margin:0 0 12px">One payment in US dollars. No subscription, no account, nothing sold to you afterwards.</p>
         <p class="prijs-onder" style="margin:0 0 18px;line-height:1.5">For comparison: a single hour with a career coach typically costs more than this whole plan. This is not the finish line, it is the first step towards your next direction.</p>
         <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, the first insight is free</button>
         <p class="micro" style="color:#AFC2A4;margin:12px 0 0">You see your pattern before you pay anything.</p>
@@ -1392,7 +1399,7 @@
     <details><summary>Is there AI behind this?</summary><p>Yes. Deskshift uses AI to analyse your answers and nothing else. No human being reads them. It is not a bare chatbot either: the intake and the plan are built tightly around it, so what comes out is about you rather than about people in general.</p></details>
     <details><summary>Is this just a quiz?</summary><p>No. You fill in a real intake and get an insight back from your own answers, in your own words. You correct anything that is off as you go, and every quote is checked against what you actually wrote, so nothing appears that you never said. After that comes a plan you run yourself.</p></details>
     <details><summary>What if the answer is that I should stay put?</summary><p>Then we say so, and we show you how. Sometimes the sharpest direction is inside the job you have: one task out, a second specialism in. That becomes a concrete six-week plan too, not "go and network and have a word with your manager".</p></details>
-    <details><summary>What exactly do I get for £19?</summary><p>Three directions with a fit score, why the others fell away, your first step for this week, and a six-week plan as a pdf. Email it to yourself and one reminder follows a week later with the week two actions. The intake and the insight before that are free.</p></details>
+    <details><summary>What exactly do I get for $29?</summary><p>Three directions with a fit score, why the others fell away, your first step for this week, and a six-week plan as a pdf. Email it to yourself and one reminder follows a week later with the week two actions. The intake and the insight before that are free.</p></details>
     <details><summary>Can anyone else see my answers?</summary><p>No person, no. Your answers sit on your own device and go only to an AI service that processes them to build your insight and your plan. Nowhere else, and not to your employer.</p></details>
     <details><summary>Do I have to pay right away?</summary><p>No. The intake and the first insight are free. You only pay if you want to go on to the three directions.</p></details>
   </div>
@@ -1400,7 +1407,7 @@
   <div class="slot-cta rv">
     <div class="slot-cta-in">
       <h2>Fifteen minutes. One honest insight. Free.</h2>
-      <p>If you want your three directions and your plan after that, it is £19, once.</p>
+      <p>If you want your three directions and your plan after that, it is $29, once.</p>
       <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, the first insight is free</button>
     </div>
   </div>
@@ -1411,7 +1418,7 @@
          meer helemaal waar te maken. Advertentietrackers zijn er nog steeds niet,
          en dat is wel precies te zeggen. -->
     <p class="muted">For people whose job has got too small for them. No cookies, no advertising trackers.</p>
-    <p class="footlinks"><a href="/vragen/">Questions</a> <span aria-hidden="true">&middot;</span> <a href="/en/privacy">Privacy notice</a> <span aria-hidden="true">&middot;</span> <a href="/en/terms">Terms</a> <span aria-hidden="true">&middot;</span> <a class="taalknop foot" href="/" hreflang="nl" rel="alternate">Nederlands</a></p>
+    <p class="footlinks"><a href="/en/questions/">Questions</a> <span aria-hidden="true">&middot;</span> <a href="/en/privacy">Privacy notice</a> <span aria-hidden="true">&middot;</span> <a href="/en/terms">Terms</a> <span aria-hidden="true">&middot;</span> <a class="taalknop foot" href="/" hreflang="nl" rel="alternate">Nederlands</a></p>
     <p class="muted" style="margin-top:6px">Deskshift does not give career, medical, legal or financial advice. The choices you make remain your own.</p>
   </div>
 
@@ -1704,7 +1711,11 @@ function meetSessie(){
 function meetStuur(afscheid){
   if(!_meetBuffer.length) return;
   if(_meetTimer){ clearTimeout(_meetTimer); _meetTimer = null; }
-  const lading = JSON.stringify({ sessie: meetSessie().id, stappen: _meetBuffer });
+  /* De taal gaat mee. Zonder die kolom lopen Nederlands en Engels door elkaar in
+     dezelfde funnel en is niet meer te zien waar wie afhaakt. Het is de taal van
+     de pagina zelf, niet die van de browser, dus er komt niets over de bezoeker
+     bij wat er niet al stond. */
+  const lading = JSON.stringify({ sessie: meetSessie().id, taal: "en", stappen: _meetBuffer });
   _meetBuffer = [];
   try{
     // sendBeacon overleeft het wegklikken van het tabblad, een fetch niet altijd.
@@ -3643,9 +3654,9 @@ function planHtml(p, s){
   if(p.bronnen) extra += `<div class="blok"><div class="mono">${esc(T.ui.waarBegin)}</div>
     <ul style="margin:10px 0 0;padding-left:18px">${p.bronnen.map(b=>`<li><b>${esc(b.naam)}</b> · ${esc(b.wat||"")}${b.tijd?` · ${esc(b.tijd)}`:""}</li>`).join("")}</ul></div>`;
   if(p.berichten) extra += `<div class="blok"><div class="mono">${esc(T.ui.berichtenKop)}</div>
-    ${p.berichten.map((b,i)=>`<div class="bericht"><div class="row spread"><b>${esc(b.titel)}</b>
+    ${p.berichten.map((b,i)=>`<div class="bericht"><div class="row spread"><b>${esc((b&&b.titel)||"")}</b>
       <button class="btn btn-ghost btn-sm" data-kopie="${i}">${esc(T.ui.kopieer)}</button></div>
-      <p id="ber${i}">${esc(b.tekst)}</p></div>`).join("")}</div>`;
+      <p id="ber${i}">${esc((b&&b.tekst)||"")}</p></div>`).join("")}</div>`;
   if(p.validatie) extra += `<div class="blok"><div class="mono">${esc(T.ui.toetsenKop)}</div>
     ${p.validatie.map((v,i)=>`<div class="tw"><b>${i+1}. ${esc(v.toets)}</b><p>${esc(T.ui.stoppenAls)}${esc(v.stop)}</p></div>`).join("")}</div>`;
 
@@ -4417,7 +4428,7 @@ function aflevering(p, s){
   apply();
 })();
 
-/* ---------- Deskshift: EUR 25 rolt als teller binnen ---------- */
+/* ---------- Deskshift: de prijs rolt als teller binnen ---------- */
 (function(){
   var pd = document.querySelector(".prijs-dark");
   var pg = document.getElementById("prijsGroot");
@@ -4548,7 +4559,7 @@ try{ checkBetaalTerugkeer(); }catch(e){}
     },
     {
       "@type": "Question",
-      "name": "What exactly do I get for £19?",
+      "name": "What exactly do I get for $29?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Three directions with a fit score, why the others fell away, your first step for this week, and a six-week plan as a pdf. Email it to yourself and one reminder follows a week later with the week two actions. The intake and the insight before that are free."
@@ -4583,7 +4594,7 @@ try{ checkBetaalTerugkeer(); }catch(e){}
   "logo": "https://deskshift.pro/brand/deskshift-appicoon-512.png",
   "description": "Deskshift takes your own answers and builds a personal plan for the spare capacity inside your working week, for people whose job has got too small for them.",
   "email": "plan@deskshift.pro",
-  "priceRange": "£19"
+  "priceRange": "$29"
 }
 </script>
 
@@ -4599,8 +4610,8 @@ try{ checkBetaalTerugkeer(); }catch(e){}
   "description": "Deskshift is an online tool for knowledge workers who finish their work in fewer hours than their contract asks for. It turns that spare capacity into a concrete plan, built from their own answers. A free insight first, then a one-off payment for three directions and a six-week plan.",
   "offers": {
     "@type": "Offer",
-    "price": "19",
-    "priceCurrency": "GBP",
+    "price": "29",
+    "priceCurrency": "USD",
     "description": "One payment, no subscription. Three directions with a fit score and a six-week plan as a pdf."
   },
   "publisher": {

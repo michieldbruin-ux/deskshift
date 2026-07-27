@@ -1,8 +1,9 @@
 -- Meting van afhaken in de intake van Deskshift.
 -- Dit is wat er in de database staat. Al toegepast, hier voor de vindbaarheid.
 --
--- Wat hier in gaat: een tijdstip, een willekeurig sessienummer, de naam van de
--- stap, en hoeveel milliseconden na de eerste stap die stap bereikt werd.
+-- Wat hier in gaat: een tijdstip, een willekeurig sessienummer, de taal van de
+-- pagina, de naam van de stap, en hoeveel milliseconden na de eerste stap die
+-- stap bereikt werd.
 -- Wat hier NIET in gaat: antwoorden, mailadressen, IP-adressen, user agents.
 -- Er komt ook geen cookie aan te pas: het sessienummer staat in sessionStorage
 -- en is weg zodra de tab sluit. Het bestaat alleen om twee stappen van dezelfde
@@ -21,9 +22,17 @@ create table if not exists public.deskshift_meting (
   id      bigserial primary key,
   ts      timestamptz not null default now(),
   sessie  text        not null,
+  taal    text,
   stap    text        not null,
   ms      integer
 );
+
+-- De taalkolom kwam er later bij, toen /en erbij kwam. Zonder die kolom lopen
+-- Nederlands en Engels door elkaar in dezelfde funnel en is niet meer te zien
+-- waar wie afhaakt. Hij mag leeg zijn: regels van voor deze wijziging hebben
+-- geen taal, en die zijn allemaal Nederlands (Engels bestond nog niet). Ze vallen
+-- binnen 30 dagen uit de view en binnen 90 dagen uit de tabel.
+alter table public.deskshift_meting add column if not exists taal text;
 
 create index if not exists deskshift_meting_ts_idx   on public.deskshift_meting (ts desc);
 create index if not exists deskshift_meting_stap_idx on public.deskshift_meting (stap);
@@ -48,29 +57,46 @@ create policy deskshift_meting_toevoegen
 -- De funnel als leesbare tabel. De volgorde komt uit de gemiddelde ms sinds de
 -- eerste stap, dus die klopt automatisch mee als de vragen veranderen. Geen
 -- vaste lijst met stapnamen die je bij elke wijziging moet bijwerken.
-create or replace view public.deskshift_funnel as
-with per_sessie as (
-  select sessie, stap, min(ms) as ms
+-- Drop en opnieuw aanmaken en niet "create or replace": er komt een kolom bij,
+-- en replace mag de kolomlijst van een bestaande view niet omgooien. Er hangt
+-- niets aan deze view, dus weggooien kost niets.
+drop view if exists public.deskshift_funnel;
+create view public.deskshift_funnel as
+-- Eerst één taal per sessie vaststellen, en niet per regel. De taalknop staat in
+-- de voet, en sessionStorage gaat mee naar /en, dus wie halverwege omschakelt zou
+-- anders in twee funnels tegelijk staan en dubbel geteld worden. De taal van de
+-- vroegste gemeten stap geldt voor de hele sessie.
+with taal_per_sessie as (
+  select sessie,
+         (array_agg(coalesce(taal, 'onbekend') order by ms asc nulls last))[1] as taal
   from public.deskshift_meting
   where ts > now() - interval '30 days'
-  group by sessie, stap
+  group by sessie
+), per_sessie as (
+  select m.sessie, t.taal, m.stap, min(m.ms) as ms
+  from public.deskshift_meting m
+  join taal_per_sessie t on t.sessie = m.sessie
+  where m.ts > now() - interval '30 days'
+  group by m.sessie, t.taal, m.stap
 ), geteld as (
-  select stap,
+  select taal,
+         stap,
          count(*)                       as sessies,
          round(avg(ms) / 1000.0)::int   as gem_seconden
   from per_sessie
-  group by stap
+  group by taal, stap
 )
-select stap,
+select taal,
+       stap,
        sessies,
        gem_seconden,
-       round(100.0 * sessies / max(sessies) over (), 1) as pct_van_start,
-       sessies - lead(sessies) over (order by gem_seconden) as verloren_hierna
+       round(100.0 * sessies / max(sessies) over (partition by taal), 1) as pct_van_start,
+       sessies - lead(sessies) over (partition by taal order by gem_seconden) as verloren_hierna
 from geteld
-order by gem_seconden;
+order by taal, gem_seconden;
 
 comment on view public.deskshift_funnel is
-  'Afhaken in de Deskshift-intake over de laatste 30 dagen. pct_van_start is ten opzichte van de drukste stap, verloren_hierna is hoeveel sessies de volgende stap niet haalden.';
+  'Afhaken in de Deskshift-intake over de laatste 30 dagen, per taal. pct_van_start is ten opzichte van de drukste stap in diezelfde taal, verloren_hierna is hoeveel sessies de volgende stap niet haalden. taal is nl, en, of onbekend voor sessies van voor de taalkolom.';
 
 -- Bewaartermijn van 90 dagen, echt afgedwongen en niet alleen opgeschreven in
 -- de privacyverklaring. Draait elke nacht.

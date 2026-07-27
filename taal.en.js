@@ -2,10 +2,12 @@
    Every visible string and every system prompt for the English Deskshift.
 
    This is not a translation of taal.nl.js. The Dutch file was read for intent,
-   section by section, and then written again for a UK and Ireland audience of
-   knowledge workers aged roughly 25 to 35: salaried, hybrid, finishing the week's
-   work before the week's hours run out. British spelling throughout
-   (organisation, colour, programme, recognise, prioritise, analyse).
+   section by section, and then written again for English-speaking knowledge
+   workers aged roughly 25 to 35: salaried, hybrid, through the week's work before
+   the week's hours run out. British spelling throughout (organisation, colour,
+   programme, recognise, prioritise, analyse), because one variety of English has
+   to be picked and this one reads as neutral in more places than the American
+   spelling does. The UK and Ireland are the nearest market, not the only one.
 
    What stayed identical on purpose:
    - The four frameworks: job demands-resources (Bakker and Demerouti), job
@@ -35,29 +37,41 @@ window.TALEN.en = (function(){
    een valutateken. Wijzig dit blok, draai `node bouw.js`, en de prijs volgt op
    de knop, in de hero, in de FAQ, op de prijskaart en in de gestructureerde data.
 
-   Het staat nu op GBP 19. Dat is een keuze, geen omrekening van de 25 euro:
-   negentien valt onder de psychologische twintig-pondgrens, en de vergelijking
-   met een uur loopbaancoaching (in het VK al snel 60 tot 150 pond) blijft ruim
-   overeind. Eén valuta voor het VK en Ierland houdt de pagina en Stripe simpel;
-   een Ierse kaart rekent zonder gedoe in ponden af.
+   Het staat op 29 dollar. Hier stond eerst 19 pond, en dat is er bewust af: het
+   pond maakt de pagina Brits terwijl de Engelse tekst breder mikt. De dollar is de
+   valuta die een Engelstalige bezoeker overal ter wereld zonder nadenken leest.
+
+   29 dollar is ongeveer 25 euro, dus de twee pagina's vragen praktisch hetzelfde.
+   Dat is geen toeval en het is de bedoeling dat het zo blijft. De taalknop staat in
+   de voet van beide pagina's, dus elke bezoeker kan de andere prijs in twee klikken
+   zien. Loopt het bedrag hier flink weg van de 25 euro, dan is dat geen
+   prijsstrategie maar een klacht.
+
+   Eén punt van eerlijkheid: "$" is niet alleen de Amerikaanse dollar. Voor iemand
+   in Canada of Australië staat er ook "$" op het scherm terwijl Stripe US-dollars
+   afrekent. Daarom staat "in US dollars" in de kleine letters bij de prijs
+   hieronder, en niet alleen in het valutaveld.
 
    LET OP, twee dingen moeten hiermee meebewegen:
-   1. api/checkout.js heeft dezelfde bedragen staan (TALEN.en.centen en .valuta).
-      Lopen die uit de pas, dan betaalt de klant iets anders dan het scherm zegt.
+   1. api/checkout.js heeft dezelfde bedragen staan (TALEN.en.centen en .valuta),
+      plus de prijs-id van het Engelse product. Lopen die uit de pas, dan betaalt
+      de klant iets anders dan het scherm zegt. En als er een prijs-id is, dan is
+      Stripe de waarheid: het bedrag hieronder is dan alleen nog wat er op de
+      pagina staat, niet wat er van de kaart gaat.
    2. De btw-regel hieronder. Die noemt bewust geen percentage en geen
-      "inclusief": een Nederlandse eenmanszaak die digitale diensten aan Britse
-      en Ierse consumenten verkoopt, valt onder Britse btw-registratie en de
-      EU-OSS-regeling. Zet er pas een percentage in als je boekhouder heeft
-      bevestigd hoe dat voor deze markt geregeld is. */
+      "inclusief". Waar de klant zit bepaalt welke btw geldt, en dat is bij een
+      Engelse pagina niet één land. Zet er pas een percentage in als je
+      boekhouder heeft bevestigd hoe dat voor deze verkoop geregeld is. */
 const PRIJS = {
-  bedrag: 19,                 // [PRIJS] alleen cijfers
-  symbool: "£",               // [PRIJS] wat op de pagina staat
-  valuta: "GBP",              // [PRIJS] ISO-code, gaat naar Stripe en schema.org
-  tekst: "£19",               // [PRIJS] hoe de prijs in een zin leest
-  ariaLabel: "19 pounds",     // [PRIJS] wat een schermlezer voorleest
-  // Geen percentage en geen "inclusief" tot de btw-registratie rond is.
-  btw: "One payment. No subscription, no account. Straight to your results.",
-  btwLang: "One payment. No subscription, no account, nothing sold to you afterwards.",
+  bedrag: 29,                 // [PRIJS] alleen cijfers
+  symbool: "$",               // [PRIJS] wat op de pagina staat
+  valuta: "USD",              // [PRIJS] ISO-code, gaat naar Stripe en schema.org
+  tekst: "$29",               // [PRIJS] hoe de prijs in een zin leest
+  ariaLabel: "29 US dollars", // [PRIJS] wat een schermlezer voorleest
+  // Geen percentage en geen "inclusief" tot de btw-registratie rond is. De valuta
+  // staat er wel bij: zie de opmerking over "$" hierboven.
+  btw: "One payment in US dollars. No subscription, no account. Straight to your results.",
+  btwLang: "One payment in US dollars. No subscription, no account, nothing sold to you afterwards.",
 };
 
 /* ---------- sorting topics ---------- */
@@ -668,7 +682,7 @@ const PDF = {
 /* ---------- landing page ---------- */
 const LANDING = {
   navCta: "Start free",
-  eyebrow: "For people who finish early and say nothing",
+  eyebrow: "For people who have too little to do and say nothing",
   h1: "Your job fits into three days.<br>Nobody asks what you do with <em>the rest</em>.",
   lead: `<strong class="ds-pop">Deskshift</strong> takes your answers and builds a personal plan for the spare capacity sitting inside your working week, in fifteen minutes.`,
   ctaStart: "Start, the first insight is free",
@@ -771,7 +785,7 @@ const LANDING = {
   footMuted: "For people whose job has got too small for them. No cookies, no advertising trackers.",
   // /vragen/ bestaat nog alleen in het Nederlands en wijst daarom naar de
   // Nederlandse pagina; privacy en voorwaarden staan er wel in het Engels.
-  footLinks: [["Questions","/vragen/"],["Privacy notice","/en/privacy"],["Terms","/en/terms"]],
+  footLinks: [["Questions","/en/questions/"],["Privacy notice","/en/privacy"],["Terms","/en/terms"]],
   footDisclaimer: "Deskshift does not give career, medical, legal or financial advice. The choices you make remain your own.",
 
   mobielCta: "±15 min · free insight",

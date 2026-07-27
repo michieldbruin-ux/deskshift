@@ -1036,10 +1036,17 @@
   .bon2 li em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#4A6B1E;white-space:nowrap}
 
   /* Founder-note als citaat. De lime streep zit op .maker-quote, dus die van
-     het buitenblok gaat eraf (anders staan er twee lijntjes naast elkaar). */
+     het buitenblok gaat eraf (anders staan er twee lijntjes naast elkaar).
+
+     Bewust NIET schuingedrukt. Cursief is bedoeld voor een enkele regel; drie
+     alinea's van vijftig woorden schuin leest langzamer en gaat er op een telefoon
+     uitzien als een fout in de opmaak. De lime streep en het mono-kopje zetten dit
+     blok al apart. Wat cursief wel zou willen zeggen, namelijk dat hier iemand
+     spreekt en niet de site, doet de eerste alinea nu met een grotere maat. */
   .maker{padding:16px 2px;border-left:0}
   .maker-quote{border-left:3px solid var(--lime);padding:4px 0 4px 18px}
   .maker-quote p{margin:8px 0 0;font-size:16px;line-height:1.6;color:var(--ink)}
+  .maker-quote p:first-of-type{font-size:17.5px;line-height:1.5;margin-top:10px}
 
   /* Slot-CTA band (full-bleed donker) */
   .slot-cta{position:relative;left:50%;margin-left:-50vw;width:100vw;background:var(--ink);color:#fff;padding:56px 20px;margin-top:26px;text-align:center;background-image:radial-gradient(100% 140% at 50% 0%,rgba(191,227,95,.10),transparent 62%)}
@@ -1224,14 +1231,14 @@
 
   /* ============================================================
      Deskshift v9 - parallax alleen op desktop (op mobiel schoof de
-     mock over de tekst), plus teller-animatie voor de EUR 25
+     mock over de tekst), plus teller-animatie voor de prijs
      ============================================================ */
   @media(max-width:819px){
     [data-para]{transform:none!important}
     .hero{gap:36px}
   }
 
-  /* EUR 25 als rollende teller: eindstand staat in CSS, JS zet alleen de
+  /* De prijs als rollende teller: eindstand staat in CSS, JS zet alleen de
      startstand klaar en laat de cijfers los zodra de sectie in beeld is */
   .price-groot{display:inline-flex;align-items:flex-start;line-height:1}
   .pd{display:inline-block;height:1em;overflow:hidden}
@@ -1671,7 +1678,11 @@ function meetSessie(){
 function meetStuur(afscheid){
   if(!_meetBuffer.length) return;
   if(_meetTimer){ clearTimeout(_meetTimer); _meetTimer = null; }
-  const lading = JSON.stringify({ sessie: meetSessie().id, stappen: _meetBuffer });
+  /* De taal gaat mee. Zonder die kolom lopen Nederlands en Engels door elkaar in
+     dezelfde funnel en is niet meer te zien waar wie afhaakt. Het is de taal van
+     de pagina zelf, niet die van de browser, dus er komt niets over de bezoeker
+     bij wat er niet al stond. */
+  const lading = JSON.stringify({ sessie: meetSessie().id, taal: "{{code}}", stappen: _meetBuffer });
   _meetBuffer = [];
   try{
     // sendBeacon overleeft het wegklikken van het tabblad, een fetch niet altijd.
@@ -3610,9 +3621,9 @@ function planHtml(p, s){
   if(p.bronnen) extra += `<div class="blok"><div class="mono">${esc(T.ui.waarBegin)}</div>
     <ul style="margin:10px 0 0;padding-left:18px">${p.bronnen.map(b=>`<li><b>${esc(b.naam)}</b> · ${esc(b.wat||"")}${b.tijd?` · ${esc(b.tijd)}`:""}</li>`).join("")}</ul></div>`;
   if(p.berichten) extra += `<div class="blok"><div class="mono">${esc(T.ui.berichtenKop)}</div>
-    ${p.berichten.map((b,i)=>`<div class="bericht"><div class="row spread"><b>${esc(b.titel)}</b>
+    ${p.berichten.map((b,i)=>`<div class="bericht"><div class="row spread"><b>${esc((b&&b.titel)||"")}</b>
       <button class="btn btn-ghost btn-sm" data-kopie="${i}">${esc(T.ui.kopieer)}</button></div>
-      <p id="ber${i}">${esc(b.tekst)}</p></div>`).join("")}</div>`;
+      <p id="ber${i}">${esc((b&&b.tekst)||"")}</p></div>`).join("")}</div>`;
   if(p.validatie) extra += `<div class="blok"><div class="mono">${esc(T.ui.toetsenKop)}</div>
     ${p.validatie.map((v,i)=>`<div class="tw"><b>${i+1}. ${esc(v.toets)}</b><p>${esc(T.ui.stoppenAls)}${esc(v.stop)}</p></div>`).join("")}</div>`;
 
@@ -4384,7 +4395,7 @@ function aflevering(p, s){
   apply();
 })();
 
-/* ---------- Deskshift: EUR 25 rolt als teller binnen ---------- */
+/* ---------- Deskshift: de prijs rolt als teller binnen ---------- */
 (function(){
   var pd = document.querySelector(".prijs-dark");
   var pg = document.getElementById("prijsGroot");

@@ -45,6 +45,12 @@ function teVaak(ip, regels) {
 const STAP = /^[a-z0-9][a-z0-9_]{0,23}(\.[a-z0-9][a-z0-9_]{0,23}){0,2}$/;
 const SESSIE = /^[a-z0-9]{8,32}$/;
 
+// De taal van de pagina waar de meting vandaan komt. Opzoeken en niet overnemen:
+// wat hier niet in staat wordt null en niet "onbekend", zodat er nooit een door de
+// bezoeker verzonnen waarde in de kolom belandt. Een pagina uit de cache van voor
+// deze wijziging stuurt niets mee en levert dus ook null op.
+const TALEN = new Set(["nl", "en"]);
+
 export default async function handler(req, res) {
   if (req.method !== "POST") { res.status(405).json({ error: "Alleen POST is toegestaan." }); return; }
 
@@ -77,6 +83,9 @@ export default async function handler(req, res) {
   const sessie = typeof body.sessie === "string" ? body.sessie : "";
   if (!SESSIE.test(sessie)) { res.status(400).end(); return; }
 
+  const taalRuw = typeof body.taal === "string" ? body.taal.trim() : "";
+  const taal = TALEN.has(taalRuw) ? taalRuw : null;
+
   const rauw = Array.isArray(body.stappen) ? body.stappen.slice(0, 60) : [];
   const regels = [];
   for (const s of rauw) {
@@ -84,7 +93,7 @@ export default async function handler(req, res) {
     if (!STAP.test(stap)) continue;
     let ms = Math.round(Number(s && s.ms));
     if (!isFinite(ms) || ms < 0 || ms > 24 * 3600 * 1000) ms = null;
-    regels.push({ sessie, stap, ms });
+    regels.push({ sessie, taal, stap, ms });
   }
   if (!regels.length) { res.status(204).end(); return; }
 
@@ -93,7 +102,7 @@ export default async function handler(req, res) {
 
   if (!url || !sleutel) {
     // Vangnet zonder database: in de logs staat het dan tenminste.
-    for (const r of regels) console.log("meting", r.sessie, r.stap, r.ms);
+    for (const r of regels) console.log("meting", r.sessie, r.taal || "-", r.stap, r.ms);
     res.status(204).end();
     return;
   }

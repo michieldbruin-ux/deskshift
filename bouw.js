@@ -76,10 +76,11 @@ const blokken = (T, taal) => ({
   BLOK_FAQ: T.landing.faq.map(f =>
     `<details><summary>${esc(f[0])}</summary><p>${esc(f[1])}</p></details>`).join("\n    "),
 
-  /* Geen taalpad ervoor. De privacyverklaring, de voorwaarden en /vragen/ staan
-     nog alleen in het Nederlands; een /en/privacy zou een 404 zijn en dat is
-     erger dan een pagina in de verkeerde taal. Komen die pagina's er in het
-     Engels, zet het pad dan in footLinks zelf. */
+  /* Geen taalpad ervoor: het hele pad staat in footLinks zelf. Die lijst wijst
+     per taal naar de pagina's die in die taal echt bestaan, en die zijn niet
+     allemaal een vertaling van elkaar. Zet er nooit automatisch /en voor, want
+     een /en dat nergens op staat is een 404 en dat is erger dan een link naar
+     een pagina in de andere taal. */
   BLOK_FOOTLINKS: T.landing.footLinks
     .map(l => `<a href="${attr(l[1])}">${esc(l[0])}</a>`)
     .join(' <span aria-hidden="true">&middot;</span> '),

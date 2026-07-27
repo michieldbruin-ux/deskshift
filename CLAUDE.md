@@ -30,17 +30,24 @@ elke taal letterlijk hetzelfde: de `v`-waarden in `KALIB`, de sleutels van
 rekent de weging op.
 
 De prijs staat per taal op één plek in de front-end: het `PRIJS`-blok bovenin het
-taalbestand, gemarkeerd met `[PRIJS]`. **Er is een tweede plek**: `api/checkout.js`
-heeft per taal een bedrag en een valuta. Die twee moeten gelijk lopen, anders
-betaalt de klant iets anders dan het scherm zegt. Staat er een prijs-id in de
-environment, dan wint Stripe van allebei.
+taalbestand, gemarkeerd met `[PRIJS]`. Nederlands is 25 euro, Engels is 29 dollar.
+**Er is een tweede plek**: `api/checkout.js` heeft per taal een bedrag, een valuta
+en een prijs-id. Die twee moeten gelijk lopen, anders betaalt de klant iets anders
+dan het scherm zegt. En let op de rangorde: is er een prijs-id, dan is Stripe de
+waarheid en is het bedrag in het taalbestand alleen nog wat er op de pagina staat.
 
-`en/privacy.html` en `en/terms.html` worden **niet** door `bouw.js` gemaakt. Dat
-zijn losse pagina's, net als hun Nederlandse tegenhangers. Wijzig je de een, kijk
-dan of de ander mee moet.
+Wat **niet** door `bouw.js` gemaakt wordt, en dus met de hand aan beide kanten
+bijgewerkt moet worden:
 
-Nog niet in het Engels: `/vragen/`. De Engelse voet linkt daarvoor naar de
-Nederlandse pagina.
+| Nederlands | Engels |
+| --- | --- |
+| `privacy.html`, `terms.html` | `en/privacy.html`, `en/terms.html` |
+| `vragen/` (3 vragen plus index) | `en/questions/` (3 vragen plus index) |
+
+De vraagpagina's zijn per taal een eigen tekst en geen vertaling: de Engelse
+slugs volgen wat iemand in het Engels zou zoeken, niet de Nederlandse titel.
+Wel gekoppeld met `hreflang`, dus voeg je er een toe, doe dat dan in beide talen
+of in geen van beide, en zet het paar ook in `sitemap.xml`.
 
 ## Huisregels voor de teksten
 
