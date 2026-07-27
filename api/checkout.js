@@ -1,23 +1,58 @@
 // api/checkout.js
-// Maakt een Stripe Checkout Session voor de eenmalige betaling van EUR 25 en
-// geeft de gehoste checkout-URL terug. De geheime sleutel blijft server-side.
+// Maakt een Stripe Checkout Session voor de eenmalige betaling en geeft de
+// gehoste checkout-URL terug. De geheime sleutel blijft server-side.
 // Vereiste environment variable:
 //   STRIPE_PRIVATE_KEY  - de secret key uit Stripe (sk_live_... of sk_test_...)
 // Optioneel:
-//   STRIPE_PRICE_ID     - overschrijft de prijs-id hieronder, bijvoorbeeld om in
-//                         testmodus een test-prijs te gebruiken.
+//   STRIPE_PRICE_ID     - overschrijft de Nederlandse prijs-id hieronder,
+//                         bijvoorbeeld om in testmodus een test-prijs te gebruiken.
+//   STRIPE_PRICE_ID_EN  - de prijs-id voor de Engelse site. Staat die er niet,
+//                         dan wordt de prijs hieronder in code gebruikt.
 //   STRIPE_PROMO_CODES  - op "uit" zetten verbergt het kortingscodeveld op de
 //                         betaalpagina. Het staat nu tijdelijk aan; de
 //                         verborgen kortingslink (?code=...) werkt altijd.
 // (STRIPE_PUBLIC_KEY is voor de browser en wordt hier niet gebruikt.)
 // De browser praat NOOIT rechtstreeks met Stripe met de secret key.
 
-// Het product in de Stripe-catalogus. Een prijs-id is geen geheim, dus die mag
-// hier staan; via STRIPE_PRICE_ID is hij per omgeving te overschrijven.
-const PRIJS_ID_STANDAARD = "price_1TwnuI46s0kCbhKWr4iibUvS";
-// Vangnet als er geen (geldige) prijs-id is: dezelfde prijs, in code.
-const PRIJS_CENTEN = 2500;
-const PRODUCT_NAAM = "Deskshift, drie richtingen en plan van zes weken";
+/* Twee talen, twee betaalstromen.
+
+   Hier zat een fout die de hele Engelse betaling onbruikbaar maakte: success_url
+   en cancel_url wezen altijd naar de wortel van het domein. Wie op /en betaalde,
+   kwam dus terug op de Nederlandse pagina. Die pagina vindt de opname in
+   localStorage wel (zelfde origin), en ontgrendelt dan een Engelse intake in het
+   Nederlands. De klant heeft betaald en krijgt de verkeerde taal terug.
+
+   De browser stuurt nu mee op welke taal hij staat. Die waarde wordt niet
+   vertrouwd maar opgezocht in de tabel hieronder: alles wat er niet in staat
+   valt terug op Nederlands. Er komt dus nooit een door de bezoeker gekozen pad
+   in een redirect terecht.
+
+   LET OP bij het wijzigen van een bedrag: dit getal moet gelijk zijn aan het
+   PRIJS-blok in het bijbehorende taalbestand (taal.nl.js of taal.en.js). Staat
+   er een prijs-id in de environment, dan wint die van beide en is Stripe de
+   waarheid; het scherm zegt dan iets anders dan de klant betaalt. */
+const TALEN = {
+  nl: {
+    pad: "/",
+    locale: "nl",
+    // Een prijs-id is geen geheim, dus die mag hier staan.
+    prijsId: () => (process.env.STRIPE_PRICE_ID || "price_1TwnuI46s0kCbhKWr4iibUvS").trim(),
+    valuta: "eur",
+    centen: 2500,
+    naam: "Deskshift, drie richtingen en plan van zes weken",
+  },
+  en: {
+    pad: "/en",
+    locale: "en",
+    // Nog geen product in de catalogus voor deze markt: zonder deze variabele
+    // gaat het via price_data hieronder. Bewust NIET terugvallen op de
+    // Nederlandse prijs-id, want dan rekent Stripe stilletjes euro's af.
+    prijsId: () => (process.env.STRIPE_PRICE_ID_EN || "").trim(),
+    valuta: "gbp",
+    centen: 1900,
+    naam: "Deskshift, three directions and a six-week plan",
+  },
+};
 
 const TOEGESTAAN = [/(^|\.)deskshift\.pro$/i, /\.vercel\.app$/i, /^localhost$/i, /^127\.0\.0\.1$/];
 function hostToegestaan(waarde) {
@@ -76,7 +111,6 @@ export default async function handler(req, res) {
 
   const key = process.env.STRIPE_PRIVATE_KEY;
   if (!key) { res.status(500).json({ error: "Betaalconfiguratie ontbreekt (STRIPE_PRIVATE_KEY)." }); return; }
-  const prijsId = (process.env.STRIPE_PRICE_ID || PRIJS_ID_STANDAARD || "").trim();
   // Kortingsveld staat nu tijdelijk AAN. Let op de keerzijde: bezoekers zonder
   // code gaan er soms naar zoeken en komen niet terug. Zet STRIPE_PROMO_CODES op
   // "uit" om het veld te verbergen; de verborgen kortingslink (?code=...) blijft
@@ -93,8 +127,14 @@ export default async function handler(req, res) {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
   const kortingscode = String((body && body.code) || "").trim();
+  // Opzoeken, niet overnemen: een onbekende waarde wordt Nederlands.
+  const taal = TALEN[String((body && body.taal) || "").trim()] || TALEN.nl;
+  const prijsId = taal.prijsId();
 
   const basis = siteBasis(req);
+  // taal.pad is "/" of "/en", allebei uit de tabel hierboven en dus niet door de
+  // bezoeker te sturen.
+  const terug = basis + taal.pad;
 
   // Verborgen kortingslink: de bezoeker komt binnen via ?code=XYZ. We zoeken die
   // code server-side op, want Stripe wil bij discounts een promotiecode-id
@@ -114,12 +154,12 @@ export default async function handler(req, res) {
   function bouwParams(metPrijsId, promoId) {
     const p = new URLSearchParams();
     p.append("mode", "payment");
-    p.append("success_url", basis + "/?betaald=1&sid={CHECKOUT_SESSION_ID}");
-    p.append("cancel_url", basis + "/?betaald=0");
+    p.append("success_url", terug + "?betaald=1&sid={CHECKOUT_SESSION_ID}");
+    p.append("cancel_url", terug + "?betaald=0");
     // Bewust GEEN payment_method_types meegeven: dan gebruikt Stripe automatisch de
     // betaalmethoden die in het Dashboard aanstaan (card, iDEAL, ...). Dat voorkomt
     // een harde fout als iDEAL nog niet geactiveerd is.
-    p.append("locale", "nl");
+    p.append("locale", taal.locale);
     // Let op: Stripe staat discounts en allow_promotion_codes niet samen toe.
     // Is er via de link al een korting toegepast, dan geen invoerveld tonen.
     if (promoId) {
@@ -133,9 +173,9 @@ export default async function handler(req, res) {
     if (metPrijsId) {
       p.append("line_items[0][price]", metPrijsId);
     } else {
-      p.append("line_items[0][price_data][currency]", "eur");
-      p.append("line_items[0][price_data][unit_amount]", String(PRIJS_CENTEN));
-      p.append("line_items[0][price_data][product_data][name]", PRODUCT_NAAM);
+      p.append("line_items[0][price_data][currency]", taal.valuta);
+      p.append("line_items[0][price_data][unit_amount]", String(taal.centen));
+      p.append("line_items[0][price_data][product_data][name]", taal.naam);
     }
     return p;
   }

@@ -3055,7 +3055,10 @@ async function startBetaling(){
     meet("afrekenen");
     bewaarBetaalSnapshot();
     const r = await fetch("/api/checkout", {method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ code: leesKortingscode() })});
+      // De taal mee, zodat Stripe in de goede taal opent en de klant na het
+      // betalen terugkomt op de pagina waar hij vandaan kwam. De server neemt
+      // deze waarde niet over maar zoekt hem op.
+      body: JSON.stringify({ code: leesKortingscode(), taal: T.code })});
     const d = await r.json().catch(()=>({}));
     if(!r.ok || !d.url) throw new Error(d.error || T.ui.betaalNietGestart);
     window.location.href = d.url;

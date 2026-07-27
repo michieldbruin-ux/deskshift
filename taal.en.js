@@ -21,35 +21,43 @@
      languages. Do not "translate" them.
 
    PRICE: the amount and the currency symbol live in the PRIJS block below and
-   nowhere else. The UK and Ireland figure is not decided yet, so it is marked
-   [PRIJS] there. Set the four fields in that one block and every price on the
-   page, in the FAQ, on the paywall button and in the structured data follows. */
+   nowhere else, marked [PRIJS]. Change those four fields, run `node bouw.js`, and
+   every price on the page follows. The same figure also sits in api/checkout.js;
+   the comment on the block says why and what else has to move with it. */
 
 window.TALEN = window.TALEN || {};
 
 window.TALEN.en = (function(){
 
 /* ---------- price, in one place ---------- */
-/* >>> [PRIJS] PLACEHOLDER <<<
-   This is the only place a price is written down. Nothing below repeats it, and
-   nothing in index.template.html hard-codes a number or a currency sign.
+/* >>> [PRIJS] EEN PLEK, EEN REGEL PER VELD <<<
+   Nergens anders in dit bestand of in index.template.html staat een bedrag of
+   een valutateken. Wijzig dit blok, draai `node bouw.js`, en de prijs volgt op
+   de knop, in de hero, in de FAQ, op de prijskaart en in de gestructureerde data.
 
-   To set the UK and Ireland price: change `bedrag`, `symbool`, `valuta` and
-   `tekst`, then run `node bouw.js`. The euro amount below is a stand-in copied
-   from the Dutch product so the page is never blank; it is almost certainly not
-   the price you want to charge in pounds. `ariaLabel` is what a screen reader
-   says instead of the rolling digits, and `bedrag` also decides how many of
-   those digits get drawn. */
+   Het staat nu op GBP 19. Dat is een keuze, geen omrekening van de 25 euro:
+   negentien valt onder de psychologische twintig-pondgrens, en de vergelijking
+   met een uur loopbaancoaching (in het VK al snel 60 tot 150 pond) blijft ruim
+   overeind. Eén valuta voor het VK en Ierland houdt de pagina en Stripe simpel;
+   een Ierse kaart rekent zonder gedoe in ponden af.
+
+   LET OP, twee dingen moeten hiermee meebewegen:
+   1. api/checkout.js heeft dezelfde bedragen staan (TALEN.en.centen en .valuta).
+      Lopen die uit de pas, dan betaalt de klant iets anders dan het scherm zegt.
+   2. De btw-regel hieronder. Die noemt bewust geen percentage en geen
+      "inclusief": een Nederlandse eenmanszaak die digitale diensten aan Britse
+      en Ierse consumenten verkoopt, valt onder Britse btw-registratie en de
+      EU-OSS-regeling. Zet er pas een percentage in als je boekhouder heeft
+      bevestigd hoe dat voor deze markt geregeld is. */
 const PRIJS = {
-  bedrag: 25,                 // [PRIJS] amount, digits only
-  symbool: "€",               // [PRIJS] currency symbol shown on the page
-  valuta: "EUR",              // [PRIJS] ISO code, goes to Stripe and to schema.org
-  tekst: "€25",               // [PRIJS] the price as it reads inside a sentence
-  ariaLabel: "25 euros",      // [PRIJS] spoken version of the above
-  // VAT wording also belongs to the price. Rewrite these two when the rate for
-  // the market is settled; they are what people read next to the button.
-  btw: "One payment, VAT included. No subscription, no account. Straight to your results.",
-  btwLang: "One payment, VAT included. No subscription, no account, nothing sold to you afterwards.",
+  bedrag: 19,                 // [PRIJS] alleen cijfers
+  symbool: "£",               // [PRIJS] wat op de pagina staat
+  valuta: "GBP",              // [PRIJS] ISO-code, gaat naar Stripe en schema.org
+  tekst: "£19",               // [PRIJS] hoe de prijs in een zin leest
+  ariaLabel: "19 pounds",     // [PRIJS] wat een schermlezer voorleest
+  // Geen percentage en geen "inclusief" tot de btw-registratie rond is.
+  btw: "One payment. No subscription, no account. Straight to your results.",
+  btwLang: "One payment. No subscription, no account, nothing sold to you afterwards.",
 };
 
 /* ---------- sorting topics ---------- */
@@ -761,9 +769,9 @@ const LANDING = {
   slotOnder: `If you want your three directions and your plan after that, it is ${PRIJS.tekst}, once.`,
 
   footMuted: "For people whose job has got too small for them. No cookies, no advertising trackers.",
-  // These three pages are still Dutch only. Point them at English versions the
-  // moment those exist; the paths are used verbatim, with no language prefix.
-  footLinks: [["Questions","/vragen/"],["Privacy notice","/privacy"],["Terms","/terms"]],
+  // /vragen/ bestaat nog alleen in het Nederlands en wijst daarom naar de
+  // Nederlandse pagina; privacy en voorwaarden staan er wel in het Engels.
+  footLinks: [["Questions","/vragen/"],["Privacy notice","/en/privacy"],["Terms","/en/terms"]],
   footDisclaimer: "Deskshift does not give career, medical, legal or financial advice. The choices you make remain your own.",
 
   mobielCta: "±15 min · free insight",
@@ -778,7 +786,7 @@ const LANDING = {
     ["Nobody is reading along."," To build your insight they go anonymously to the Deskshift AI engine and nowhere else, not to your employer and not to your colleagues."],
     ["One button wipes everything,"," halfway through as well."],
   ],
-  privacyPopSlot: `So be honest. The more honest you are, the sharper your results. By starting you agree to our <a href="/privacy" target="_blank" rel="noopener" style="color:#4A6B1E">privacy notice</a>.`,
+  privacyPopSlot: `So be honest. The more honest you are, the sharper your results. By starting you agree to our <a href="/en/privacy" target="_blank" rel="noopener" style="color:#4A6B1E">privacy notice</a>.`,
   privacyPopKnop: "Understood, let's start",
 
   sortPopKop: "Two rounds of sorting",

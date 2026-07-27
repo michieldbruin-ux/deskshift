@@ -48,7 +48,12 @@
   .box{background:var(--veld);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:16px 0}
   .box p:last-child{margin-bottom:0}
   table{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:15px}
-  th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line)}
+  /* overflow-wrap: lange samenstellingen als "verwerkingsverantwoordelijke"
+     en "betaaldienstverlener" konden niet afbreken, waardoor de tabel op
+     390px 95px buiten het scherm stak en de hele pagina horizontaal schoof.
+     table-layout houdt de kolommen daarnaast binnen de kaart. */
+  table{table-layout:fixed}
+  th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
   th{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);font-weight:500}
   .foot{margin-top:24px;text-align:center;font-size:13px;color:var(--slate)}
   .foot a{color:var(--petrol)}
@@ -143,7 +148,7 @@
     <h2>Contact</h2>
     <p>Vragen over je privacy of over deze verklaring? Mail <a href="mailto:plan@deskshift.pro">plan@deskshift.pro</a>.</p>
   </div>
-  <p class="foot"><a href="/">Deskshift</a> &middot; <a href="/terms">Algemene voorwaarden</a></p>
+  <p class="foot"><a href="/">Deskshift</a> &middot; <a href="/terms">Algemene voorwaarden</a> &middot; <a href="/en/privacy">English</a></p>
 </div>
 </body>
 </html>

@@ -29,9 +29,18 @@ elke taal letterlijk hetzelfde: de `v`-waarden in `KALIB`, de sleutels van
 `taakverrijking|leren|zijproject` en `inkomen|leren|erkenning|prikkel`. Daar
 rekent de weging op.
 
-De prijs staat per taal op één plek: het `PRIJS`-blok bovenin het taalbestand.
-In `taal.en.js` staat die nog op de Nederlandse euro en is hij gemarkeerd met
-`[PRIJS]`.
+De prijs staat per taal op één plek in de front-end: het `PRIJS`-blok bovenin het
+taalbestand, gemarkeerd met `[PRIJS]`. **Er is een tweede plek**: `api/checkout.js`
+heeft per taal een bedrag en een valuta. Die twee moeten gelijk lopen, anders
+betaalt de klant iets anders dan het scherm zegt. Staat er een prijs-id in de
+environment, dan wint Stripe van allebei.
+
+`en/privacy.html` en `en/terms.html` worden **niet** door `bouw.js` gemaakt. Dat
+zijn losse pagina's, net als hun Nederlandse tegenhangers. Wijzig je de een, kijk
+dan of de ander mee moet.
+
+Nog niet in het Engels: `/vragen/`. De Engelse voet linkt daarvoor naar de
+Nederlandse pagina.
 
 ## Huisregels voor de teksten
 

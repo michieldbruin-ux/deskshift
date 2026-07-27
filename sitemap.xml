@@ -19,6 +19,28 @@
   <url><loc>https://deskshift.pro/vragen/baan-te-makkelijk-geworden</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://deskshift.pro/vragen/donderdag-al-klaar-met-werk</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://deskshift.pro/vragen/wat-is-job-crafting</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://deskshift.pro/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://deskshift.pro/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url>
+    <loc>https://deskshift.pro/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://deskshift.pro/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://deskshift.pro/en/privacy"/>
+    <changefreq>yearly</changefreq><priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://deskshift.pro/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://deskshift.pro/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://deskshift.pro/en/privacy"/>
+    <changefreq>yearly</changefreq><priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://deskshift.pro/terms</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://deskshift.pro/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://deskshift.pro/en/terms"/>
+    <changefreq>yearly</changefreq><priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://deskshift.pro/en/terms</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://deskshift.pro/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://deskshift.pro/en/terms"/>
+    <changefreq>yearly</changefreq><priority>0.3</priority>
+  </url>
 </urlset>
