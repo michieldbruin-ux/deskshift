@@ -1,8 +1,37 @@
 # Deskshift
 
-Nederlandse intaketool voor witteboordenwerkers die te snel klaar zijn met hun
-werk. Eén bestand: `index.html`, met inline stijl en script. Serverloze functies
-in `api/`. Deploy gaat via `main` naar Vercel op deskshift.pro.
+Intaketool voor witteboordenwerkers die te snel klaar zijn met hun werk. Twee
+talen: Nederlands op `/` en Engels op `/en`. Serverloze functies in `api/`.
+Deploy gaat via `main` naar Vercel op deskshift.pro.
+
+## Bouwen: bewerk index.html NIET
+
+`index.html` en `en/index.html` zijn **uitvoer**. Wie ze rechtstreeks bewerkt is
+zijn wijziging kwijt bij de eerstvolgende build.
+
+| Wat je wilt wijzigen | Waar |
+| --- | --- |
+| Een zin, een vraag, een systeemprompt, de prijs | `taal.nl.js` of `taal.en.js` |
+| Opmaak, gedrag, de weegformules, de flow | `index.template.html` |
+| Hoe de twee bij elkaar komen | `bouw.js` |
+
+Daarna altijd `node bouw.js`, en de uitvoer mee committen.
+
+Wat waar hoort: alle zichtbare tekst en alle systeemprompts staan in de
+taalbestanden, de rekenlogica staat in het sjabloon en is voor beide talen
+identiek. `bouw.js` weigert te bouwen als de twee taalbestanden niet dezelfde
+sleutels hebben of als de intake niet in beide talen dezelfde vragen in dezelfde
+volgorde stelt.
+
+Een paar waarden in de taalbestanden zijn **sleutels, geen tekst**, en blijven in
+elke taal letterlijk hetzelfde: de `v`-waarden in `KALIB`, de sleutels van
+`DRIJF`, `sleutels` bij de grenzenvraag, en in de prompts de woorden
+`taakverrijking|leren|zijproject` en `inkomen|leren|erkenning|prikkel`. Daar
+rekent de weging op.
+
+De prijs staat per taal op één plek: het `PRIJS`-blok bovenin het taalbestand.
+In `taal.en.js` staat die nog op de Nederlandse euro en is hij gemarkeerd met
+`[PRIJS]`.
 
 ## Huisregels voor de teksten
 
@@ -52,14 +81,23 @@ onbereikbaar voor Instagram.
 
 ## Testen
 
-Geen testsuite in de repo. Werk verifiëren met Puppeteer tegen `index.html`,
-met een stub op `/api/chat` en `/api/mail`. Chromium staat op
+Geen testsuite in de repo. Werk verifiëren met Puppeteer tegen de gebouwde
+`index.html` en `en/index.html`, met een stub op `/api/chat` en `/api/mail`.
+Serveer ze over http en niet via `file://`: localStorage werkt daar niet, en
+zonder localStorage komt de testmodus niet aan. Chromium staat op
 `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`. Meet op 390px eerst:
 mobiel is de maat, desktop is de afgeleide.
 
 Let op bij het stubben: de prompt van `P_ANALYSE` bevat "vat deze persoon samen
 voor een eerste gesprek" en die van `P_UITWERKING` "een eerste gespreksverslag".
-Matchen op `eerste gesprek` raakt dus beide.
+Matchen op `eerste gesprek` raakt dus beide, en in het Engels raakt
+`first conversation` net zo goed `written summary` niet, maar staat de
+uitwerkingsprompt wel vóór de analyseprompt in de tekst. Toets in een stub altijd
+eerst op de uitwerking.
+
+Een stub moet sterktes teruggeven in de taal van de sortering. Doet hij dat niet,
+dan vindt `sterkteScore` ze niet terug en zakt de pasvorm om een reden die niets
+met de app te maken heeft.
 
 ## Testmodus
 

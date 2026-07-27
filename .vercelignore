@@ -19,6 +19,9 @@ tiktok-3.html
 *.zip
 
 # Werkbestanden voor de repo, geen onderdeel van het product
+# Let op: taal.nl.js en taal.en.js blijven er WEL in, die haalt de pagina zelf op.
+index.template.html
+bouw.js
 meting.sql
 CLAUDE.md
 README-DEPLOY.md

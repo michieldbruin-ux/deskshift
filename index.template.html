@@ -1,28 +1,26 @@
 <!doctype html>
-<html lang="nl">
+<html lang="{{htmlLang}}">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Deskshift</title>
-<meta name="description" content="Deskshift is een online tool die kenniswerkers die hun werk sneller af hebben dan hun contracturen helpt om die ruimte om te zetten in een concreet plan, op basis van hun eigen antwoorden. Gratis inzicht, daarna eenmalig 25 euro voor drie richtingen en een plan van zes weken.">
+<title>{{meta.titel}}</title>
+<meta name="description" content="{{meta.omschrijving}}">
 <meta name="theme-color" content="#ECEEE6">
-<link rel="canonical" href="https://deskshift.pro/">
-<link rel="alternate" hreflang="nl" href="https://deskshift.pro/">
-<link rel="alternate" hreflang="en" href="https://deskshift.pro/en">
-<link rel="alternate" hreflang="x-default" href="https://deskshift.pro/">
+<link rel="canonical" href="{{canoniek}}">
+{{hreflang}}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Deskshift">
-<meta property="og:title" content="Deskshift">
-<meta property="og:description" content="Zeven korte secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
-<meta property="og:url" content="https://deskshift.pro/">
-<meta property="og:locale" content="nl_NL">
-<meta property="og:image" content="https://deskshift.pro/brand/deskshift-og.png">
+<meta property="og:title" content="{{meta.titel}}">
+<meta property="og:description" content="{{meta.ogOmschrijving}}">
+<meta property="og:url" content="{{canoniek}}">
+<meta property="og:locale" content="{{ogLocale}}">
+<meta property="og:image" content="{{basis}}/brand/deskshift-og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Deskshift. Je werk past in drie dagen. Niemand vraagt wat je met de rest doet.">
+<meta property="og:image:alt" content="{{meta.ogAlt}}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://deskshift.pro/brand/deskshift-og.png">
-<meta name="twitter:title" content="Deskshift">
-<meta name="twitter:description" content="Zeven korte secties, direct een gratis inzicht, daarna drie gewogen paden met een plan van zes weken.">
+<meta name="twitter:image" content="{{basis}}/brand/deskshift-og.png">
+<meta name="twitter:title" content="{{meta.titel}}">
+<meta name="twitter:description" content="{{meta.ogOmschrijving}}">
 <link rel="icon" type="image/svg+xml" href="/brand/deskshift-favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/brand/deskshift-favicon-32.png">
 <link rel="apple-touch-icon" href="/brand/deskshift-appicoon-180.png">
@@ -33,7 +31,7 @@
 <!-- Alle zichtbare tekst en alle systeemprompts staan in dit bestand. De rest
      van deze pagina bevat alleen gedrag en opmaak. Welke taal er geladen wordt,
      bepaalt het pad: / krijgt taal.nl.js, /en krijgt taal.en.js. -->
-<script src="/taal.nl.js"></script>
+<script src="/taal.{{code}}.js"></script>
 
 <style>
   :root{
@@ -1260,148 +1258,121 @@
   <nav class="dsnav" aria-label="Deskshift">
     <span class="brand"><svg class="mark" width="21" height="21" viewBox="0 0 100 100" aria-hidden="true"><rect x="0" y="10" width="62" height="32" fill="#404E3B"/><rect x="38" y="58" width="62" height="32" fill="#7B9669"/></svg><span class="brand-w">Desk<span class="brand-l">shift</span></span></span>
     <span class="navrechts">
-      <a class="taalknop" href="/en" hreflang="en" rel="alternate">English</a>
-      <button class="btn btn-sm nav-cta" onclick="document.getElementById('start').click()">Start gratis</button>
+      <a class="taalknop" href="{{ui.taalPad}}" hreflang="{{ui.taalCode}}" rel="alternate">{{ui.taalKnop}}</a>
+      <button class="btn btn-sm nav-cta" onclick="document.getElementById('start').click()">{{landing.navCta}}</button>
     </span>
   </nav>
 
   <header class="hero">
     <div class="hero-tekst">
-      <div class="mono eyebrow">Voor professionals die te snel klaar zijn</div>
-      <h1>Je werk past in drie dagen.<br>Niemand vraagt wat je met <em>de rest</em> doet.</h1>
+      <div class="mono eyebrow">{{landing.eyebrow}}</div>
+      <h1>{{landing.h1}}</h1>
       <!-- Deze zin benoemt zelf waar het over gaat en leunt niet op de kop
            erboven, zodat hij ook los te begrijpen is. Dat helpt een AI-systeem
            dat één zin uit de pagina overneemt. -->
-      <p class="lead"><strong class="ds-pop">Deskshift</strong> bouwt uit jóuw antwoorden een persoonlijk plan voor de ruimte die in je werkweek zit, in vijftien minuten.</p>
+      <p class="lead">{{landing.lead}}</p>
       <div class="row cta-row">
-        <button class="btn btn-hero" id="start">Start, het eerste inzicht is gratis</button>
-        <button class="btn btn-ghost hidden" id="resume">Ga verder waar je gebleven was</button>
-        <button class="btn btn-lime hidden" id="herstelBetaald">Open je uitkomst en plan</button>
+        <button class="btn btn-hero" id="start">{{landing.ctaStart}}</button>
+        <button class="btn btn-ghost hidden" id="resume">{{landing.ctaHervat}}</button>
+        <button class="btn btn-lime hidden" id="herstelBetaald">{{landing.ctaHerstel}}</button>
       </div>
-      <p class="micro">Gratis: je patroon in één zin, plus je profiel. €25: drie richtingen met een plan. Geen account.</p>
-      <p class="micro" style="margin-top:2px">Je antwoorden blijven op je eigen toestel, dus je kunt altijd verder waar je gebleven was.</p>
+      <p class="micro">{{landing.microPrijs}}</p>
+      <p class="micro" style="margin-top:2px">{{landing.microOpslag}}</p>
     </div>
 
     <figure class="hero-mock" data-para="0.09" aria-hidden="true">
-      <span class="mock-tag">dit krijg je</span>
+      <span class="mock-tag">{{landing.mockTag}}</span>
       <div class="mock">
-        <div class="mock-label mono">Voorbeeld · echt resultaat uit een testrun</div>
-        <div class="mock-quote">"Je vak is niet te zwaar. Het is te klein."</div>
+        <div class="mock-label mono">{{landing.mockLabel}}</div>
+        <div class="mock-quote">{{landing.mockQuote}}</div>
         <div class="mock-card">
-          <div class="mock-cardtop"><b>Een tweede vakgebied opbouwen naast je werk</b><span class="mono">jouw pasvorm</span></div>
-          <div class="mock-bars"><div class="mb"><span class="mb-l">je week</span><span class="mb-t"><i style="--w:88%"></i></span></div>
-            <div class="mb"><span class="mb-l">je grenzen</span><span class="mb-t"><i style="--w:74%"></i></span></div>
-            <div class="mb"><span class="mb-l">je drijfveer</span><span class="mb-t"><i style="--w:82%"></i></span></div>
-            <div class="mb"><span class="mb-l">je sterkte</span><span class="mb-t"><i style="--w:69%"></i></span></div></div>
+          <div class="mock-cardtop"><b>{{landing.mockKaartTitel}}</b><span class="mono">{{landing.mockPasvorm}}</span></div>
+          <div class="mock-bars">{{BLOK_MOCKBALKEN}}</div>
         </div>
         <div class="mock-deze">
-          <div class="mono">Deze week</div>
-          <p>Schrijf in één A4 welk vakgebied je wilt opbouwen, en wat je nodig hebt om er deze maand mee te beginnen.</p>
+          <div class="mono">{{landing.mockDeze}}</div>
+          <p>{{landing.mockActie}}</p>
         </div>
       </div>
     </figure>
   </header>
 
   <div class="week-sectie rv">
-    <div class="mono">Een werkweek, eerlijk gemeten</div>
+    <div class="mono">{{landing.weekKop}}</div>
     <div class="week" id="weekViz" aria-hidden="true">
       <div class="week-day" style="--h:.62"><span class="week-fill"></span></div>
       <div class="week-day" style="--h:.8"><span class="week-fill"></span></div>
       <div class="week-day mid" style="--h:.95"><span class="week-fill"></span></div>
       <div class="week-day zak" style="--h:.34"><span class="week-fill"></span></div>
       <div class="week-day zak" style="--h:.16"><span class="week-fill"></span></div>
-      <span class="week-lijn"><b>hier zakt het in</b></span>
+      <span class="week-lijn"><b>{{landing.weekLijn}}</b></span>
     </div>
-    <div class="week-labels" aria-hidden="true"><span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span></div>
-    <p class="week-cap"><b>Rond donderdag is je week vaak al af.</b> Die inzakking is geen luiheid. Het is ruimte die niemand voor je invult, en precies waar dit over gaat.</p>
+    <div class="week-labels" aria-hidden="true">{{BLOK_WEEKDAGEN}}</div>
+    <p class="week-cap">{{landing.weekCap}}</p>
   </div>
 
   <div class="hoe rv">
-    <div class="mono">Hoe het werkt</div>
-    <h2 class="bloktitel" style="margin:8px 0 6px">Van vage onvrede naar een concreet plan</h2>
-    <p class="muted" style="margin:0 0 6px">Alles wordt opgebouwd uit jóuw antwoorden. Hoe eerlijker je bent, hoe scherper en waardevoller je plan.</p>
-    <ol class="stepper" id="stepper"><li><span class="step-n">01</span><div class="step-b"><h3>Intake voor jouw situatie</h3><p>Een korte intake die helemaal over jou gaat. Geen eindeloze vragenlijst. Vijftien minuten op je telefoon.</p></div></li>
-      <li><span class="step-n">02</span><div class="step-b"><h3>Je schets, en jij corrigeert</h3><p>Vier observaties uit je eigen antwoorden. Per stuk geef je aan of het klopt. Wat je afwijst, verdwijnt uit de rest.</p></div></li>
-      <li><span class="step-n">03</span><div class="step-b"><h3>Je gratis inzicht</h3><p>Het scherpste patroon, met letterlijke citaten uit je eigen antwoorden en wat je zelf niet opschreef. Voordat je iets betaalt.</p></div></li>
-      <li><span class="step-n">04</span><div class="step-b"><h3>Jouw drie richtingen</h3><p>Vier laatste voorkeuren, dan drie richtingen met een pasvorm-score en een plan van zes weken. Geen open einde.</p></div></li></ol>
+    <div class="mono">{{landing.hoeKop}}</div>
+    <h2 class="bloktitel" style="margin:8px 0 6px">{{landing.hoeTitel}}</h2>
+    <p class="muted" style="margin:0 0 6px">{{landing.hoeOnder}}</p>
+    <ol class="stepper" id="stepper">{{BLOK_STAPPEN}}</ol>
   </div>
 
   <div class="citaat rv">
     <div class="citaat-in">
-      <div class="mono">De kern</div>
-      <p class="citaat-tekst">Je capaciteit groeit door. Je opdracht niet. Dat gat is geen luiheid, het is een tekort aan uitdaging.</p>
-      <p class="citaat-note">Deskshift maakt dat gat zichtbaar en zet er een plan op, uit jouw eigen antwoorden.</p>
+      <div class="mono">{{landing.citaatKop}}</div>
+      <p class="citaat-tekst">{{landing.citaatTekst}}</p>
+      <p class="citaat-note">{{landing.citaatNote}}</p>
     </div>
   </div>
 
   <div class="cred rv">
-    <div class="mono">Waarop dit rust</div>
-    <h2 class="bloktitel" style="margin:8px 0 6px">Onderbouwd, niet uit de onderbuik</h2>
-    <p class="muted" style="margin:0 0 4px">Gegrond in de arbeids- en organisatiepsychologie. <strong class="ds-pop">Deskshift</strong> analyseert alleen jóuw antwoorden; de intake en het plan zijn daar strak omheen gebouwd.</p>
-    <div class="credgrid"><div class="credkaart"><b>Job demands-resources</b><span>Bakker en Demerouti. Te weinig taakeisen geeft net zulke klachten als te veel.</span></div>
-      <div class="credkaart"><b>Job crafting</b><span>Wrzesniewski en Dutton. Je functie zelf verbouwen in plaats van er alleen in werken.</span></div>
-      <div class="credkaart"><b>Zelfdeterminatietheorie</b><span>Deci en Ryan. Autonomie, competentie en verbondenheid als brandstof.</span></div>
-      <div class="credkaart"><b>Flow</b><span>Csikszentmihalyi. Verveling ontstaat zodra je kunde je uitdaging voorbijstreeft.</span></div>
-      <div class="credkaart"><b>Vrije tijd met betekenis</b><span>Vrije tijd die alleen herstel is, voegt weinig toe.</span></div>
-      <div class="credkaart"><b>Optimaal tijdsbudget</b><span>Te weinig vrije tijd geeft stress, te veel geeft leegte. Dat laatste is precies de klacht die deze test in kaart brengt.</span></div></div>
+    <div class="mono">{{landing.credKop}}</div>
+    <h2 class="bloktitel" style="margin:8px 0 6px">{{landing.credTitel}}</h2>
+    <p class="muted" style="margin:0 0 4px">{{landing.credOnder}}</p>
+    <div class="credgrid">{{BLOK_CRED}}</div>
   </div>
 
   <div class="maker rv">
     <div class="maker-quote">
-      <div class="mono">Waarom dit bestaat</div>
-      <p>Vier banen, hetzelfde patroon. Na een paar maanden liep het werk terug en werd mijn agenda leger. Niet omdat ik het niet aankon, maar omdat ik het te snel afkreeg.</p>
-      <p>Ik zei er nooit iets over. “Ik heb te weinig werk” zeg je niet hardop op je werk. Dus vulde ik de uren zelf, in stilte, zonder dat iemand het zag.</p>
-      <p>Dit is het gesprek dat ik toen had willen voeren. Geen duur coachtraject, geen abonnement, geen diagnose. Eén eerlijke intake, en een plan dat je zelf uitvoert.</p>
+      <div class="mono">{{landing.makerKop}}</div>
+      {{BLOK_MAKER}}
     </div>
   </div>
 
   <div class="trust rv">
-    <div class="mono">Jouw data is jouw data</div>
-    <h2 class="bloktitel" style="margin:8px 0 18px">Gemaakt om niets over je te onthouden</h2>
-    <div class="trustgrid"><div class="trustkaart"><b>Geen account.</b><span>Geen mailadres, geen registratie, geen advertentietrackers. Je begint meteen.</span></div>
-      <div class="trustkaart"><b>Op je eigen toestel.</b><span>Je antwoorden worden alleen op dit toestel bewaard, zodat je later verder kunt. Heb je betaald, dan blijft je uitkomst er 30 dagen staan, zodat je hem terugvindt als je het venster sluit. Wij houden geen profiel over je bij.</span></div>
-      <div class="trustkaart"><b>Alleen voor je analyse.</b><span>Om je inzicht te maken gaan je antwoorden naar een AI-dienst (Anthropic) en worden daar alleen daarvoor gebruikt. Niet naar je werkgever of collega's.</span></div>
-      <div class="trustkaart"><b>Eén knop wist alles.</b><span>Ook halverwege, definitief.</span></div></div>
+    <div class="mono">{{landing.trustKop}}</div>
+    <h2 class="bloktitel" style="margin:8px 0 18px">{{landing.trustTitel}}</h2>
+    <div class="trustgrid">{{BLOK_TRUST}}</div>
   </div>
 
   <div class="prijs-dark rv">
     <div class="prijs-dark-in">
       <div class="prijs-links">
-        <div class="mono">Wat het kost, en wat er letterlijk op je scherm staat</div>
-        <div class="price-groot" id="prijsGroot" aria-label="25 euro"><span aria-hidden="true">€</span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:2"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span><span class="pd" aria-hidden="true"><span class="pd-reel" style="--d:5"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span></div>
-        <p class="prijs-onder" style="margin:0 0 12px">Eenmalig, inclusief 21% btw. Geen abonnement, geen account, geen upsell.</p>
-        <p class="prijs-onder" style="margin:0 0 18px;line-height:1.5">Ter vergelijking: een uur loopbaancoaching kost al snel meer dan dit hele plan. Dit is niet het eindpunt, het is de eerste stap naar je volgende richting.</p>
-        <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
-        <p class="micro" style="color:#AFC2A4;margin:12px 0 0">Je ziet je patroon voordat je iets betaalt.</p>
+        <div class="mono">{{landing.prijsKop}}</div>
+        <div class="price-groot" id="prijsGroot" aria-label="{{prijs.ariaLabel}}"><span aria-hidden="true">{{prijs.symbool}}</span>{{BLOK_PRIJSCIJFERS}}</div>
+        <p class="prijs-onder" style="margin:0 0 12px">{{landing.prijsOnder1}}</p>
+        <p class="prijs-onder" style="margin:0 0 18px;line-height:1.5">{{landing.prijsOnder2}}</p>
+        <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">{{landing.ctaStart}}</button>
+        <p class="micro" style="color:#AFC2A4;margin:12px 0 0">{{landing.prijsMicro}}</p>
       </div>
       <div class="bon-kaart">
-        <div class="mono" style="color:var(--slate)">Na betaling zie je direct</div>
-        <ul class="bon2"><li><span>Drie richtingen, elk met een pasvorm-score uit jouw antwoorden</span></li>
-          <li><span>Waarom de andere richtingen afvielen, per richting</span></li>
-          <li><span>Eén actie die je deze week al kunt doen</span></li>
-          <li><span>Een plan van zes weken, week voor week</span><em>pdf</em></li>
-          <li><span>Kant-en-klare berichten om je richting voor te stellen, aan je leidinggevende of aan je netwerk</span></li>
-          <li><span>Een week later één herinnering met de acties van week twee</span><em>mail</em></li></ul>
+        <div class="mono" style="color:var(--slate)">{{landing.bonKop}}</div>
+        <ul class="bon2">{{BLOK_BON}}</ul>
       </div>
     </div>
   </div>
 
   <div class="faq rv">
-    <div class="mono" style="margin-bottom:10px">Voor de zekerheid</div>
-    <details><summary>Is dit een cursus of coaching-traject?</summary><p>Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen.</p></details>
-    <details><summary>Zit hier AI achter?</summary><p>Ja. Deskshift gebruikt AI om alleen jóuw antwoorden te analyseren. Geen mens leest ze. Het is geen kale chatbot: de intake en het plan zijn er strak omheen gebouwd, zodat de uitkomst over jou gaat en niet over iemand in het algemeen.</p></details>
-    <details><summary>Is dit niet gewoon een quiz of gimmick?</summary><p>Nee. Je vult een echte intake in en krijgt direct een inzicht uit je eigen antwoorden, in je eigen woorden terug. Je corrigeert onderweg zelf wat er niet klopt, en elk citaat wordt teruggelegd naast wat je echt hebt opgeschreven, zodat er niets in staat dat je nooit gezegd hebt. Daarna een plan dat je zelf uitvoert.</p></details>
-    <details><summary>Wat als het antwoord is dat ik moet blijven waar ik zit?</summary><p>Dan zeggen we dat, en laten we zien hóe. Soms zit de scherpste richting in je huidige baan: een taak eruit, een tweede vakgebied erbij. Ook dat wordt een concreet plan van zes weken, geen "ga netwerken en praat met je manager".</p></details>
-    <details><summary>Wat krijg ik precies voor €25?</summary><p>Drie richtingen met een pasvorm-score, waarom de andere afvielen, je eerste stap voor deze week, en een plan van zes weken als pdf. Mail je het naar jezelf, dan volgt een week later één herinnering met de acties van week twee. De intake en het inzicht daarvoor zijn gratis.</p></details>
-    <details><summary>Ziet iemand anders mijn antwoorden?</summary><p>Geen mens, nee. Je antwoorden staan op je eigen toestel en gaan alleen naar een AI-dienst die ze verwerkt om jouw inzicht en plan te maken. Verder nergens heen, ook niet naar je werkgever.</p></details>
-    <details><summary>Moet ik meteen betalen?</summary><p>Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie richtingen.</p></details>
+    <div class="mono" style="margin-bottom:10px">{{landing.faqKop}}</div>
+    {{BLOK_FAQ}}
   </div>
 
   <div class="slot-cta rv">
     <div class="slot-cta-in">
-      <h2>Vijftien minuten. Eén eerlijk inzicht. Gratis.</h2>
-      <p>Wil je daarna je drie richtingen en je plan, dan is dat eenmalig €25.</p>
-      <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">Start, het eerste inzicht is gratis</button>
+      <h2>{{landing.slotTitel}}</h2>
+      <p>{{landing.slotOnder}}</p>
+      <button class="btn btn-lime btn-hero" onclick="document.getElementById('start').click()">{{landing.ctaStart}}</button>
     </div>
   </div>
 
@@ -1410,35 +1381,32 @@
     <!-- "geen tracking" stond hier, en dat is sinds de anonieme funnelmeting niet
          meer helemaal waar te maken. Advertentietrackers zijn er nog steeds niet,
          en dat is wel precies te zeggen. -->
-    <p class="muted">Voor mensen van wie het werk te klein is geworden. Geen cookies, geen advertentietrackers.</p>
-    <p class="footlinks"><a href="/vragen/">Vragen</a> <span aria-hidden="true">&middot;</span> <a href="/privacy">Privacyverklaring</a> <span aria-hidden="true">&middot;</span> <a href="/terms">Algemene voorwaarden</a> <span aria-hidden="true">&middot;</span> <a class="taalknop foot" href="/en" hreflang="en" rel="alternate">English</a></p>
-    <p class="muted" style="margin-top:6px">Deskshift geeft geen loopbaan-, medisch, juridisch of financieel advies. Je blijft zelf verantwoordelijk voor je keuzes.</p>
+    <p class="muted">{{landing.footMuted}}</p>
+    <p class="footlinks">{{BLOK_FOOTLINKS}} <span aria-hidden="true">&middot;</span> <a class="taalknop foot" href="{{ui.taalPad}}" hreflang="{{ui.taalCode}}" rel="alternate">{{ui.taalKnop}}</a></p>
+    <p class="muted" style="margin-top:6px">{{landing.footDisclaimer}}</p>
   </div>
 
   <div class="row devrow hidden" id="devrow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
-    <button class="btn btn-ghost btn-sm" id="demo">Testmodus: direct naar de uitkomst</button>
-    <button class="btn btn-ghost btn-sm" id="demoSchets">Testmodus: vanaf de schets</button>
-    <button class="btn btn-ghost btn-sm" id="demoLoop">Testmodus: door de intake lopen</button>
-    <span class="muted" style="font-size:13px">Testmodus staat aan op dit toestel. Zet uit met ?test=0</span>
+    <button class="btn btn-ghost btn-sm" id="demo">{{landing.testrij.0}}</button>
+    <button class="btn btn-ghost btn-sm" id="demoSchets">{{landing.testrij.1}}</button>
+    <button class="btn btn-ghost btn-sm" id="demoLoop">{{landing.testrij.2}}</button>
+    <span class="muted" style="font-size:13px">{{landing.testrijUit}}</span>
   </div>
 </section>
 
-<div id="mobielCta" class="hidden" role="region" aria-label="Snel starten">
-  <span>±15 min · gratis inzicht</span>
-  <button class="btn" onclick="document.getElementById('start').click()">Start gratis inzicht</button>
+<div id="mobielCta" class="hidden" role="region" aria-label="{{landing.mobielAria}}">
+  <span>{{landing.mobielCta}}</span>
+  <button class="btn" onclick="document.getElementById('start').click()">{{landing.mobielKnop}}</button>
 </div>
 
 <div id="privacyPop" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="popTitel">
   <div class="pop-kaart">
     <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 8.3 8 11 4.6-2.7 8-6 8-11V5l-8-3Z" fill="#152A1C"/><path d="m8.6 12 2.4 2.4L15.8 9.6" stroke="#BFE35F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="mono">Voordat je begint</div>
-    <h2 id="popTitel">Je antwoorden blijven van jou</h2>
-    <ul class="pop-lijst"><li><b>Geen account, geen mailadres.</b> Je begint meteen.</li>
-      <li><b>Alleen op dit toestel.</b> Je antwoorden blijven hier, zodat je later verder kunt. Wij houden geen profiel over je bij.</li>
-      <li><b>Niemand leest mee.</b> Om je inzicht te maken gaan ze alleen anoniem naar de Deskshift AI engine, en verder nergens heen, niet naar je werkgever of collega's.</li>
-      <li><b>Eén knop wist alles,</b> ook halverwege.</li></ul>
-    <p class="pop-slot">Wees dus gerust eerlijk. Hoe eerlijker je antwoordt, hoe scherper je uitkomst. Door te beginnen ga je akkoord met onze <a href="/privacy" target="_blank" rel="noopener" style="color:#4A6B1E">privacyverklaring</a>.</p>
-    <button class="btn btn-lime btn-hero" id="popStart">Ik snap het, we beginnen</button>
+    <div class="mono">{{landing.privacyPopKop}}</div>
+    <h2 id="popTitel">{{landing.privacyPopTitel}}</h2>
+    <ul class="pop-lijst">{{BLOK_PRIVACYLIJST}}</ul>
+    <p class="pop-slot">{{landing.privacyPopSlot}}</p>
+    <button class="btn btn-lime btn-hero" id="popStart">{{landing.privacyPopKnop}}</button>
   </div>
 </div>
 
@@ -1448,38 +1416,37 @@
          verschillende antwoorden. De vorige versie gebruikte lime op een lime
          badge, waardoor de helft wegviel. Alles nu in inkt. -->
     <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 8h18M3 16h18" stroke="#152A1C" stroke-width="1.8" stroke-linecap="round"/><circle cx="8.5" cy="8" r="3.1" fill="#152A1C"/><circle cx="15.5" cy="16" r="3.1" fill="#152A1C"/></svg></div>
-    <div class="mono">Twee keer sorteren</div>
-    <h2 id="sortPopTitel">Let op: twee verschillende vragen</h2>
-    <ul class="pop-lijst"><li><b>Eerst:</b> waar ben je <b>goed</b> in?</li>
-      <li><b>Daarna:</b> wat vind je <b>leuk</b> om te doen?</li></ul>
-    <p class="pop-slot"><b>Goed</b> kunnen en <b>leuk</b> vinden zijn niet hetzelfde. We leggen je twee antwoorden over elkaar en zoeken waar ze allebei samenvallen. Daar zit je richting.</p>
-    <button class="btn btn-lime btn-hero" id="sortPopOk">Duidelijk</button>
+    <div class="mono">{{landing.sortPopKop}}</div>
+    <h2 id="sortPopTitel">{{landing.sortPopTitel}}</h2>
+    <ul class="pop-lijst">{{BLOK_SORTLIJST}}</ul>
+    <p class="pop-slot">{{landing.sortPopSlot}}</p>
+    <button class="btn btn-lime btn-hero" id="sortPopOk">{{landing.sortPopKnop}}</button>
   </div>
 </div>
 
 <div id="exitPop" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="exitPopTitel">
   <div class="pop-kaart">
     <div class="pop-badge" style="background:#F3C9C2" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7M10 11v6M14 11v6" stroke="#8A2B21" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="mono">Stoppen en wissen</div>
-    <h2 id="exitPopTitel">Al je antwoorden verwijderen?</h2>
-    <p class="pop-slot" style="margin-bottom:22px">Dit wist alles wat je op dit toestel hebt ingevuld en sluit de intake. Dit kan niet ongedaan worden gemaakt.</p>
-    <button class="btn btn-hero" id="exitJa" style="width:100%;background:#B23A2C;color:#fff;margin-bottom:10px">Ja, verwijder alles</button>
-    <button class="btn btn-ghost" id="exitNee" style="width:100%">Nee, ik ga door</button>
+    <div class="mono">{{landing.exitPopKop}}</div>
+    <h2 id="exitPopTitel">{{landing.exitPopTitel}}</h2>
+    <p class="pop-slot" style="margin-bottom:22px">{{landing.exitPopSlot}}</p>
+    <button class="btn btn-hero" id="exitJa" style="width:100%;background:#B23A2C;color:#fff;margin-bottom:10px">{{landing.exitPopJa}}</button>
+    <button class="btn btn-ghost" id="exitNee" style="width:100%">{{landing.exitPopNee}}</button>
   </div>
 </div>
 
 <div id="mailPop" class="pop hidden" role="dialog" aria-modal="true" aria-labelledby="mailPopTitel">
   <div class="pop-kaart">
     <div class="pop-badge" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="2.5" stroke="#152A1C" stroke-width="1.8"/><path d="m3.5 7 8.5 6 8.5-6" stroke="#152A1C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="mono">Bewaar het</div>
-    <h2 id="mailPopTitel">Stuur dit plan naar je mail</h2>
-    <p class="pop-slot" id="mailPopSlot">Je krijgt je rapport en je plan van zes weken netjes opgemaakt in je inbox. Over een week volgt één korte herinnering met de acties van week twee uit je eigen plan. Geen nieuwsbrief, daarna niets meer.</p>
+    <div class="mono">{{landing.mailPopKop}}</div>
+    <h2 id="mailPopTitel">{{landing.mailPopTitel}}</h2>
+    <p class="pop-slot" id="mailPopSlot">{{ui.mailPopEen}}</p>
     <div class="mailrij" style="margin-bottom:6px">
-      <input type="email" id="mailAdres" inputmode="email" autocomplete="email" placeholder="jouw@email.nl">
-      <button class="btn btn-lime" id="mailKnop">Versturen</button>
+      <input type="email" id="mailAdres" inputmode="email" autocomplete="email" placeholder="{{landing.mailPopPlaceholder}}">
+      <button class="btn btn-lime" id="mailKnop">{{landing.mailPopKnop}}</button>
     </div>
     <p id="mailStatus" class="mailstatus"></p>
-    <button class="btn btn-ghost" id="mailPopSluit" style="width:100%;margin-top:12px">Sluiten</button>
+    <button class="btn btn-ghost" id="mailPopSluit" style="width:100%;margin-top:12px">{{landing.mailPopSluit}}</button>
   </div>
 </div>
 
@@ -1492,22 +1459,22 @@
         <path class="okpad" d="M25 41.5 36 52 56 30" fill="none" stroke="#5F7A50" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    <div class="mono" style="color:#4A6B1E">Onderweg naar je inbox</div>
-    <h2 id="mailOkTitel" style="margin:2px 0 10px">Verstuurd</h2>
-    <p class="pop-slot" id="mailOkTekst" style="margin-bottom:22px">We hebben je rapport verstuurd. Kijk in je inbox, en anders even in de spam.</p>
-    <button class="btn btn-lime btn-hero" id="mailOkKnop" style="width:100%">Klaar</button>
+    <div class="mono" style="color:#4A6B1E">{{landing.mailOkKop}}</div>
+    <h2 id="mailOkTitel" style="margin:2px 0 10px">{{landing.mailOkTitel}}</h2>
+    <p class="pop-slot" id="mailOkTekst" style="margin-bottom:22px">{{landing.mailOkStandaard}}</p>
+    <button class="btn btn-lime btn-hero" id="mailOkKnop" style="width:100%">{{landing.mailOkKnop}}</button>
   </div>
 </div>
 
 <section id="intake" class="hidden">
   <div class="rail">
     <div class="railtop">
-      <button class="homebtn" id="homeBtn" type="button" aria-label="Terug naar de startpagina"><span aria-hidden="true">‹</span> Terug<span class="hb-staart"> naar start</span></button>
+      <button class="homebtn" id="homeBtn" type="button" aria-label="{{ui.terugStartAria}}"><span aria-hidden="true">‹</span> {{ui.terug}}<span class="hb-staart"> {{ui.terugStaart}}</span></button>
       <span class="railmerk" aria-label="Deskshift">
         <svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect x="0" y="10" width="62" height="32" fill="#404E3B"/><rect x="38" y="58" width="62" height="32" fill="#7B9669"/></svg>
         <span class="rm-w" aria-hidden="true">Desk<span class="rm-l">shift</span></span>
       </span>
-      <button class="wisbtn" id="exitBtn" type="button" aria-label="Verwijder mijn data en stop"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Verwijder<span class="wb-staart"> mijn data</span></button>
+      <button class="wisbtn" id="exitBtn" type="button" aria-label="{{ui.wisAria}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ui.wis}}<span class="wb-staart"> {{ui.wisStaart}}</span></button>
     </div>
     <div class="railbalk"><span id="railvul"></span></div>
     <div class="railmeta"><span class="mono" id="railsectie"></span><span class="mono" id="resttijd"></span><span class="mono" id="railtel"></span></div>
@@ -1515,54 +1482,54 @@
   <div id="stage"></div>
   <div id="err"></div>
   <div class="row spread intake-nav" style="margin-top:18px">
-    <button class="btn btn-ghost" id="back">Vorige</button>
+    <button class="btn btn-ghost" id="back">{{ui.vorige}}</button>
     <div style="text-align:right">
       <div class="row" style="justify-content:flex-end">
         <span class="ok" id="saved"></span>
-        <button class="btn" id="next">Volgende</button>
+        <button class="btn" id="next">{{ui.volgende}}</button>
       </div>
-      <div class="muted enterhint" style="font-size:13px;margin-top:6px">Enter om verder te gaan</div>
+      <div class="muted enterhint" style="font-size:13px;margin-top:6px">{{ui.enterKort}}</div>
     </div>
   </div>
 </section>
 
 <section id="review" class="hidden">
-  <div class="mono">Bijna klaar</div>
-  <h2 style="margin:12px 0 6px">Kijk je antwoorden nog even na</h2>
-  <p class="muted">Alles is aan te passen. Klik op het potlood bij het antwoord dat je wilt wijzigen.</p>
+  <div class="mono">{{ui.bijnaKlaar}}</div>
+  <h2 style="margin:12px 0 6px">{{ui.reviewKop}}</h2>
+  <p class="muted">{{ui.reviewOnder}}</p>
   <div id="revBody"></div>
-  <div class="row" style="margin-top:22px"><button class="btn" id="toSummary">Dit klopt, maak de schets</button>
-    <button class="btn btn-ghost" data-terug="intake">Terug naar de vragen</button></div>
+  <div class="row" style="margin-top:22px"><button class="btn" id="toSummary">{{ui.reviewKlaar}}</button>
+    <button class="btn btn-ghost" data-terug="intake">{{ui.reviewTerug}}</button></div>
 </section>
 
 <section id="summary" class="hidden">
-  <div class="mono">Jouw situatie, zoals die nu is</div>
-  <h2 style="margin:12px 0 18px">Waar je nu staat</h2>
+  <div class="mono">{{ui.schetsEyebrow}}</div>
+  <h2 style="margin:12px 0 18px">{{ui.schetsKop}}</h2>
   <div id="sumBody"></div>
   <div id="sumQuad"></div>
   <div class="row hidden" id="sumRow" style="margin-top:22px">
-    <button class="btn btn-lime" id="toInsight">Klopt. Laat mijn eerste inzicht zien</button>
-    <button class="btn btn-ghost" id="backToReview">Ik wil iets aanpassen</button>
+    <button class="btn btn-lime" id="toInsight">{{ui.schetsVerder}}</button>
+    <button class="btn btn-ghost" id="backToReview">{{ui.schetsAanpassen}}</button>
   </div>
 </section>
 
 <section id="insight" class="hidden">
-  <div class="mono">Gratis inzicht</div>
-  <h2 style="margin:12px 0 18px">Wat er in jouw antwoorden opvalt</h2>
+  <div class="mono">{{ui.inzichtEyebrow}}</div>
+  <h2 style="margin:12px 0 18px">{{ui.inzichtKop}}</h2>
   <div id="insBody" class="body"></div>
   <div class="row" style="margin-top:26px">
-    <button class="btn btn-lime" id="unlock">Verder naar de laatste vier keuzes</button>
-    <button class="btn btn-ghost" data-terug="summary">Terug</button>
+    <button class="btn btn-lime" id="unlock">{{ui.inzichtVerder}}</button>
+    <button class="btn btn-ghost" data-terug="summary">{{ui.terugKort}}</button>
   </div>
 </section>
 
 <section id="kalib" class="hidden">
-  <div class="mono">Bijna klaar</div>
-  <h2 style="margin:12px 0 6px">Nog vier korte voorkeuren</h2>
-  <p class="muted">Geen goede of foute antwoorden. Ze helpen om de richtingen straks bij jou te laten passen.</p>
+  <div class="mono">{{ui.bijnaKlaar}}</div>
+  <h2 style="margin:12px 0 6px">{{ui.kalibKop}}</h2>
+  <p class="muted">{{ui.kalibOnder}}</p>
   <div id="kalibBody"></div>
-  <div class="row" style="margin-top:20px"><button class="btn btn-lime" id="kalibKlaar">Klaar, ga verder</button>
-    <button class="btn btn-ghost" data-terug="insight">Terug</button></div>
+  <div class="row" style="margin-top:20px"><button class="btn btn-lime" id="kalibKlaar">{{ui.kalibVerder}}</button>
+    <button class="btn btn-ghost" data-terug="insight">{{ui.terugKort}}</button></div>
 </section>
 
 
@@ -1573,21 +1540,21 @@
   <div id="scenBody"></div>
   <div id="afvallers"></div>
   <div id="herzien"></div>
-  <div class="row" style="margin-top:18px"><button class="btn btn-ghost" data-terug="kalib">Terug</button></div>
+  <div class="row" style="margin-top:18px"><button class="btn btn-ghost" data-terug="kalib">{{ui.terugKort}}</button></div>
 </section>
 
 <section id="action" class="hidden">
-  <div class="mono">Jouw actiepad</div>
+  <div class="mono">{{ui.actieEyebrow}}</div>
   <h2 style="margin:12px 0 18px" id="actTitle"></h2>
   <div id="actBody" class="body"></div>
-  <div class="row" style="margin-top:20px"><button class="btn btn-ghost" data-terug="scenarios">Terug naar de richtingen</button></div>
-  <button class="zweefterug" data-terug="scenarios" type="button" aria-label="Terug naar de richtingen">
+  <div class="row" style="margin-top:20px"><button class="btn btn-ghost" data-terug="scenarios">{{ui.terugRichtingen}}</button></div>
+  <button class="zweefterug" data-terug="scenarios" type="button" aria-label="{{ui.terugRichtingen}}">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span>Richtingen</span>
+    <span>{{landing.richtingenTerug}}</span>
   </button>
 </section>
 
-<button id="scrollcue" class="hidden" type="button" aria-label="Scroll naar beneden">
+<button id="scrollcue" class="hidden" type="button" aria-label="{{ui.scrollAria}}">
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button>
 
@@ -1601,7 +1568,7 @@
    Wat hier NIET in het taalbestand hoort: de weegformules, de matrix, de
    drempels en de flow-besturing. Die zijn voor beide talen identiek, dus een
    fix daarin geldt meteen voor allebei. */
-const T = (window.TALEN && window.TALEN["nl"]) || (window.TALEN && window.TALEN.nl);
+const T = (window.TALEN && window.TALEN["{{code}}"]) || (window.TALEN && window.TALEN.nl);
 if(!T) throw new Error("taalbestand niet geladen");
 const PRIJS = T.prijs;
 // "Anders: " als voorvoegsel weer van een eigen antwoord af halen. Uit het
@@ -4505,105 +4472,4 @@ try{ checkBetaalTerugkeer(); }catch(e){}
      pagina. De vragen en antwoorden in de FAQPage komen letterlijk uit
      landing.faq, dus ze kunnen niet uit de pas gaan lopen met wat er op het
      scherm staat. -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "inLanguage": "nl",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Is dit een cursus of coaching-traject?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Nee. Eén sessie, één plan. Geen abonnement, geen vervolgtraject dat je moet afzeggen."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Zit hier AI achter?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Ja. Deskshift gebruikt AI om alleen jóuw antwoorden te analyseren. Geen mens leest ze. Het is geen kale chatbot: de intake en het plan zijn er strak omheen gebouwd, zodat de uitkomst over jou gaat en niet over iemand in het algemeen."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is dit niet gewoon een quiz of gimmick?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Nee. Je vult een echte intake in en krijgt direct een inzicht uit je eigen antwoorden, in je eigen woorden terug. Je corrigeert onderweg zelf wat er niet klopt, en elk citaat wordt teruggelegd naast wat je echt hebt opgeschreven, zodat er niets in staat dat je nooit gezegd hebt. Daarna een plan dat je zelf uitvoert."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Wat als het antwoord is dat ik moet blijven waar ik zit?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Dan zeggen we dat, en laten we zien hóe. Soms zit de scherpste richting in je huidige baan: een taak eruit, een tweede vakgebied erbij. Ook dat wordt een concreet plan van zes weken, geen \"ga netwerken en praat met je manager\"."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Wat krijg ik precies voor €25?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Drie richtingen met een pasvorm-score, waarom de andere afvielen, je eerste stap voor deze week, en een plan van zes weken als pdf. Mail je het naar jezelf, dan volgt een week later één herinnering met de acties van week twee. De intake en het inzicht daarvoor zijn gratis."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Ziet iemand anders mijn antwoorden?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Geen mens, nee. Je antwoorden staan op je eigen toestel en gaan alleen naar een AI-dienst die ze verwerkt om jouw inzicht en plan te maken. Verder nergens heen, ook niet naar je werkgever."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Moet ik meteen betalen?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Nee. De intake en het eerste inzicht zijn gratis. Je betaalt pas als je verder wilt naar de drie richtingen."
-      }
-    }
-  ]
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Deskshift",
-  "url": "https://deskshift.pro",
-  "logo": "https://deskshift.pro/brand/deskshift-appicoon-512.png",
-  "description": "Deskshift bouwt uit je eigen antwoorden een persoonlijk plan voor de ruimte die in je werkweek zit, voor mensen van wie het werk te klein is geworden.",
-  "email": "plan@deskshift.pro",
-  "priceRange": "€25"
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Deskshift",
-  "url": "https://deskshift.pro/",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Elke browser",
-  "inLanguage": "nl-NL",
-  "description": "Deskshift is een online tool die kenniswerkers die hun werk sneller af hebben dan hun contracturen helpt om die ruimte om te zetten in een concreet plan, op basis van hun eigen antwoorden. Gratis inzicht, daarna eenmalig 25 euro voor drie richtingen en een plan van zes weken.",
-  "offers": {
-    "@type": "Offer",
-    "price": "25",
-    "priceCurrency": "EUR",
-    "description": "Eenmalig, geen abonnement. Drie richtingen met een pasvorm-score en een plan van zes weken als pdf."
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Deskshift",
-    "url": "https://deskshift.pro"
-  }
-}
-</script>
+{{JSONLD}}
