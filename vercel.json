@@ -16,8 +16,15 @@
     },
     "api/stap.js": {
       "maxDuration": 10
+    },
+    "api/adminmail.js": {
+      "maxDuration": 30
     }
   },
+  "crons": [
+    { "path": "/api/adminmail", "schedule": "0 5 * * *" },
+    { "path": "/api/adminmail", "schedule": "0 6 * * *" }
+  ],
   "rewrites": [
     { "source": "/en", "destination": "/en/index.html" },
     { "source": "/en/", "destination": "/en/index.html" }

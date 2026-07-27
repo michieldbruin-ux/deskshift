@@ -111,3 +111,37 @@ select cron.unschedule('deskshift-meting-opruimen')
   where exists (select 1 from cron.job where jobname = 'deskshift-meting-opruimen');
 
 select cron.schedule('deskshift-meting-opruimen', '17 3 * * *', 'select public.deskshift_meting_opruimen()');
+
+-- ---------------------------------------------------------------------------
+-- Verzendadministratie van de beheerdersmail (api/adminmail.js).
+--
+-- Waarom dit bestaat: de cron van Vercel draait op UTC en 07:00 in Nederland is
+-- 's zomers 05:00 UTC en 's winters 06:00. Daarom staan er twee cron-regels op
+-- hetzelfde pad. Deze tabel zorgt ervoor dat er dan toch één mail uitgaat: wie
+-- als eerste een regel weet toe te voegen mag versturen, de ander vindt hem al
+-- staan en doet niets. Dat vangt ook een herhaald verzoek van Vercel op.
+--
+-- Geen RLS-policy, en dat is de bedoeling: alleen de service-sleutel komt erbij.
+-- De anon-sleutel die in de browserfunctie zit kan hier niets mee.
+create table if not exists public.deskshift_adminmail (
+  soort     text not null,          -- 'dag', 'week' of 'dagfout'
+  periode   text not null,          -- '2026-07-26' of 'week-2026-07-20'
+  verstuurd timestamptz not null default now(),
+  primary key (soort, periode)
+);
+
+alter table public.deskshift_adminmail enable row level security;
+
+comment on table public.deskshift_adminmail is
+  'Welke beheerdersmail al verstuurd is. Voorkomt dubbele mail als de cron twee keer langskomt.';
+
+-- Meer dan een jaar hoeft niet.
+create or replace function public.deskshift_adminmail_opruimen()
+returns void language sql security definer set search_path = public as $$
+  delete from public.deskshift_adminmail where verstuurd < now() - interval '400 days';
+$$;
+
+select cron.unschedule('deskshift-adminmail-opruimen')
+  where exists (select 1 from cron.job where jobname = 'deskshift-adminmail-opruimen');
+
+select cron.schedule('deskshift-adminmail-opruimen', '23 3 * * *', 'select public.deskshift_adminmail_opruimen()');

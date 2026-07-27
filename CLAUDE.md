@@ -49,6 +49,28 @@ slugs volgen wat iemand in het Engels zou zoeken, niet de Nederlandse titel.
 Wel gekoppeld met `hreflang`, dus voeg je er een toe, doe dat dan in beide talen
 of in geen van beide, en zet het paar ook in `sitemap.xml`.
 
+## Beheerdersmail
+
+`api/adminmail.js` stuurt twee overzichten naar de beheerder. De dagmail gaat
+alleen uit als er die dag betaald is, de weekmail gaat elke maandag uit, ook op
+nul. De betalingen komen uit Stripe, de afhakers uit `deskshift_meting`.
+
+De cron van Vercel draait op UTC en 07:00 hier is 's zomers 05:00 UTC en 's
+winters 06:00. Daarom staan er **twee** cron-regels op hetzelfde pad in
+`vercel.json`. De functie slaat de te vroege ronde over, en
+`deskshift_adminmail` houdt bij wat al verstuurd is zodat er per periode één
+mail uitgaat. Wijzig je die twee regels, houd dan beide kanten in de gaten.
+
+Eigen betalingen tellen niet mee: `ADMIN_NEGEER_MAILS` plus het adres van de
+beheerder zelf. Dat werkt alleen voor de betalingen. De meting achter de
+afhakers kent geen mailadres en dat blijft zo, dus een eigen intake die bij de
+paywall stopt staat gewoon in dat getal.
+
+Zonder `CRON_SECRET` weigert het endpoint alles. Een open endpoint dat mail
+verstuurt is erger dan een mail die niet aankomt. Handmatig aanroepen kan met
+`?droog=1`: dat rekent alles door en verstuurt niets. Met `?nu=<iso>` reken je
+een andere datum door.
+
 ## Huisregels voor de teksten
 
 - Nederlands, je-vorm, korte zinnen.
