@@ -3016,7 +3016,7 @@ function profielHtml(prof, P){
       `<li><span class="plabel">${esc(k.label)}</span><span>${esc(k.tekst)}</span></li>`).join("")}</ul>
     <div class="pbagage"><span class="mono">Wat je al hebt liggen</span>
       ${(prof.bagage||[]).map(b=>`<span class="btag">${esc(b)}</span>`).join("")}</div>
-    <div class="mono" style="margin-top:16px;color:#BBC3B7;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${P.slack} uur ruimte in je werkweek en ${P.eigenBasis} uur eigen tijd per week. Je sterkste drijfveer is ${esc((P.rang&&P.rang[0])||"")}.</div>
+    <div class="mono" style="margin-top:16px;color:#BBC3B7;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px">${esc(urenZin(P))}</div>
   </div>`;
 }
 
@@ -3309,6 +3309,25 @@ function profielGetallen(){
           eigenBasis:eigenBasis, risicoTol:Math.max(1,risicoTol), zichtTol:Math.max(1,zichtTol),
           rang:rang, sweet:sweetSpots(), vlak:sorteringVlak()};
 }
+/* De urenzin onder het profiel, op één plek. Hij stond viermaal los in de code
+   (scherm, print, pdf-bijlage en mail) en zei overal "ongeveer 0 uur ruimte in je
+   werkweek" bij iemand die tien uur overwerkt, terwijl de inzichtpagina er een
+   scherm eerder "10 uur méér dan je contract" van maakte. Tekst zonder opmaak,
+   zodat elk van de vier hem in zijn eigen huls kan zetten. */
+function urenZin(P){
+  P = P || {};
+  if(P.slack == null && P.over == null) return "";
+  const eigen = P.eigenBasis != null ? P.eigenBasis : "?";
+  const drijf = (P.rang && P.rang[0]) ? ` Je sterkste drijfveer is ${P.rang[0]}.` : "";
+  if(P.over > 0){
+    return `Berekend uit jouw antwoorden: je werkt ongeveer ${P.over} uur per week méér dan je contract, dus er is geen ruimte in je werkweek. Buiten werktijd houd je ongeveer ${eigen} uur per week over.${drijf}`;
+  }
+  if(P.slack === 0){
+    return `Berekend uit jouw antwoorden: je werkweek zit precies vol, dus er komt geen ruimte vrij zonder dat er iets uit gaat. Buiten werktijd houd je ongeveer ${eigen} uur per week over.${drijf}`;
+  }
+  return `Berekend uit jouw antwoorden: ongeveer ${P.slack} uur ruimte in je werkweek en ${eigen} uur eigen tijd per week.${drijf}`;
+}
+
 const DRIJF = {inkomen:"Extra inkomen", leren:"Leren", erkenning:"Erkenning", prikkel:"Minder verveling"};
 /* Hoe uitgesproken heeft de gebruiker deze onderwerpen zelf geplaatst?
 
@@ -3908,8 +3927,8 @@ function mailRapport(){
       <div style="font-size:15px;color:${MK.petrol}">${esc(k.tekst||"")}</div>
     </td></tr>`).join("");
   const bagage = (prof.bagage||[]).map(b=>`<span style="display:inline-block;background:${MK.paper};color:${MK.ink};border-radius:20px;padding:5px 12px;margin:3px 4px 3px 0;font-size:13px">${esc(b)}</span>`).join("");
-  const uren = (P.slack!=null||P.eigenBasis!=null) ? `Berekend uit je antwoorden: ongeveer ${esc(String(P.slack!=null?P.slack:"?"))} uur ruimte in je werkweek en ${esc(String(P.eigenBasis!=null?P.eigenBasis:"?"))} uur eigen tijd per week.` : "";
-  const drijf = (P.rang&&P.rang[0]) ? ` Je sterkste drijfveer is ${esc(P.rang[0])}.` : "";
+  const uren = esc(urenZin(P));
+  const drijf = "";
   return `<tr><td style="padding:26px 26px 6px">
     <div style="font:bold 12px/1 'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;color:${MK.accent}">Waar je nu staat</div>
     <h1 style="font-size:23px;margin:6px 0 14px;color:${MK.ink}">${esc(prof.archetype||"Je profiel")}</h1>
@@ -4244,10 +4263,7 @@ function pdfAllePlannen(scen, plans, profiel){
   }
   const P = S.pg || profielGetallen() || {};
   if(P.slack !== undefined){
-    d.tekst("Berekend uit jouw antwoorden: ongeveer " + P.slack + " uur ruimte in je werkweek en "
-            + P.eigenBasis + " uur eigen tijd per week. Je sterkste drijfveer is "
-            + ((P.rang && P.rang[0]) || "onbekend") + ".",
-            {grootte:9.5, kleur:[0.310,0.388,0.376], na:4});
+    d.tekst(urenZin(P), {grootte:9.5, kleur:[0.310,0.388,0.376], na:4});
   }
   (scen||[]).forEach((s,i)=>{
     d.pagina();
@@ -4391,7 +4407,7 @@ function printProfielHtml(){
     <div style="height:10px"></div>
     ${punten}
     ${bagage?`<div style="margin:14px 0 0"><div class="mono" style="margin:0 0 3px">Wat je al hebt liggen</div><div>${bagage}</div></div>`:""}
-    <p style="margin:14px 0 0;font-size:13px">Berekend uit jouw antwoorden: ongeveer ${esc(String(P.slack||0))} uur ruimte in je werkweek en ${esc(String(P.eigenBasis||0))} uur eigen tijd per week. Je sterkste drijfveer is ${esc((P.rang&&P.rang[0])||"")}.</p>
+    <p style="margin:14px 0 0;font-size:13px">${esc(urenZin(P))}</p>
   </div>`;
 }
 function printAllesHtml(scen, plans){
