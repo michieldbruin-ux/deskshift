@@ -9,11 +9,16 @@
 -- en is weg zodra de tab sluit. Het bestaat alleen om twee stappen van dezelfde
 -- bezoeker aan elkaar te knopen, en is nergens anders bekend.
 --
--- De tabel staat in het bestaande Supabase-project (VendorRadar) en heet daarom
--- deskshift_meting en niet meting: zo blijft duidelijk waar hij bij hoort. Een
--- eigen project kost 10 euro per maand en dat is te veel voor een tellertabel.
--- Verhuizen is dit bestand opnieuw uitvoeren op een ander project en twee
--- environment variables in Vercel omzetten.
+-- Deskshift heeft een eigen Supabase-project (naxanmyekaqxledmzowh). Dat was
+-- eerst niet zo: de tabel stond in het project van VendorRadar, omdat het voor
+-- een tellertabel zonde leek om een project op te tuigen. Daar is hij weg bij de
+-- beheerdersmail, want die heeft een service-sleutel nodig om te lezen, en zo'n
+-- sleutel gaat langs RLS van ELKE tabel in het project. In één project betekent
+-- dat: een fout in een functie van Deskshift ligt de gebruikersgegevens van
+-- VendorRadar open. Twee projecten is de enige scheiding die dat echt afdekt.
+--
+-- De tabellen heten nog steeds deskshift_iets. Dat mag nu weg, maar het kost
+-- alleen maar een migratie en het leest prima.
 --
 -- Hij staat in het schema public omdat PostgREST alleen dat schema standaard
 -- doorgeeft, en dat is nodig om er vanuit api/stap.js in te kunnen schrijven.

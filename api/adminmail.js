@@ -16,12 +16,16 @@
 //                                erger dan een mail die niet aankomt.
 //   STRIPE_PRIVATE_KEY         - voor de betalingen. Al ingesteld.
 //   BREVO_API_KEY, MAIL_FROM   - voor het versturen. Al ingesteld.
-//   SUPABASE_URL               - al ingesteld.
-//   SUPABASE_SERVICE_ROLE_KEY  - nieuw. De anon-sleutel mag in deze tabel alleen
+//   SUPABASE_URL               - het eigen Deskshift-project.
+//   SUPABASE_SERVICE_ROLE_KEY  - de anon-sleutel mag in de meettabel alleen
 //                                toevoegen en niets lezen (zie meting.sql), dus
 //                                daarmee is de funnel niet uit te lezen. Zonder
 //                                deze sleutel gaat de weekmail wel uit, maar
 //                                zonder het aantal afhakers.
+//                                LET OP: deze sleutel gaat langs RLS van elke
+//                                tabel in het project. Daarom heeft Deskshift een
+//                                eigen Supabase-project en deelt het er geen met
+//                                een andere app.
 //   ADMIN_MAIL                 - optioneel, waar het heen gaat.
 //   ADMIN_NEGEER_MAILS         - optioneel, komma's ertussen. Betalingen op deze
 //                                adressen tellen niet mee. Standaard staat het
