@@ -249,6 +249,9 @@
   .bar .fill{display:block;height:100%;background:var(--lime);min-width:2px}
   .bar .fill.laag{background:var(--warn)}
   .bar .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--slate);text-align:right}
+  /* Balk zonder score: geen kale nul maar de reden waarom er niets staat. */
+  .bar.leeg{grid-template-columns:132px 1fr}
+  .bar .geen{font-size:12px;color:var(--slate);font-style:italic}
   .score{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:700;font-size:30px;line-height:1}
   .afval{border:1px dashed var(--line);border-radius:var(--r);padding:18px 20px;margin-top:8px}
   .afval li{margin-bottom:6px;color:var(--slate);font-size:15px}
@@ -411,7 +414,10 @@
   .og-vink{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--lime);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;margin-top:1px}
   .gratisstap h3{color:var(--chalk)}
   .framebox{background:var(--veld);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-top:20px}
-  .frij{display:grid;grid-template-columns:190px 1fr 44px;gap:12px;align-items:center;margin-bottom:10px}
+  /* Laatste kolom op auto: daar past nu ook "vrijwel niets", de eerlijke vorm
+     van wat eerder een harde 0% was. */
+  .frij{display:grid;grid-template-columns:minmax(110px,190px) 1fr auto;gap:12px;align-items:center;margin-bottom:10px}
+  .frij em{white-space:nowrap;font-size:12px}
   .frij b{display:block;text-transform:capitalize}
   .frij span.track{display:block;height:10px;background:var(--veld);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
   .frij .fill{display:block;height:100%;background:var(--lime)}
@@ -1048,6 +1054,11 @@
   .iw-fill{display:block;height:100%;width:var(--p);background:var(--ink);border-radius:8px;animation:iwFill 1.1s var(--ease) both}
   @keyframes iwFill{from{width:0}}
   .iw-cap{font-size:13.5px;color:var(--slate);margin:12px 0 0}
+  /* Te volle week: het getal rechts is geen winst maar een tekort, dus niet in
+     het groen van de ruimte-variant. */
+  .insight-week.te-vol .iw-top .iw-r b{color:var(--warn)}
+  .insight-week.te-vol .iw-bar{background:rgba(162,78,51,.18)}
+  .insight-week.te-vol .iw-fill{background:var(--warn)}
   /* Genummerde tussenkopjes op de inzichtpagina. Vier gelijk ogende blokken
      onder elkaar lezen als een muur; met een nummer ervoor zie je meteen hoeveel
      er is en waar je bent. */
@@ -1632,7 +1643,9 @@ const SECTIES = [
     intro:"Drie korte vragen over je loopbaan.",
     theorie:"Patronen herhalen zich. Als je in eerdere rollen na een paar maanden leegliep, zegt dat meer over de match tussen jouw tempo en de functie dan over de functie zelf.",
     stappen:[
-      {id:"jaren",type:"slider",vraag:"Hoeveel jaar werk je in totaal?",min:0,max:45,def:8,unit:"jaar"},
+      // labels vangt de nulwaarde af: "0 jaar" leest knullig bij iemand die net
+      // een half jaar bezig is.
+      {id:"jaren",type:"slider",vraag:"Hoeveel jaar werk je in totaal?",min:0,max:45,def:8,unit:"jaar",labels:{0:"minder dan een jaar"}},
       {id:"werkgevers",type:"slider",vraag:"Bij hoeveel werkgevers heb je gewerkt?",min:1,max:15,def:3,unit:"werkgevers"},
       {id:"patroon",type:"choice",vraag:"Herken je dat je werk na een tijd te ruim gaat zitten?",opties:["Ja, in vrijwel elke rol","Ja, in sommige rollen","Nee, dit is de eerste keer","Weet ik niet"]}
     ]},
@@ -1648,7 +1661,10 @@ const SECTIES = [
       // die persoon HR-verantwoordelijk is voor gedetacheerde IT'ers. Functietitel
       // en sector zeggen samen te weinig; dit zegt het wel.
       {id:"dagelijks",type:"longtext",vraag:"Wat doe je op een gewone werkdag?",hint:"Twee of drie dingen waar je tijd echt aan opgaat. Hiermee schatten we je vak niet verkeerd in."},
-      {id:"contract",type:"slider",vraag:"Hoeveel uur staat er in je contract?",min:16,max:45,def:40,unit:"uur"},
+      // Hint erbij in plaats van een extra vraag over loondienst of zelfstandig:
+      // de intake is al lang genoeg, en dit is het enige punt waar het verschil
+      // voor de berekening uitmaakt.
+      {id:"contract",type:"slider",vraag:"Hoeveel uur staat er in je contract?",hint:"Werk je voor jezelf? Neem dan de uren die je jezelf hebt opgelegd.",min:16,max:45,def:40,unit:"uur"},
       {id:"kantoor",type:"slider",vraag:"Hoeveel dagen per week ben je op kantoor?",min:0,max:5,def:2,unit:"dagen"},
       {id:"rolduur",type:"schaal",vraag:"Hoe lang ben je al {functie}?",schaal:ROLDUUR,def:14}
     ]},
@@ -1690,12 +1706,14 @@ const SECTIES = [
       {id:"aldoet",type:"longtext",vraag:"Vul je je eigen ruimte binnen werktijd al in met iets naast je officiële taken?",hint:"Zonder oordeel. Dit is vaker regel dan uitzondering."},
       {id:"droom",type:"longtext",vraag:"Geen geld nodig, geen risico, niemand die meekijkt. Wat ga je doen?",hint:"Mag groot. Mag onrealistisch. Schrijf op wat er als eerste opkomt."},
       {id:"droom2",type:"longtext",vraag:"En over vijf jaar: waar wil je dan goed in zijn?",hint:"Niet welke functie. Welke vaardigheid of welk onderwerp."},
-      {id:"grenzen",type:"multi",vraag:"Wat wil je zeker niet?",hint:"Meerdere antwoorden mogelijk.",opties:["Risico op ontslag","Mijn avonden en weekenden kwijt","Iets dat raakt aan mijn werkgever of sector","Opvallen bij collega's"]},
+      {id:"grenzen",type:"multi",vraag:"Wat wil je zeker niet?",hint:"Meerdere antwoorden mogelijk.",opties:["Mijn inkomen op het spel zetten","Mijn avonden en weekenden kwijt","Iets dat raakt aan mijn werkgever of opdrachtgever","Opvallen bij collega's"]},
       {id:"rangorde",type:"rank",vraag:"Zet op volgorde wat het zwaarst telt",hint:"Nummer 1 telt het zwaarst. Gelijkspel bestaat hier niet.",items:["Leren","Extra inkomen","Erkenning","Minder verveling"]}
     ]}
 ];
 
-const S = { betaald:false, s:0, q:0, ant:{}, pos:{skill:{},energie:{}}, kaarten:[], cvNaam:"", cvB64:"", cvTekst:"", terug:false, transcript:"", scenarios:[], chosen:null, actMsgs:[] };
+// Geen cv-velden meer: er was nergens een uploadveld, dus cvB64 en cvNaam
+// konden nooit gevuld raken en cvTekst werd alleen door de demo gezet.
+const S = { betaald:false, s:0, q:0, ant:{}, pos:{skill:{},energie:{}}, kaarten:[], terug:false, transcript:"", scenarios:[], chosen:null, actMsgs:[] };
 const $ = i => document.getElementById(i);
 // De mobiele CTA-balk hoort alleen op de landing. Zodra we een andere sectie
 // tonen of de landing verbergen, verdwijnt hij hard (de IntersectionObserver
@@ -1801,7 +1819,7 @@ function tpl(str){
 }
 
 async function bewaar(){
-  const d = {s:S.s,q:S.q,ant:S.ant,pos:S.pos,kaarten:S.kaarten,cvNaam:S.cvNaam,cvTekst:S.cvTekst};
+  const d = {s:S.s,q:S.q,ant:S.ant,pos:S.pos,kaarten:S.kaarten};
   try{ await window.storage.set(KEY, JSON.stringify(d)); $("saved").textContent="opgeslagen"; setTimeout(()=>$("saved").textContent="",1600); }catch(e){}
 }
 async function laad(){ try{ const r = await window.storage.get(KEY); return r?JSON.parse(r.value):null; }catch(e){ return null; } }
@@ -1854,14 +1872,17 @@ function spiegelHtml(){
     return spiegelBlok(`Je gaf net aan dat ${a} ${+a===1?"avond":"avonden"} per week echt van jou ${+a===1?"is":"zijn"}. Onthoud dat getal, verderop bepaalt het wat er naast je werk past.`);
   }
   if(id === "talent"){
-    const c = +S.ant.contract || 0, e = +S.ant.echturen;
-    if(!c || isNaN(e)) return "";
-    const echt = Math.min(e, c), gat = c - echt;
-    if(gat > 0) return spiegelBlok(`Even terug: je contract zegt ${c} uur, je schatte ${echt} uur echt werk. Dat verschil van ${gat} uur is het materiaal waar je uitkomst op gaat bouwen.`);
-    return spiegelBlok("Je schatte net dat je week volledig gevuld is met echt werk. Dan wordt des te belangrijker waar je energie zit, en daar gaat deze sectie over.");
+    const u = urenBeeld();
+    if(!u.contract || isNaN(u.echt)) return "";
+    if(u.over > 0) return spiegelBlok(`Even terug: je contract zegt ${u.contract} uur en je schatte ${u.echt} uur echt werk. Dat is ${u.over} uur méér, niet minder. Je week is niet te leeg maar te vol, en dat verandert waar je uitkomst op gaat bouwen.`);
+    if(u.slack > 0) return spiegelBlok(`Even terug: je contract zegt ${u.contract} uur, je schatte ${u.echt} uur echt werk. Dat verschil van ${u.slack} uur is het materiaal waar je uitkomst op gaat bouwen.`);
+    return spiegelBlok("Je schatte net dat je week precies vol zit met echt werk. Dan wordt des te belangrijker waar je energie zit, en daar gaat deze sectie over.");
   }
   if(id === "dromen"){
-    const sweet = matrixData().filter(p=>p.x>.5 && p.y<.5).map(p=>p.naam);
+    // Bij een nauwelijks bewogen sortering hoort hier geen conclusie te staan.
+    // Dat was juist het geval waarin het scherm het stelligst was.
+    if(sorteringVlak()) return spiegelBlok("Je hebt de schuiven dicht bij het midden gelaten. Daar tekent zich nog geen voorkeur in af, dus de vragen hierna wegen straks zwaarder mee.");
+    const sweet = sweetSpots();
     if(sweet.length) return spiegelBlok(`Uit je twee sorteringen: ${sweet.slice(0,3).join(", ").toLowerCase()} ${sweet.length===1?"valt":"vallen"} bij jou in het vak goed én leuk. De vragen hierna bepalen wat je daarmee wilt.`);
     return spiegelBlok("In je twee sorteringen viel niets in het vak goed én leuk. Dat is zelf al een uitkomst; deze sectie zoekt de richting dan ergens anders.");
   }
@@ -1915,7 +1936,10 @@ function veldTeken(st){
       <input type="range" id="in" min="${st.min}" max="${st.max}" step="${st.step||1}" value="${val}">
       <div class="ends"><span>${ends[0]}</span><span>${ends[1]}</span></div></div>`;
     const upd = x => {
-      $("slv").textContent = x;
+      const bijz = st.labels && st.labels[x];
+      $("slv").textContent = bijz || x;
+      // Bij een bijzonder label staat de eenheid al in de tekst.
+      const eh = v.querySelector(".sl-val small"); if(eh) eh.style.display = bijz ? "none" : "";
       if(st.pctVan && S.ant[st.pctVan]) $("sub").textContent = Math.round(x/S.ant[st.pctVan]*100) + "% van je contracturen";
     };
     upd(val);
@@ -2110,7 +2134,7 @@ function leesVeld(){
 }
 function ingevuld(){
   const st = stap();
-  if(st.type==="cv"||st.type==="longtext"||st.type==="multi") return true;
+  if(st.type==="longtext"||st.type==="multi") return true;
   if(st.type==="strip") return Object.keys(S.pos[st.bron]||{}).length >= 3;
   const a = S.ant[st.id];
   return !(a===null || a===undefined || a==="");
@@ -2212,7 +2236,7 @@ $("start").onclick = async () => { await startIntake(); openPrivacy(()=>{}); };
 $("resume").onclick = async () => {
   meet("intake.hervat");
   const d = await laad();
-  if(d){ S.s=d.s; S.q=d.q; S.ant=d.ant||{}; S.pos=d.pos||{skill:{},energie:{}}; S.kaarten=d.kaarten||[]; S.cvNaam=d.cvNaam||""; S.cvTekst=d.cvTekst||""; }
+  if(d){ S.s=d.s; S.q=d.q; S.ant=d.ant||{}; S.pos=d.pos||{skill:{},energie:{}}; S.kaarten=d.kaarten||[]; }
   hide("landing"); show("intake"); toonStap(); // zonder opslag: verder waar je in het geheugen was
 };
 if($("homeBtn")) $("homeBtn").onclick = () => {
@@ -2301,7 +2325,6 @@ const DEMO = {
   ant:{
     leeftijd:33, opleiding:"Hbo", thuis:"Samenwonend zonder kinderen", avonden:4,
     jaren:8, werkgevers:4, patroon:"Ja, in vrijwel elke rol",
-    cv:"(profieltekst meegegeven)",
     functie:"Strategic Partner Manager", sector:"HR-dienstverlening en flexbranche",
     dagelijks:"Gesprekken met partners over samenwerkingen, businesscases doorrekenen, en intern afstemmen met sales en legal om afspraken rond te krijgen.",
     contract:40, kantoor:2, rolduur:"2 jaar",
@@ -2317,7 +2340,7 @@ const DEMO = {
     aldoet:"Ja. Ik bouw en valideer eigen productideeën, meestal in de uren dat de agenda leeg is.",
     droom:"Een eigen product bouwen, klanten vinden en het uiteindelijk verkopen.",
     droom2:"Iets van nul naar één zetten. Niet één vak, maar het bouwen zelf.",
-    grenzen:["Iets dat raakt aan mijn werkgever of sector"],
+    grenzen:["Iets dat raakt aan mijn werkgever of opdrachtgever"],
     rangorde:["Extra inkomen","Leren","Minder verveling","Erkenning"]
   },
   pos:{
@@ -2328,14 +2351,13 @@ const DEMO = {
               "Uitzoeken":0.90,"Bouwen of maken":0.94,"Anderen helpen":0.58,"Nieuwe mensen spreken":0.80,
               "Beslissen":0.62,"Details controleren":0.14,"Documenteren":0.10,"Schrijven":0.52,"Improviseren":0.84 }
   },
-  cvTekst:"Strategic Partner Manager. Ruim zeven jaar in channel partnerships, alliance management en partnerstrategie. Eerder Strategy en Planning Manager, en alliance manager voor een groot techpartnerschap. Sterk in het opzetten van nieuwe samenwerkingen, minder in het beheren ervan zodra het loopt.",
   // De vier kalibratie-keuzes, zodat de testmodus tot en met de uitkomst kan doorlopen.
   kalib:{ bewijs:"leren", ritme:"sprint", spijt:"tijd", gezelschap:"alleen" }
 };
 function demoVul(){
   S.ant = JSON.parse(JSON.stringify(DEMO.ant));
   S.pos = JSON.parse(JSON.stringify(DEMO.pos));
-  S.cvTekst = DEMO.cvTekst; S.cvNaam = ""; S.kaarten = KAARTEN.slice();
+  S.kaarten = KAARTEN.slice();
   S.ant.skill = S.pos.skill; S.ant.energiekaart = S.pos.energie;
 }
 // Testmodus: vult de antwoorden in en loopt meteen door naar de uitkomst, tot
@@ -2369,8 +2391,20 @@ $("demoSchets").onclick = async () => {
 $("demoLoop").onclick = async () => { demoVul(); S.s=0; S.q=0; await bewaar(); hide("landing"); show("intake"); toonStap(); };
 
 /* ---------- overzicht ---------- */
-function leesbaar(st){
-  if(st.type==="cv") return S.ant.cv || "overgeslagen";
+/* Twee versies van hetzelfde antwoord, en dat onderscheid is belangrijk.
+
+   leesbaarRuw geeft terug wat de gebruiker letterlijk typte. Dat is wat er in de
+   prompt hoort. Hier stond eerst esc() in, waardoor er "Beleidsnota&#39;s
+   schrijven" naar het model ging. Twee gevolgen: het model las vervuilde tekst,
+   en citeerde het zo'n zin woordelijk terug, dan keurde citaatEcht() het af,
+   want normTekst maakt van het origineel "beleidsnotas" en van het citaat
+   "beleidsnota 39 s". Iedereen met een apostrof in een antwoord raakte daarmee
+   stil zijn citaten kwijt, en juist die citaten zijn de reden dat iemand betaalt.
+
+   leesbaar escapet wel, want die gaat via innerHTML het scherm op. Let op de
+   strip-tak: die namen zijn deels door de gebruiker zelf getypt en gingen
+   voorheen ongeescaped het overzicht in. */
+function leesbaarRuw(st){
   const a = S.ant[st.id];
   if(st.type==="dual" && a) return `${a.a} bij het begin, ${a.b} aan het eind`;
   if(st.type==="strip"){
@@ -2380,8 +2414,10 @@ function leesbaar(st){
   }
   if(Array.isArray(a)) return a.length? a.join(", ") : "niets aangevinkt";
   if(a===""||a===null||a===undefined) return "overgeslagen";
-  return esc(a) + (st.unit&&st.type==="slider"?(" "+st.unit):"");
+  if(st.type==="slider" && st.labels && st.labels[a]) return st.labels[a];
+  return String(a) + (st.unit&&st.type==="slider"?(" "+st.unit):"");
 }
+function leesbaar(st){ return esc(leesbaarRuw(st)); }
 function naarReview(){
   meet("overzicht");
   hide("intake"); show("review");
@@ -2402,6 +2438,55 @@ function matrixData(){
   const sk = S.pos.skill||{}, en = S.pos.energie||{};
   const namen = Object.keys(sk).concat(Object.keys(en).filter(k=>!sk[k]));
   return namen.map(n=>({naam:n, x:(en[n]!==undefined?en[n]:0.5), y:1-(sk[n]!==undefined?sk[n]:0.5)}));
+}
+
+/* Wat telt als "hier ben je goed in én dit vind je leuk".
+
+   De drempel lag op 0.5, dus precies op het midden. Een schuif die je net over
+   het midden duwt telde daarmee even zwaar als een schuif die je helemaal naar
+   rechts sleept. Juist iemand die twijfelt en alles rond het midden laat staan,
+   kreeg zo de stelligste uitspraken ("dit valt bij jou in het vak goed én
+   leuk") en bijna de hoogste pasvorm. Precies omgekeerd aan wat het hoort te
+   doen. Vanaf 0.62 is een plaatsing een keuze en geen ruis. */
+const SWEET_DREMPEL = 0.62;
+function sweetSpots(){
+  return matrixData().filter(p => p.x >= SWEET_DREMPEL && (1 - p.y) >= SWEET_DREMPEL).map(p => p.naam);
+}
+// Goed in, maar geen energie van. Zelfde drempels, andere kant.
+function valkuilen(){
+  return matrixData().filter(p => p.x <= (1 - SWEET_DREMPEL) && (1 - p.y) >= SWEET_DREMPEL).map(p => p.naam);
+}
+// Staat er genoeg uitgesproken plaatsing om überhaupt iets te beweren? Zo niet,
+// dan hoort de taal eromheen voorzichtig te zijn in plaats van stellig.
+function sorteringVlak(){
+  const d = matrixData();
+  if(d.length < 2) return true;
+  return d.filter(p => Math.abs(p.x - .5) >= .12 || Math.abs(p.y - .5) >= .12).length < 2;
+}
+
+/* De werkweek in getallen, op één plek.
+
+   Hier zat de vervelendste fout van het hele product. Wie meer werkt dan het
+   contract, kreeg overal Math.max(0, contract - echt), dus netjes 0. Het scherm
+   zei dan "0 uur ruimte in je week. Die 0 uur zijn geen luiheid, dat is de
+   ruimte waar je plan straks op bouwt", en de paywall verkocht daar een pasvorm
+   van 98 bij. De premisse van het hele product werd nergens getoetst.
+
+   Nu is het verschil expliciet: slack is ruimte, over is een tekort. Wie
+   overwerkt hoort geen richtingen te krijgen die zijn niet-bestaande uren
+   opvullen, maar richtingen die eerst ruimte máken. */
+function urenBeeld(){
+  const contract = +S.ant.contract || 40;
+  const rauw = S.ant.echturen;
+  const echt = (rauw === undefined || rauw === null || rauw === "") ? contract : +rauw;
+  return {
+    contract: contract,
+    echt: echt,
+    slack: Math.max(0, contract - echt),
+    over: Math.max(0, echt - contract),
+    teVol: echt > contract,
+    vol: echt >= contract,
+  };
 }
 function matrixTeken(el){
   const d = matrixData(); if(!d.length) return;
@@ -2512,17 +2597,18 @@ async function ask(system, messages, tools, maxTokens, tier){
 }
 function bouwTranscript(){
   let t = "";
-  SECTIES.forEach(sec=>{ t += `\n[${sec.naam.toUpperCase()}]\n`; sec.stappen.forEach(st=>{ t += `${tpl(st.vraag)}\n> ${leesbaar(st)}\n`; }); });
-  const d = matrixData();
-  const sweet = d.filter(p=>p.x>.5&&p.y<.5).map(p=>p.naam);
-  const val   = d.filter(p=>p.x<=.5&&p.y<.5).map(p=>p.naam);
+  // leesbaarRuw en niet leesbaar: het model hoort te lezen wat de gebruiker
+  // typte, niet de html-veilige versie daarvan.
+  SECTIES.forEach(sec=>{ t += `\n[${sec.naam.toUpperCase()}]\n`; sec.stappen.forEach(st=>{ t += `${tpl(st.vraag)}\n> ${leesbaarRuw(st)}\n`; }); });
+  const sweet = sweetSpots(), val = valkuilen();
   t += `\n[OVERLAP UIT DE TWEE SORTERINGEN]\nGoed in en vindt de gebruiker leuk: ${sweet.join(", ")||"geen"}\nGoed in maar vindt de gebruiker niet leuk: ${val.join(", ")||"geen"}\n`;
-  if(S.cvTekst) t += `\n[PROFIELTEKST]\n${S.cvTekst.slice(0,4000)}\n`;
+  if(sorteringVlak()) t += `Let op: deze persoon heeft de schuiven nauwelijks bewogen. Trek daar geen conclusies uit en doe geen uitspraken over wat deze persoon goed kan of leuk vindt op basis van die sorteringen.\n`;
+  const u = urenBeeld();
+  if(u.over > 0) t += `\n[WERKWEEK]\nLet op: deze persoon werkt structureel méér dan het contract, ${u.echt} uur op een contract van ${u.contract} uur. Er is dus geen ruimte over in de werkweek maar een tekort van ${u.over} uur. Behandel dit niet als iemand die te weinig te doen heeft.\n`;
   S.transcript = t;
 }
 function bericht(extra){
   const content = [];
-  if(S.cvB64) content.push({type:"document",source:{type:"base64",media_type:"application/pdf",data:S.cvB64}});
   content.push({type:"text",text:(extra||"")+"\n\nDit is de volledige intake:\n"+S.transcript+schetsFeedbackTekst()});
   return [{role:"user",content:content}];
 }
@@ -2533,8 +2619,20 @@ function bericht(extra){
    letterlijk wordt gepresenteerd, wordt hier eerst tegen de eigen antwoorden
    gehouden. Wat niet klopt, verliest alleen de aanhalingstekens of het veld;
    de inhoud zelf blijft staan. */
+// Vangnet naast de fix in leesbaarRuw: mocht er via een oude opgeslagen sessie
+// of een geescaped fragment toch een &#39; in een citaat belanden, dan wordt hij
+// hier alsnog teruggedraaid. Moet vóór het strippen van leestekens gebeuren,
+// anders blijft de 39 als los getal staan en matcht het citaat nooit meer.
+function decodeEntities(s){
+  return String(s||"")
+    .replace(/&#(\d{1,5});/g, (_, n) => String.fromCharCode(+n))
+    .replace(/&#x([0-9a-f]{1,5});/gi, (_, n) => String.fromCharCode(parseInt(n,16)))
+    .replace(/&quot;/g,'"').replace(/&apos;/g,"'")
+    .replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ")
+    .replace(/&amp;/g,"&");
+}
 function normTekst(s){
-  return String(s||"").toLowerCase()
+  return decodeEntities(s).toLowerCase()
     .replace(/[‘’“”„"']/g,"")
     .replace(/[^a-z0-9À-ɏ]+/gi," ")
     .replace(/\s+/g," ").trim();
@@ -2548,7 +2646,6 @@ function antwoordTekst(){
     if(typeof v === "string") delen.push(v);
     if(Array.isArray(v)) delen.push(v.join(" "));
   });
-  if(S.cvTekst) delen.push(S.cvTekst);
   return normTekst(delen.join(" \n "));
 }
 function citaatEcht(c, minWoorden){
@@ -2664,11 +2761,12 @@ async function askJSON(system, messages, tools, maxTokens, tier){
 }
 
 const TOON = `Je bent een kritische, eerlijke gesprekspartner, geen life coach. Geen coach-jargon, geen slijmerij, geen uitroeptekens. Direct, een beetje droog, positief zonder te vleien. Nederlands, korte zinnen, geen gedachtestreepjes.
-Nooit suggereren dat iemand moet stoppen met zijn baan of iets drastisch moet veranderen. Nooit doen alsof deze gegevens gedeeld worden.
+Nooit suggereren dat iemand de eigen baan moet opzeggen of iets drastisch moet veranderen. Nooit doen alsof deze gegevens gedeeld worden.
 Je kent het job demands-resources model, job crafting, de zelfdeterminatietheorie en flow, en gebruikt die kaders zonder ermee te pronken.
 Schrijf altijd in de je-vorm. Gebruik nooit hij, zij, hem of haar over de gebruiker, en gok nooit naar geslacht.
 De sector die is ingevuld zegt wat de werkgever doet, niet wat deze persoon doet. Iemand die HR-werk doet bij een IT-bedrijf is geen IT'er. Ga altijd uit van wat er staat bij wat deze persoon op een gewone werkdag doet en bij de eigen taken; de functietitel en de sector zijn alleen context. Vul nooit vakinhoud in die uit de sector komt maar nergens in de antwoorden terugkomt.
-Belangrijk over tijd: de uren die binnen de werkweek overblijven zijn geen vrije tijd. Het blijft betaalde tijd van de werkgever. Noem het ruimte in de werkweek, nooit vrije tijd, en stel binnen die uren alleen dingen voor die je aan je werkgever zou kunnen uitleggen, zoals leren, oefenen, verkennen of iets opbouwen dat de organisatie ook iets oplevert. Alles wat echt voor eigen rekening is, zoals een eigen project of iets met inkomsten, plan je in de eigen uren buiten werktijd.`;
+Belangrijk over tijd: de uren die binnen de werkweek overblijven zijn geen vrije tijd. Het blijft betaalde tijd. Noem het ruimte in de werkweek, nooit vrije tijd, en stel binnen die uren alleen dingen voor die te verantwoorden zijn aan wie het werk betaalt, zoals leren, oefenen, verkennen of iets opbouwen dat de organisatie ook iets oplevert. Alles wat echt voor eigen rekening is, zoals een eigen project of iets met inkomsten, plan je in de eigen uren buiten werktijd.
+Werkt deze persoon voor zichzelf, blijkend uit de functietitel of de antwoorden, dan is er geen werkgever en geen leidinggevende. Spreek dan over opdrachtgevers en over eigen keuzes, en stel nooit een gesprek met een leidinggevende voor.`;
 
 /* ---------- as-is schets als kaarten ---------- */
 $("toSummary").onclick = async () => {
@@ -2818,9 +2916,10 @@ function insLabel(nr, tekst){
 }
 function inzichtHtml(d, staat){
   d = d || {}; staat = staat || {kern:"klaar", diepte:"klaar"};
-  const contract = S.ant.contract||40, echt = Math.min(S.ant.echturen||0, contract);
-  const ruimte = Math.max(0, contract-echt);
-  const pct = contract ? Math.round(echt/contract*100) : 0;
+  const u = urenBeeld();
+  // De balk loopt tot 100%: bij overwerk is hij vol en zegt het cijfer ernaast
+  // hoeveel er overheen gaat.
+  const pct = u.contract ? Math.min(100, Math.round(u.echt/u.contract*100)) : 0;
   const sp = d.spanning||null;
   return `
     <div class="insight-lead">
@@ -2832,13 +2931,19 @@ function inzichtHtml(d, staat){
     </div>
 
     ${insLabel(2, "Je week, uit je eigen antwoorden")}
-    <div class="insight-week">
+    <div class="insight-week${u.teVol?" te-vol":""}">
       <div class="iw-top">
-        <span><b>${echt}</b> van ${contract} uur echt werk</span>
-        <span class="iw-r"><b>${ruimte}</b> uur ruimte in je week</span>
+        <span><b>${u.echt}</b> van ${u.contract} uur echt werk</span>
+        ${u.teVol
+          ? `<span class="iw-r"><b>${u.over}</b> uur méér dan je contract</span>`
+          : `<span class="iw-r"><b>${u.slack}</b> uur ruimte in je week</span>`}
       </div>
       <div class="iw-bar" aria-hidden="true"><span class="iw-fill" style="--p:${pct}%"></span></div>
-      <p class="iw-cap">Die ${ruimte} uur zijn geen luiheid. Dat is de ruimte waar je plan straks op bouwt.</p>
+      <p class="iw-cap">${u.teVol
+        ? `Je week is niet te leeg maar te vol. Dat is een ander probleem, en je uitkomst hierna gaat dan ook niet over ruimte opvullen maar over ruimte maken.`
+        : u.vol
+          ? `Je week zit precies vol. Er is geen ruimte die vanzelf ontstaat, dus je uitkomst hierna begint bij wat eruit kan.`
+          : `Die ${u.slack} uur zijn geen luiheid. Dat is de ruimte waar je plan straks op bouwt.`}</p>
     </div>
 
     ${insLabel(3, "Waar het bij jou schuurt")}
@@ -3176,64 +3281,146 @@ document.querySelectorAll("[data-terug]").forEach(b=>b.onclick=()=>{
 
 /* ---------- weging in code, niet door het model ---------- */
 function profielGetallen(){
-  const contract = S.ant.contract||40, echt = S.ant.echturen||contract;
-  const slack = Math.max(0, contract - echt);
+  const u = urenBeeld();
   const avonden = S.ant.avonden||0;
-  let ruimte = Math.round(slack*0.6);          // binnen werktijd, blijft tijd van de werkgever
+  let ruimte = Math.round(u.slack*0.6);          // binnen werktijd, blijft betaalde tijd
   const eigenBasis = Math.round(avonden*1.2);   // eigen uren buiten werk (rauw, voor weergave)
   let eigen  = eigenBasis;
   if(S.kalib.ritme==="sprint"){ ruimte = Math.round(ruimte*1.3); eigen = Math.round(eigen*1.8); }
+  // Wie structureel overwerkt heeft ook buiten werktijd minder over dan de
+  // avondtelling suggereert. Niet doen alsof die uren onaangetast zijn.
+  if(u.over > 0) eigen = Math.max(1, Math.round(eigen * 0.6));
   let beschikbaar = ruimte + eigen;
   const g = S.ant.grenzen||[];
+  const heeft = w => g.some(x => String(x).toLowerCase().indexOf(w) >= 0);
   let risicoTol = 3;
-  if(g.indexOf("Risico op ontslag")>=0) risicoTol -= 1;
-  if(g.indexOf("Iets dat raakt aan mijn werkgever of sector")>=0) risicoTol -= 0.5;
+  // "ontslag" staat er voor oudere opgeslagen sessies bij: de optietekst heet nu
+  // "mijn inkomen op het spel zetten", want een zzp'er wordt niet ontslagen.
+  if(heeft("inkomen") || heeft("ontslag")) risicoTol -= 1;
+  // Op tekst matchen en niet op de hele zin, zodat een aangepaste optietekst de
+  // weging niet stilletjes uitschakelt.
+  if(heeft("werkgever")) risicoTol -= 0.5;
   if(S.kalib.spijt==="geld") risicoTol -= 0.5;
-  let zichtTol = g.indexOf("Opvallen bij collega's")>=0 ? 2 : 4;
+  let zichtTol = heeft("opvallen") ? 2 : 4;
   if(S.kalib.spijt==="gezicht") zichtTol -= 1;
   const rang = S.ant.rangorde||["Leren","Extra inkomen","Erkenning","Minder verveling"];
-  const sweet = matrixData().filter(p=>p.x>.5&&p.y<.5).map(p=>p.naam);
-  return {beschikbaar:Math.max(2,beschikbaar), ruimte:ruimte, eigen:eigen, slack:slack, eigenBasis:eigenBasis, risicoTol:Math.max(1,risicoTol), zichtTol:Math.max(1,zichtTol), rang:rang, sweet:sweet};
+  return {beschikbaar:Math.max(1,beschikbaar), ruimte:ruimte, eigen:eigen,
+          slack:u.slack, over:u.over, teVol:u.teVol, contract:u.contract, echt:u.echt,
+          eigenBasis:eigenBasis, risicoTol:Math.max(1,risicoTol), zichtTol:Math.max(1,zichtTol),
+          rang:rang, sweet:sweetSpots(), vlak:sorteringVlak()};
 }
 const DRIJF = {inkomen:"Extra inkomen", leren:"Leren", erkenning:"Erkenning", prikkel:"Minder verveling"};
+/* Hoe uitgesproken heeft de gebruiker deze onderwerpen zelf geplaatst?
+
+   Dit verving de oude sterkte-telling, die circulair was: de prompt draagt het
+   model op sterktes te kiezen uit de sweet-lijst, en de code telde daarna
+   hoeveel van die sterktes in diezelfde lijst voorkwamen. Dat werd vrijwel
+   altijd 100. Nu telt de stand van de schuiven zelf, dus een onderwerp waar
+   iemand goed in is maar geen energie van krijgt levert netjes een halve score
+   op in plaats van een volle. */
+function sterkteScore(sterktes){
+  const sk = S.pos.skill||{}, en = S.pos.energie||{};
+  const sleutels = Object.keys(sk).concat(Object.keys(en).filter(k=>sk[k]===undefined));
+  if(!sleutels.length) return null;              // geen sortering: niets te scoren
+  const zoek = naam => {
+    const b = String(naam||"").toLowerCase();
+    if(!b) return null;
+    return sleutels.find(s=>{ const a = s.toLowerCase(); return a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0; }) || null;
+  };
+  let som = 0, tel = 0;
+  (sterktes||[]).slice(0,3).forEach(x=>{
+    const k = zoek(x);
+    if(k === null) return;
+    const goed = sk[k] === undefined ? 0.5 : sk[k];
+    const leuk = en[k] === undefined ? 0.5 : en[k];
+    som += (goed*0.5 + leuk*0.5) * 100; tel++;
+  });
+  // Noemde het model alleen dingen die nergens in de sortering staan, dan is er
+  // geen bewijs voor of tegen. Middenwaarde, geen nul.
+  if(!tel) return 45;
+  return Math.round(som/tel);
+}
+
 function scoreKandidaat(k, P){
   const uren = +k.uren || 4;
-  const over = Math.max(0, uren - P.beschikbaar);
   const onder = Math.max(0, P.beschikbaar - uren);
-  const tijd = Math.max(0, 100 - over*9 - Math.min(onder, 12)*1.5);
-  const risico = Math.max(0, 100 - Math.max(0,(+k.risico||3) - P.risicoTol)*30 - Math.max(0,(+k.zichtbaarheid||3) - P.zichtTol)*18);
+
+  /* Tijd als verhouding in plaats van als aftrek. De oude formule trok 9 punten
+     af per uur tekort, waardoor een richting van 3 uur bij 2 beschikbare uren
+     nog op 91 uitkwam. Nu weegt hoeveel van de gevraagde uren er echt zijn. */
+  const dekking = uren > 0 ? Math.min(1, P.beschikbaar / uren) : 1;
+  let tijd = 100 * Math.pow(dekking, 1.35);
+  // Ruim onder je mogelijkheden blijven is ook geen goede pasvorm.
+  if(onder > 8) tijd -= Math.min(18, (onder - 8) * 2);
+  tijd = Math.max(0, Math.min(100, tijd));
+
+  /* Grenzen. Voorheen was alles binnen de tolerantie precies 100, dus vrijwel
+     iedere kandidaat scoorde hier vol. Nu telt ook hoe dicht je tegen je eigen
+     grens aan zit: risico 3 bij tolerantie 3 is niet hetzelfde als risico 1. */
+  const kr = +k.risico || 3, kz = +k.zichtbaarheid || 3;
+  const risico = Math.max(0,
+    100 - Math.max(0, kr - P.risicoTol)*30 - Math.max(0, kz - P.zichtTol)*18
+        - (Math.max(0, kr - 1)/4)*14 - (Math.max(0, kz - 1)/4)*10);
+
+  // Drijfveer: de bovengrens is 92 en niet 100, zodat een perfecte match nog
+  // ruimte laat en het totaal niet vanzelf tegen het plafond loopt.
   const idx = P.rang.indexOf(DRIJF[k.levert]||"");
-  let drijf = idx<0 ? 50 : [100,76,52,32][idx];
-  if(S.kalib.bewijs==="inkomen" && k.levert==="inkomen") drijf = Math.min(100, drijf+14);
-  if(S.kalib.bewijs==="leren" && k.levert==="leren") drijf = Math.min(100, drijf+14);
-  if(S.kalib.bewijs==="werk" && k.type==="taakverrijking") drijf = Math.min(100, drijf+16);
-  if(S.kalib.bewijs==="erkenning" && k.levert==="erkenning") drijf = Math.min(100, drijf+14);
-  const st = k.sterktes||[];
-  const raak = st.filter(x=>P.sweet.some(s=>{
-    const a=s.toLowerCase(), b=String(x).toLowerCase();
-    return a.indexOf(b)>=0 || b.indexOf(a)>=0;
-  })).length;
-  const sterkte = st.length ? Math.round(Math.min(1, raak/Math.min(st.length,3))*100) : 50;
+  let drijf = idx<0 ? 45 : [92,72,50,30][idx];
+  if(S.kalib.bewijs==="inkomen" && k.levert==="inkomen") drijf += 14;
+  if(S.kalib.bewijs==="leren" && k.levert==="leren") drijf += 14;
+  if(S.kalib.bewijs==="werk" && k.type==="taakverrijking") drijf += 16;
+  if(S.kalib.bewijs==="erkenning" && k.levert==="erkenning") drijf += 14;
+  drijf = Math.min(96, drijf);
+
+  // Null betekent: er is geen sortering om op te bouwen. Dat is iets anders dan
+  // een score van nul, en het hoort ook anders op het scherm te komen.
+  const sterkteRuw = P.vlak ? null : sterkteScore(k.sterktes);
+  const sterkte = sterkteRuw === null ? 50 : sterkteRuw;
+
   const bars = [
     {label:"Past in je week", score:Math.round(tijd)},
     {label:"Past bij je grenzen", score:Math.round(risico)},
     {label:"Bedient je drijfveer", score:Math.round(drijf)},
-    {label:"Bouwt op je sterkte", score:Math.round(sterkte)}
+    sterkteRuw === null
+      ? {label:"Sluit aan op je sortering", score:null, tekst:"te weinig geplaatst"}
+      : {label:"Bouwt op je sterkte", score:Math.round(sterkteRuw)}
   ];
-  const totaal = Math.round((tijd*0.25 + risico*0.3 + drijf*0.25 + sterkte*0.2));
+
+  /* Kromme over het totaal. Zonder deze kwam zeventien van de twintig
+     testprofielen op 92 of hoger uit, en zei "pasvorm 96" dus niets meer. Met
+     de kromme wordt de bovenkant weer schaars en betekent een hoge score iets. */
+  const ruw = tijd*0.28 + risico*0.26 + drijf*0.24 + sterkte*0.22;
+  const totaal = Math.max(1, Math.round(100 * Math.pow(ruw/100, 1.35)));
   return {bars:bars, totaal:totaal};
 }
 function frameTeken(){
   const el = document.getElementById("frame"); if(!el) return;
-  const map = {taakverrijking:"blijven", leren:"schuiven", zijproject:"switchen"};
-  const uitleg = {blijven:"Meer halen uit de baan die je hebt", schuiven:"Zelfde werkgever, ander zwaartepunt", switchen:"Iets eigen opbouwen naast je werk"};
+  const uitleg = {blijven:"Meer halen uit de baan die je hebt", schuiven:"Zelfde baan, ander zwaartepunt", switchen:"Iets eigen opbouwen naast je werk"};
   const punten = {blijven:0, schuiven:0, switchen:0};
-  S.scenarios.forEach(s=>{ const k = map[s.id]; if(k) punten[k] = Math.max(punten[k], s.totaal||0); });
+  /* "leren" telde volledig als schuiven, maar leren vóór je huidige rol is
+     gewoon blijven. Daardoor wees het frame bij iemand die tevreden is en zich
+     wil verdiepen nipt naar schuiven. Leren telt nu voor beide kanten mee, met
+     het zwaartepunt bij blijven, want dat is waar de meeste leerrichtingen
+     landen. Ook s.type als terugval, want vóór het ontgrendelen bestaat s.id nog
+     niet en stond het hele frame op nul. */
+  S.scenarios.forEach(s=>{
+    const soort = s.id || s.type;
+    const t = s.totaal || 0;
+    if(soort === "taakverrijking") punten.blijven = Math.max(punten.blijven, t);
+    else if(soort === "zijproject") punten.switchen = Math.max(punten.switchen, t);
+    else if(soort === "leren"){
+      punten.blijven = Math.max(punten.blijven, Math.round(t*0.55));
+      punten.schuiven = Math.max(punten.schuiven, t);
+    }
+  });
   const som = Object.values(punten).reduce((a,b)=>a+b,0) || 1;
   const rijen = Object.keys(punten).map(k=>{
     const pct = Math.round(punten[k]/som*100);
+    // Een harde 0% is stelliger dan de data draagt: het betekent alleen dat er
+    // in deze top drie geen richting van dat type zat.
     return `<div class="frij"><div><b>${k}</b><span>${uitleg[k]}</span></div>
-      <span class="track"><span class="fill" style="width:${pct}%"></span></span><em>${pct}%</em></div>`;
+      <span class="track"><span class="fill" style="width:${pct}%"></span></span>
+      <em>${pct > 0 ? pct + "%" : "vrijwel niets"}</em></div>`;
   }).join("");
   const winnaar = Object.keys(punten).sort((a,b)=>punten[b]-punten[a])[0];
   el.innerHTML = `<div class="framebox">
@@ -3245,9 +3432,16 @@ function frameTeken(){
     </div>`;
 }
 function barsHtml(bars){
-  return `<div class="bars">${bars.map(b=>`<div class="bar"><span>${b.label}</span>
-    <span class="track"><span class="fill${b.score<45?" laag":""}" style="width:${b.score}%"></span></span>
-    <span class="n">${b.score}</span></div>`).join("")}</div>`;
+  // Een balk zonder score is niet hetzelfde als een balk op nul. Bij een lege of
+  // nauwelijks bewogen sortering stond hier eerder drie keer een kale 0, en dat
+  // leest als "dit rapport heeft niets met jou gedaan" terwijl er simpelweg geen
+  // sorteerbeeld is om op te bouwen.
+  return `<div class="bars">${bars.map(b=> b.score === null || b.score === undefined
+    ? `<div class="bar leeg"><span>${esc(b.label)}</span>
+       <span class="geen">${esc(b.tekst||"geen beeld")}</span></div>`
+    : `<div class="bar"><span>${esc(b.label)}</span>
+       <span class="track"><span class="fill${b.score<45?" laag":""}" style="width:${b.score}%"></span></span>
+       <span class="n">${b.score}</span></div>`).join("")}</div>`;
 }
 
 /* ---------- de vier stappen ---------- */
@@ -3314,26 +3508,44 @@ function gangStop(){
   setTimeout(()=>{ $("gang").innerHTML=""; }, 900);
 }
 
-const P_ANALYSE = TOON + `
+/* Het derde label was hard "Je patroon". Bij iemand met één werkgever, een half
+   jaar ervaring en "weet ik niet" op de patroonvraag moet het model dan een
+   patroon opschrijven dat er niet is, en de gebruiker leest dat als analyse. Bij
+   een dunne werkgeschiedenis heet dat blok nu "Waar je nu staat". */
+function dunneGeschiedenis(){
+  const wg = +S.ant.werkgevers || 0, jr = +S.ant.jaren || 0;
+  return wg < 2 || jr < 2 || S.ant.patroon === "Weet ik niet" || S.ant.patroon === "Nee, dit is de eerste keer";
+}
+function P_ANALYSE(){
+  const dun = dunneGeschiedenis();
+  return TOON + `
 
 Je werkt als loopbaancoach en vat deze persoon samen voor een eerste gesprek. Kijk naar het patroon achter de antwoorden en wees eerlijk over wat iemand tegenhoudt. Spreek over de persoon, niet over tools of techniek.
 
 Schrijf kort. Elke regel is een losse observatie van maximaal twaalf woorden, zonder bijzinnen en zonder alinea's.
 Antwoord uitsluitend met geldige JSON:
 {"archetype":"drie tot vijf woorden","punten":[{"label":"twee woorden","tekst":"maximaal 12 woorden, in de je-vorm"}],"bagage":["maximaal 6 woorden","nog een","nog een"]}
-Precies vier punten, met deze labels in deze volgorde: Wat je beweegt, Wat je tegenhoudt, Je patroon, Blinde vlek.`;
+Precies vier punten, met deze labels in deze volgorde: Wat je beweegt, Wat je tegenhoudt, ${dun?"Waar je nu staat":"Je patroon"}, Blinde vlek.` + (dun ? `
+LET OP: deze persoon heeft nog weinig werkgeschiedenis of geeft zelf aan geen patroon te herkennen. Beweer dan geen patroon over meerdere banen heen. Beschrijf bij "Waar je nu staat" alleen wat er in deze antwoorden feitelijk staat, en zeg desnoods gewoon dat het daarvoor nog te vroeg is.` : "");
+}
 
 function P_KANDIDATEN(P, feedback){
   return TOON + `
 
-Je bent loopbaancoach. Bedenk zes richtingen voor de komende maanden: twee binnen zijn huidige baan, twee gericht leren of ontwikkelen, twee eigen initiatieven naast het werk.
+Je bent loopbaancoach. Bedenk zes richtingen voor de komende maanden: twee binnen de huidige baan, twee gericht leren of ontwikkelen, twee eigen initiatieven naast het werk.
 
 Belangrijk voor het niveau:
 - Denk in richtingen en thema's, niet in tools of techniek. Geen software, platformen of automatiseringspakketten noemen, tenzij de persoon ze zelf noemde als interesse.
-- Een richting beschrijft wat voor werk iemand gaat doen en wat het hem oplevert, bijvoorbeeld "intern begeleider worden voor nieuwe collega's" of "een tweede vakgebied opbouwen naast je huidige".
-- Sluit aan bij wat deze persoon goed kan en leuk vindt: ${P.sweet.join(", ")||"onbekend"}.
+- Een richting beschrijft wat voor werk iemand gaat doen en wat het deze persoon oplevert, bijvoorbeeld "intern begeleider worden voor nieuwe collega's" of "een tweede vakgebied opbouwen naast je huidige".
+- ${P.vlak
+  ? `Deze persoon heeft de twee sorteringen nauwelijks bewogen, dus er is geen betrouwbaar beeld van wat goed gaat en energie geeft. Leun op de antwoorden in eigen woorden en beweer niets over sterktes uit die sorteringen.`
+  : `Sluit aan bij wat deze persoon goed kan en leuk vindt: ${P.sweet.join(", ")||"onbekend"}.`}
 - Elke richting moet binnen zes weken een eerste zichtbaar resultaat kunnen opleveren.
-- Deze persoon ziet op zijn scherm dat er ongeveer ${P.slack} uur ruimte in de werkweek zit en ongeveer ${P.eigenBasis} uur eigen tijd per week. Noem geen andere getallen dan deze twee, anders spreekt je tekst het scherm tegen. Reken er intern wel op dat daarvan realistisch ongeveer ${P.ruimte} uur in de werkweek en ${P.eigen} uur eigen tijd echt besteed kan worden, want niet alle ruimte is vrij te besteden. Ruimte binnen de werkweek blijft tijd van de werkgever: daar past leren, verkennen of iets opbouwen dat het werk ook dient. Alles wat puur voor eigen rekening is, hoort in de eigen uren.
+${P.over > 0
+  ? `- LET OP DE WERKWEEK. Deze persoon werkt ${P.echt} uur op een contract van ${P.contract} uur, dus ${P.over} uur méér dan afgesproken. Er is géén ruimte in de werkweek. Doe niet alsof die uren er zijn en noem nooit een aantal uren ruimte in de werkweek. Minstens vier van de zes richtingen moeten eerst ruimte máken: taken afstoten, werk overdragen, verwachtingen bijstellen, of iets structureel oplossen dat nu tijd vreet. Buiten werktijd is er ongeveer ${P.eigenBasis} uur per week, en houd daar rekening met vermoeidheid.`
+  : P.slack === 0
+    ? `- De werkweek van deze persoon zit precies vol: ${P.echt} uur op een contract van ${P.contract} uur. Er komt geen ruimte vrij zonder dat er iets uit gaat. Laat minstens twee richtingen daarom beginnen bij wat eruit kan. Buiten werktijd is er ongeveer ${P.eigenBasis} uur per week.`
+    : `- Deze persoon ziet op het scherm dat er ongeveer ${P.slack} uur ruimte in de werkweek zit en ongeveer ${P.eigenBasis} uur eigen tijd per week. Noem geen andere getallen dan deze twee, anders spreekt je tekst het scherm tegen. Reken er intern wel op dat daarvan realistisch ongeveer ${P.ruimte} uur in de werkweek en ${P.eigen} uur eigen tijd echt besteed kan worden, want niet alle ruimte is vrij te besteden. Ruimte binnen de werkweek blijft betaalde tijd: daar past leren, verkennen of iets opbouwen dat het werk ook dient. Alles wat puur voor eigen rekening is, hoort in de eigen uren.`}
 ${feedback?("\nDe gebruiker gaf deze correctie op een eerdere poging. Neem die zwaar mee en wijk echt af van de vorige richting: "+feedback):""}
 
 Antwoord uitsluitend met geldige JSON:
@@ -3361,7 +3573,7 @@ async function draaien(feedback){
   try{
     gangStap(["bezig","bezig",""]);
     const [prof, kandData] = await Promise.all([
-      askJSON(P_ANALYSE, bericht(), null, 1500),
+      askJSON(P_ANALYSE(), bericht(), null, 1500),
       askJSON(P_KANDIDATEN(P, feedback), bericht(), null, 3200)
     ]);
     if(S.gangAf) return;
@@ -3415,6 +3627,10 @@ function toonRichtingen(){
   // staat de paywall. Wie hier komt zonder te betalen is de grootste groep die
   // je nog kunt winnen.
   meet(S.betaald ? "richtingen.betaald" : "paywall");
+  // Aparte emmer per scorehoogte. Zo is straks uit de funnel af te lezen of een
+  // lage pasvorm echt slechter converteert, en hoeft de weging niet op gevoel
+  // bijgesteld te worden.
+  if(!S.betaald) meet(((S.scenarios[0]||{}).totaal||0) >= 85 ? "paywall.hoog" : "paywall.laag");
   const rest = S.rest || [];
   // Betaald: download en mail meteen bovenaan, zodat het niet pas onderaan de
   // pagina te vinden is. Komt zowel na het ontgrendelen als na een herstel.
@@ -3452,18 +3668,28 @@ function toonRichtingen(){
     $("scenBody").appendChild(zone);
     const top = S.scenarios[0]||{};
     const gelijkAanTop = S.scenarios.filter(x=>(x.totaal||0)===(top.totaal||0)).length;
-    const topKop = gelijkAanTop>1
-      ? `Je sterkste richtingen scoren ${top.totaal||"?"} van 100`
-      : `Je best passende richting scoort ${top.totaal||"?"} van 100`;
+    /* Het cijfer alleen in de kop zetten als het cijfer ook verkoopt. Bij een 77
+       zei die kop feitelijk "we hebben niets overtuigends gevonden, wil je daar
+       voor betalen", en juist de meest zoekende profielen kregen die kop. Onder
+       de drempel wint de inhoud, en het cijfer blijft gewoon op de kaarten
+       staan waar het context heeft. */
+    const topKop = (top.totaal||0) >= 85
+      ? (gelijkAanTop>1
+          ? `Je sterkste richtingen scoren ${top.totaal} van 100`
+          : `Je best passende richting scoort ${top.totaal} van 100`)
+      : `Drie richtingen, met per richting waar het schuurt`;
     // De betaalbeslissing valt hier, dus dit scherm hoort het persoonlijkst te
     // zijn van allemaal: jouw getallen, jouw sterktes, niet "29 antwoorden".
     const pg = S.pg || {};
     const stukjes = [];
-    if(pg.slack > 0) stukjes.push(`je ${pg.slack} uur ruimte in de werkweek`);
+    if(pg.over > 0) stukjes.push(`je ${pg.over} uur overwerk per week`);
+    else if(pg.slack > 0) stukjes.push(`je ${pg.slack} uur ruimte in de werkweek`);
     if(+S.ant.avonden > 0) stukjes.push(`je ${S.ant.avonden} vrije avond${+S.ant.avonden===1?"":"en"}`);
     // esc(), want deze namen komen uit de sorteerkaarten en die zijn deels door
-    // de gebruiker zelf getypt en deels door de AI verzonnen.
-    if((pg.sweet||[]).length) stukjes.push(`wat je goed kunt én leuk vindt (${esc(pg.sweet.slice(0,2).join(", ").toLowerCase())})`);
+    // de gebruiker zelf getypt en deels door de AI verzonnen. Bij een vlakke
+    // sortering hier niets beweren: dat was precies het geval waarin de paywall
+    // het stelligst was terwijl er het minst onder lag.
+    if(!pg.vlak && (pg.sweet||[]).length) stukjes.push(`wat je goed kunt én leuk vindt (${esc(pg.sweet.slice(0,2).join(", ").toLowerCase())})`);
     const basisregel = stukjes.length
       ? `Gebouwd op ${stukjes.join(", ")}, en op wat je in je eigen woorden schreef. Zes richtingen afgewogen, drie overgebleven.`
       : `Gewogen uit ${SECTIES.reduce((n,x)=>n+x.stappen.length,0)} antwoorden, je twee sorteringen en je vier keuzes. Zes richtingen afgewogen, drie overgebleven.`;
