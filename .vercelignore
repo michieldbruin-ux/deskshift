@@ -11,13 +11,19 @@ node_modules/
 
 # Bronbestanden en uitvoer van de content. De bestanden die Instagram wel moet
 # kunnen ophalen staan in social/ en blijven dus wel staan.
+#
+# LET OP de schuine streep voor de laatste twee. Hier stond eerst *.mp4 zonder
+# streep, en zo'n patroon geldt op elk niveau: daarmee vloog social/*.mp4 er ook
+# uit en gaf elke reel-URL een 404. De Graph API haalt het bestand zelf op van
+# die URL, dus dan kan er geen enkele reel gepubliceerd worden, Nederlands noch
+# Engels. Met de streep geldt het alleen nog voor de losse opnames in de wortel.
 content/
 video-1.html
 tiktok-1.html
 tiktok-2.html
 tiktok-3.html
-*.mp4
-*.zip
+/*.mp4
+/*.zip
 
 # Werkbestanden voor de repo, geen onderdeel van het product
 # Let op: taal.nl.js en taal.en.js blijven er WEL in, die haalt de pagina zelf op.
