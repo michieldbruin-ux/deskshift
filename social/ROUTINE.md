@@ -39,9 +39,20 @@ account zijn. Controleer eerst met INSTAGRAM_GET_USER_INFO op dat expliciete id
 dat username gelijk is aan desk_shift_nl. Klopt dat niet, publiceer dan niets.
 
 WELKE POST
-Haal https://deskshift.pro/social/planning.json op. Zoek in "posts" de regel
-waarvan "datum" gelijk is aan de datum van vandaag in Europe/Amsterdam. Staat er
-geen regel voor vandaag, publiceer dan niets en meld dat er niets gepland stond.
+Haal https://deskshift.pro/social/planning.json op. Zoek in "posts" de regels
+waarvan "datum" gelijk is aan de datum van vandaag in Europe/Amsterdam.
+
+Houd daarvan alleen de regels over met "taal": "nl". Sla elke andere regel over,
+ook als er dan niets overblijft. Deze Routine publiceert uitsluitend Nederlands,
+want het enige account waar hij op mag posten is desk_shift_nl. Een Engelse
+regel hoort op desk_shift en dat account staat hier niet aan. Sla je er een over,
+meld dat dan kort in je antwoord.
+
+Blijft er niets over, publiceer dan niets en meld dat er niets Nederlands
+gepland stond.
+
+Blijven er meerdere Nederlandse regels over, publiceer ze dan allemaal, een voor
+een, en doorloop de stappen hieronder per regel volledig.
 
 CONTROLEER EERST OF HET ER AL STAAT
 Haal met INSTAGRAM_GET_IG_USER_MEDIA de laatste vijf berichten op en vergelijk
@@ -78,3 +89,13 @@ door Vercel meegeserveerd, dus de Routine kan er altijd bij.
 
 De controle op de laatste berichten zit erin omdat een Routine soms twee keer
 kan afgaan. Dubbel posten valt niet terug te draaien, een overgeslagen post wel.
+
+Het filter op `"taal": "nl"` zit erin omdat de planning sinds de Engelse content
+regels van beide talen op dezelfde datum heeft staan. Zonder dat filter pakt de
+Routine ze allebei en zet hij de Engelse caption op het Nederlandse account. De
+eerste datum waarop dat speelt is zondag 2 augustus 2026: daar staan een
+Nederlandse en een Engelse regel op hetzelfde tijdslot.
+
+Let op: deze prompt staat hier alleen ter documentatie. De Routines op claude.ai
+hebben hun eigen kopie. Wijzig je hier iets, werk dan alle drie de Routines bij,
+anders draait er nog de oude tekst.
