@@ -7,4 +7,8 @@ HTTPS-URL, zonder querystring. Vandaar dat ze hier staan en niet alleen in
 
 Bestanden zijn opnieuw te maken met `node render-content.js`.
 
-Na de laatste geplande post (16 augustus) kan deze map weg.
+Nederlands en Engels staan hier door elkaar. Engelse bestanden beginnen met `en-`
+en horen bij `desk_shift`, de rest bij `desk_shift_nl`. Welke waar heen gaat staat
+in `planning.json`, en dat is de enige plek waar je dat hoort op te zoeken.
+
+Na de laatste geplande post (18 augustus) kan deze map weg.
