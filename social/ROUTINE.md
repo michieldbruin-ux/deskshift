@@ -107,10 +107,14 @@ door Vercel meegeserveerd, dus de Routine kan er altijd bij.
 **De Routine leest de gepubliceerde versie, niet de versie in de repo.** Een
 wijziging in `planning.json` doet dus niets tot hij live staat. Loopt de Routine
 op iets vast wat in de repo allang klopt, kijk dan eerst of wat op
-`deskshift.pro/social/planning.json` staat gelijk is aan wat je hier ziet. Op
-28 juli 2026 was dat niet zo: de productie-branch liep acht commits achter en
-serveerde een oudere planning zonder het veld `taal`, terwijl `main` allang goed
-stond.
+`deskshift.pro/social/planning.json` staat gelijk is aan wat je hier ziet.
+
+Op 28 juli 2026 was dat niet zo. De Routine vond het veld `taal` niet, terwijl
+`main` toen al zeventien regels had die het allemaal hadden. Wat live stond was
+een oudere versie met acht regels en zonder dat veld. De repo was dus niet het
+probleem, de productiedeploy op Vercel had `main` niet opgepakt. Dat is de
+eerste plek om te kijken als de planning zich anders gedraagt dan het bestand
+dat je voor je hebt.
 
 De controle op de laatste berichten zit erin omdat een Routine soms twee keer
 kan afgaan. Dubbel posten valt niet terug te draaien, een overgeslagen post wel.
