@@ -31,12 +31,21 @@ Na 16 augustus zijn de negen posts geweest en kunnen de Routines uit.
 Publiceer de Instagram-post die vandaag gepland staat voor Deskshift.
 
 HARDE REGEL OVER HET ACCOUNT
-Publiceren mag uitsluitend op desk_shift_nl, ig_user_id 27843378131945454.
-Nooit op het privéaccount michieldebruin en nooit op een ander account. Geef
-altijd dat expliciete numerieke id mee en gebruik nooit "me" als ig_user_id,
-want dat lost op naar de standaardverbinding van Composio en dat kan een ander
-account zijn. Controleer eerst met INSTAGRAM_GET_USER_INFO op dat expliciete id
-dat username gelijk is aan desk_shift_nl. Klopt dat niet, publiceer dan niets.
+Publiceren mag uitsluitend op desk_shift_nl, ig_user_id 27843378131945454, via
+de Composio-verbinding instagram_amaze-burrow. Nooit op het privéaccount
+michieldebruin en nooit op een ander account.
+
+Geef bij ELKE Instagram-aanroep allebei die waarden mee: het expliciete
+numerieke ig_user_id en die verbinding. Gebruik nooit "me" als ig_user_id.
+
+Alleen het id meegeven is niet genoeg. De standaardverbinding van Composio is
+desk_shift, het Engelse account, en dat zit in een andere Business Manager. Loopt
+de aanroep daarlangs, dan kent hij het Nederlandse id niet en krijg je "object
+does not exist" op een id dat gewoon bestaat.
+
+Controleer eerst met INSTAGRAM_GET_USER_INFO op dat expliciete id, via die
+verbinding, dat username gelijk is aan desk_shift_nl. Klopt dat niet, of geeft
+de aanroep een fout, publiceer dan niets en meld wat er terugkwam.
 
 WELKE POST
 Haal https://deskshift.pro/social/planning.json op. Zoek in "posts" de regels
@@ -61,7 +70,7 @@ dubbel posten is niet terug te draaien.
 
 PUBLICEREN
 1. Maak een container met INSTAGRAM_POST_IG_USER_MEDIA:
-   ig_user_id 27843378131945454
+   ig_user_id 27843378131945454, verbinding instagram_amaze-burrow
    bij soort "reel": video_url = het veld "bestand", media_type REELS,
      share_to_feed true
    bij soort "post": image_url = het veld "bestand"
@@ -95,6 +104,11 @@ regels van beide talen op dezelfde datum heeft staan. Zonder dat filter pakt de
 Routine ze allebei en zet hij de Engelse caption op het Nederlandse account. De
 eerste datum waarop dat speelt is zondag 2 augustus 2026: daar staan een
 Nederlandse en een Engelse regel op hetzelfde tijdslot.
+
+De verbinding staat er sinds 28 juli 2026 expliciet bij. Tot die dag hing er maar
+één Instagram-account aan Composio en was desk_shift_nl vanzelf de standaard.
+Sinds desk_shift erbij kwam is dat omgedraaid en is het Engelse account de
+standaard. Een prompt die alleen het Nederlandse id noemt loopt sindsdien vast.
 
 Let op: deze prompt staat hier alleen ter documentatie. De Routines op claude.ai
 hebben hun eigen kopie. Wijzig je hier iets, werk dan alle drie de Routines bij,

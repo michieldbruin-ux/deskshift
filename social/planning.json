@@ -189,14 +189,18 @@
     }
   ],
   "_accounts": {
+    "_over": "Beide accounts hangen sinds 28 juli 2026 aan Composio. Geef bij een publicatie altijd allebei de velden mee: het ig_user_id EN de composio_verbinding. Alleen het id is niet genoeg, want de aanroep loopt via de inloggegevens van de verbinding en de twee accounts zitten in een andere Business Manager. Vraag je het Nederlandse id op via de Engelse verbinding, dan krijg je object does not exist.",
     "nl": {
       "username": "desk_shift_nl",
-      "ig_user_id": "27843378131945454"
+      "ig_user_id": "27843378131945454",
+      "composio_verbinding": "instagram_amaze-burrow"
     },
     "en": {
       "username": "desk_shift",
-      "ig_user_id": "NOG ONBEKEND. Het account hangt op 2026-07-28 niet aan Composio: er is daar maar een verbinding, en dat is desk_shift_nl. Eerst desk_shift als tweede Instagram-account koppelen, daarna geeft de verbinding zelf het id. NIET 17841439417364814: dat stond in de paginabron maar de Graph API kent het niet."
+      "ig_user_id": "37664874506459107",
+      "composio_verbinding": "instagram_aoul-mastax"
     },
-    "verboden": "michieldebruin en elk ander account. Nooit \"me\" als ig_user_id gebruiken."
+    "standaard": "desk_shift is op 28 juli 2026 de standaardverbinding geworden. Reken daar niet op en leun er nooit op: een aanroep zonder expliciete verbinding komt dus op het ENGELSE account uit.",
+    "verboden": "michieldebruin en elk ander account. Nooit \"me\" als ig_user_id gebruiken. NIET 17841439417364814: dat stond in de paginabron van desk_shift maar de Graph API kent het niet."
   }
 }
