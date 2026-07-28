@@ -9,16 +9,6 @@
   ],
   "posts": [
     {
-      "nr": 1,
-      "taal": "en",
-      "datum": "2026-07-28",
-      "tijd": "zo snel mogelijk",
-      "bestand": "https://deskshift.pro/social/en-ig-w02-p1-reel-tuesday.mp4",
-      "soort": "reel",
-      "caption": "Three days that nobody fills for you. Fifteen minutes of questions, then one honest read on your own week. Link in bio.",
-      "hashtags": "#boreout #careers #worklife #deskshift"
-    },
-    {
       "nr": 2,
       "datum": "2026-07-30",
       "tijd": "12:30",
@@ -172,7 +162,7 @@
       "nr": 9,
       "taal": "en",
       "datum": "2026-08-18",
-      "tijd": "12:30",
+      "tijd": "07:30",
       "bestand": "https://deskshift.pro/social/en-ig-w04-p3-post-the-job.png",
       "soort": "post",
       "caption": "Four jobs, the same shape every time. That is not a character flaw. Link in bio for your own read.",
@@ -186,6 +176,13 @@
       "bestand": "ig-w02-p1-reel-dinsdag.mp4",
       "permalink": "https://www.instagram.com/reel/DbPrk4gGRDc/",
       "taal": "nl"
+    },
+    {
+      "nr": 1,
+      "datum": "2026-07-28",
+      "bestand": "en-ig-w02-p1-reel-tuesday.mp4",
+      "permalink": "https://www.instagram.com/reel/DbVH0mtnRKu/",
+      "taal": "en"
     }
   ],
   "_accounts": {

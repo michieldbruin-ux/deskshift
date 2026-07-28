@@ -5,27 +5,42 @@ connectors meebrengen: de sessie die hij start heeft dan geen Composio en kan
 dus niet posten. Aanmaken via de Routines-interface op claude.ai kan dat wel,
 want daar hang je de connector zelf aan de Routine.
 
-Hieronder staat wat je daar invult. Drie Routines, omdat de drie tijdslots
-verschillen. De prompt is voor alle drie identiek: die zoekt zelf op welke post
-bij de datum van vandaag hoort.
+Hieronder staat wat je daar invult. **Zes Routines: drie Nederlandse en drie
+Engelse.** De tijdslots zijn per taal hetzelfde, maar de prompt verschilt, want
+de twee talen gaan naar een ander account via een andere verbinding.
 
-## De drie Routines
+Waarom gescheiden en niet één prompt die beide talen doet: een Routine die maar
+één account kent, kan niet op het verkeerde account posten. Een prompt die per
+regel moet kiezen tussen twee accounts kan dat wel, en publiceren is niet terug
+te draaien. Die veiligheid is het dubbele aantal Routines waard.
 
-| Routine | Cron (UTC) | Fires op | Voor |
-| --- | --- | --- | --- |
-| Deskshift IG dinsdag | `30 5 * * 2` | dinsdag 07:30 Amsterdam | post 4 en 7 |
-| Deskshift IG donderdag | `30 10 * * 4` | donderdag 12:30 Amsterdam | post 2, 5 en 8 |
-| Deskshift IG zondag | `30 17 * * 0` | zondag 19:30 Amsterdam | post 3, 6 en 9 |
+## De zes Routines
+
+| Routine | Cron (UTC) | Fires op | Account | Voor |
+| --- | --- | --- | --- | --- |
+| Deskshift IG NL dinsdag | `30 5 * * 2` | dinsdag 07:30 Amsterdam | `desk_shift_nl` | 4 en 11 aug |
+| Deskshift IG NL donderdag | `30 10 * * 4` | donderdag 12:30 Amsterdam | `desk_shift_nl` | 30 jul, 6 en 13 aug |
+| Deskshift IG NL zondag | `30 17 * * 0` | zondag 19:30 Amsterdam | `desk_shift_nl` | 2, 9 en 16 aug |
+| Deskshift IG EN dinsdag | `30 5 * * 2` | dinsdag 07:30 Amsterdam | `desk_shift` | 4, 11 en 18 aug |
+| Deskshift IG EN donderdag | `30 10 * * 4` | donderdag 12:30 Amsterdam | `desk_shift` | 6 en 13 aug |
+| Deskshift IG EN zondag | `30 17 * * 0` | zondag 19:30 Amsterdam | `desk_shift` | 2, 9 en 16 aug |
 
 De tijden staan in UTC en de posts vallen allemaal in de zomertijd, dus twee uur
 eraf. Loopt het door tot na 25 oktober, zet er dan een uur bij.
 
-Zet bij alle drie de **Composio-connector** aan, anders kan de sessie niet
+Zet bij alle zes de **Composio-connector** aan, anders kan de sessie niet
 publiceren. Laat notificaties aanstaan, dan zie je per keer of het gelukt is.
 
-Na 16 augustus zijn de negen posts geweest en kunnen de Routines uit.
+Een Routine matcht op de **datum**, niet op het veld `tijd`. Dat veld is
+documentatie; de cron bepaalt het werkelijke moment. Houd ze daarom gelijk, want
+anders belooft de planning iets anders dan er gebeurt. De Engelse post van
+18 augustus stond daarom eerst op 12:30 en is naar 07:30 gezet: dat is de enige
+dinsdag-cron die er is, en een zevende Routine voor één post is niet de moeite.
 
-## De prompt, voor alle drie hetzelfde
+Na 16 augustus is het Nederlands op en kunnen die drie uit. Het Engels loopt tot
+18 augustus.
+
+## De Nederlandse prompt, voor alle drie hetzelfde
 
 ```
 Publiceer de Instagram-post die vandaag gepland staat voor Deskshift.
@@ -89,6 +104,84 @@ verbinding op het Engelse account uitkomt en publiceren niet terug te draaien is
    ze, want een caption is via de API niet meer te wijzigen en een reactie wel.
 4. Controleer met INSTAGRAM_GET_IG_MEDIA, via de verbinding
    instagram_amaze-burrow, en meld de permalink, plus of caption en hashtags
+   goed zijn doorgekomen.
+
+ALS IETS NIET KAN
+Geen Composio-connector, of het aanmaken van de container mislukt: publiceer
+niets, verzin geen omweg, en meld kort wat er misging. Bij een mislukte
+container maak je een nieuwe aan; dezelfde creation_id twee keer publiceren
+geeft een fout.
+```
+
+## De Engelse prompt, voor alle drie hetzelfde
+
+Zelfde opzet, ander account en een ander filter. Verwissel deze twee prompts
+niet: het verschil zit in een handvol cijfers en dat is precies waarom het fout
+kan gaan.
+
+```
+Publiceer de Instagram-post die vandaag gepland staat voor Deskshift Engels.
+
+HARDE REGEL OVER HET ACCOUNT
+Publiceren mag uitsluitend op desk_shift, ig_user_id 37664874506459107, via de
+Composio-verbinding instagram_aoul-mastax. Nooit op desk_shift_nl, nooit op het
+privéaccount michieldebruin, nooit op een ander account.
+
+Geef bij ELKE Instagram-aanroep allebei die waarden mee: het expliciete
+numerieke ig_user_id en die verbinding. Gebruik nooit "me" als ig_user_id.
+
+Alleen het id meegeven is niet genoeg. De twee Deskshift-accounts zitten in een
+andere Business Manager, en een aanroep loopt via de inloggegevens van de
+verbinding. Gaat hij langs de verkeerde, dan krijg je "object does not exist" op
+een id dat gewoon bestaat.
+
+Controleer eerst met INSTAGRAM_GET_USER_INFO op dat expliciete id, via die
+verbinding, dat username gelijk is aan desk_shift. Klopt dat niet, of geeft de
+aanroep een fout, publiceer dan niets en meld wat er terugkwam.
+
+WELKE POST
+Haal https://deskshift.pro/social/planning.json op. Zoek in "posts" de regels
+waarvan "datum" gelijk is aan de datum van vandaag in Europe/Amsterdam.
+
+Houd daarvan alleen de regels over met "taal": "en". Sla elke andere regel over,
+ook als er dan niets overblijft. Deze Routine publiceert uitsluitend Engels,
+want het enige account waar hij op mag posten is desk_shift. Een Nederlandse
+regel hoort op desk_shift_nl en dat account staat hier niet aan. Sla je er een
+over, meld dat dan kort in je antwoord.
+
+Blijft er niets over, publiceer dan niets en meld dat er niets Engels gepland
+stond.
+
+Blijven er meerdere Engelse regels over, publiceer ze dan allemaal, een voor
+een, en doorloop de stappen hieronder per regel volledig.
+
+CONTROLEER EERST OF HET ER AL STAAT
+Haal met INSTAGRAM_GET_IG_USER_MEDIA de laatste vijf berichten op en vergelijk
+de captions. Gebruik ig_user_id 37664874506459107 via de verbinding
+instagram_aoul-mastax. Staat de caption van vandaag er al tussen, publiceer dan
+niets: dubbel posten is niet terug te draaien.
+
+PUBLICEREN
+Bij elk van de vier stappen hieronder geldt: ig_user_id 37664874506459107, via de
+Composio-verbinding instagram_aoul-mastax. Het staat er per stap nog een keer
+bij. Dat is geen herhaling om de herhaling, dat is omdat een stap zonder die
+verbinding op het Nederlandse account uitkomt en publiceren niet terug te
+draaien is.
+
+1. Maak een container met INSTAGRAM_POST_IG_USER_MEDIA:
+   ig_user_id 37664874506459107, verbinding instagram_aoul-mastax
+   bij soort "reel": video_url = het veld "bestand", media_type REELS,
+     share_to_feed true
+   bij soort "post": image_url = het veld "bestand"
+   caption: het veld "caption", letterlijk. Er hoort geen # in de caption.
+2. Publiceer met INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH, max_wait_seconds 180.
+   ig_user_id 37664874506459107, verbinding instagram_aoul-mastax.
+   Een reel verwerken duurt ongeveer een minuut, een foto is meteen klaar.
+3. Zet met INSTAGRAM_POST_IG_MEDIA_COMMENTS het veld "hashtags" als eerste
+   reactie onder de post, via de verbinding instagram_aoul-mastax. Daar horen
+   ze, want een caption is via de API niet meer te wijzigen en een reactie wel.
+4. Controleer met INSTAGRAM_GET_IG_MEDIA, via de verbinding
+   instagram_aoul-mastax, en meld de permalink, plus of caption en hashtags
    goed zijn doorgekomen.
 
 ALS IETS NIET KAN
