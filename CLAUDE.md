@@ -86,14 +86,25 @@ een andere datum door.
 
 | | |
 | --- | --- |
-| Nederlandse content | `desk_shift_nl`, ig_user_id **`27843378131945454`** |
-| Engelse content | `desk_shift`, ig_user_id **nog onbekend**, opvragen en verifiëren voor de eerste publicatie |
+| Nederlandse content | `desk_shift_nl`, ig_user_id **`27843378131945454`**, verbinding `instagram_amaze-burrow` |
+| Engelse content | `desk_shift`, ig_user_id **`37664874506459107`**, verbinding `instagram_aoul-mastax` |
 | Verboden | `michieldebruin` (privéaccount) en elk ander account |
 
 Een Engelse post op het Nederlandse account is niet terug te draaien: een caption
-is via de API niet te wijzigen en een bericht verwijderen kan ook niet. Zolang het
-id van `desk_shift` niet bekend en geverifieerd is, gaat er dus niets Engels de
-deur uit.
+is via de API niet te wijzigen en een bericht verwijderen kan ook niet.
+
+**Het id alleen is niet genoeg, de verbinding hoort erbij.** De twee accounts
+zitten in een andere Business Manager, en een aanroep loopt via de
+inloggegevens van de Composio-verbinding. Vraag je het Nederlandse id op via de
+Engelse verbinding, dan krijg je "object does not exist" op een id dat prima
+bestaat. Wijs dus altijd allebei aan: het `ig_user_id` en de verbinding.
+
+Sinds 28 juli 2026 is `desk_shift` de **standaardverbinding**. Een aanroep
+zonder expliciete verbinding komt dus op het Engelse account uit, precies
+andersom dan het daarvoor was. Leun er niet op, in geen van beide richtingen.
+
+`17841439417364814` staat in de paginabron van `desk_shift` maar is het id
+**niet**. De Graph API geeft daarop "object does not exist". Vul het nergens in.
 
 Regels bij het publiceren:
 
