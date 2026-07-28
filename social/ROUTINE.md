@@ -62,9 +62,19 @@ Controleer eerst met INSTAGRAM_GET_USER_INFO op dat expliciete id, via die
 verbinding, dat username gelijk is aan desk_shift_nl. Klopt dat niet, of geeft
 de aanroep een fout, publiceer dan niets en meld wat er terugkwam.
 
+Doe die controle altijd, ook als er vandaag niets gepland blijkt te staan, en
+zet in je antwoord letterlijk welke username eruit kwam. Dat is de enige manier
+waarop achteraf te zien is of deze Routine bij Instagram kon. Een ronde die
+alleen meldt dat er niets gepland stond, zegt daar niets over.
+
 WELKE POST
-Haal https://deskshift.pro/social/planning.json op. Zoek in "posts" de regels
-waarvan "datum" gelijk is aan de datum van vandaag in Europe/Amsterdam.
+Haal https://deskshift.pro/social/planning.json op. Krijg je een 403 of een
+andere fout van de proxy, haal hem dan op met curl. Lukt ophalen helemaal
+niet, publiceer dan niets en meld dat, want zonder de planning weet je niet
+wat er vandaag hoort te gebeuren.
+
+Zoek in "posts" de regels waarvan "datum" gelijk is aan de datum van vandaag
+in Europe/Amsterdam.
 
 Houd daarvan alleen de regels over met "taal": "nl". Sla elke andere regel over,
 ook als er dan niets overblijft. Deze Routine publiceert uitsluitend Nederlands,
@@ -139,9 +149,19 @@ Controleer eerst met INSTAGRAM_GET_USER_INFO op dat expliciete id, via die
 verbinding, dat username gelijk is aan desk_shift. Klopt dat niet, of geeft de
 aanroep een fout, publiceer dan niets en meld wat er terugkwam.
 
+Doe die controle altijd, ook als er vandaag niets gepland blijkt te staan, en
+zet in je antwoord letterlijk welke username eruit kwam. Dat is de enige manier
+waarop achteraf te zien is of deze Routine bij Instagram kon. Een ronde die
+alleen meldt dat er niets gepland stond, zegt daar niets over.
+
 WELKE POST
-Haal https://deskshift.pro/social/planning.json op. Zoek in "posts" de regels
-waarvan "datum" gelijk is aan de datum van vandaag in Europe/Amsterdam.
+Haal https://deskshift.pro/social/planning.json op. Krijg je een 403 of een
+andere fout van de proxy, haal hem dan op met curl. Lukt ophalen helemaal
+niet, publiceer dan niets en meld dat, want zonder de planning weet je niet
+wat er vandaag hoort te gebeuren.
+
+Zoek in "posts" de regels waarvan "datum" gelijk is aan de datum van vandaag
+in Europe/Amsterdam.
 
 Houd daarvan alleen de regels over met "taal": "en". Sla elke andere regel over,
 ook als er dan niets overblijft. Deze Routine publiceert uitsluitend Engels,
@@ -224,5 +244,12 @@ Sinds desk_shift erbij kwam is dat omgedraaid en is het Engelse account de
 standaard. Een prompt die alleen het Nederlandse id noemt loopt sindsdien vast.
 
 Let op: deze prompt staat hier alleen ter documentatie. De Routines op claude.ai
-hebben hun eigen kopie. Wijzig je hier iets, werk dan alle drie de Routines bij,
+hebben hun eigen kopie. Wijzig je hier iets, werk dan alle zes de Routines bij,
 anders draait er nog de oude tekst.
+
+Twee dingen kwamen uit de eerste proefronde op 28 juli 2026. Het ophalen van de
+planning liep vast op een 403 van de proxy en lukte wel met curl, dus dat
+vangnet staat nu in de prompt. En de ronde meldde alleen dat er niets gepland
+stond, zonder de accountcontrole te noemen, waardoor achteraf niet te zien was
+of hij bij Instagram kon. Daarom moet die controle nu altijd gebeuren en altijd
+in het antwoord staan, ook op een lege dag.
