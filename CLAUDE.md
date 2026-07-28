@@ -82,12 +82,18 @@ een andere datum door.
 
 ## Publiceren op social media
 
-**Instagram gaat uitsluitend naar `desk_shift_nl`.**
+**Twee accounts, en de taal bepaalt welke.**
 
 | | |
 | --- | --- |
-| Toegestaan | `desk_shift_nl`, ig_user_id **`27843378131945454`** |
+| Nederlandse content | `desk_shift_nl`, ig_user_id **`27843378131945454`** |
+| Engelse content | `desk_shift`, ig_user_id **nog onbekend**, opvragen en verifiëren voor de eerste publicatie |
 | Verboden | `michieldebruin` (privéaccount) en elk ander account |
+
+Een Engelse post op het Nederlandse account is niet terug te draaien: een caption
+is via de API niet te wijzigen en een bericht verwijderen kan ook niet. Zolang het
+id van `desk_shift` niet bekend en geverifieerd is, gaat er dus niets Engels de
+deur uit.
 
 Regels bij het publiceren:
 

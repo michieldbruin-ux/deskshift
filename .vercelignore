@@ -6,6 +6,7 @@
 # Gereedschap voor het opnemen en renderen van de video's
 record-video.js
 render-content.js
+maak-content.js
 node_modules/
 
 # Bronbestanden en uitvoer van de content. De bestanden die Instagram wel moet

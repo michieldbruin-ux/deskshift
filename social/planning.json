@@ -1,16 +1,22 @@
 {
-  "_over": "Planning voor het publiceren van de Instagram-content. Een Routine leest dit bestand, zoekt de regel met de datum van vandaag en publiceert die ene post. Alle tijden zijn Europe/Amsterdam.",
-  "_account": {
-    "username": "desk_shift_nl",
-    "ig_user_id": "27843378131945454",
-    "verboden": "michieldebruin en elk ander account. Nooit \"me\" als ig_user_id gebruiken."
-  },
+  "_over": "Planning voor het publiceren van de Instagram-content, Nederlands en Engels. Een Routine leest dit bestand, zoekt de regels met de datum van vandaag en publiceert die posts, elk op het account van zijn eigen taal. Alle tijden zijn Europe/Amsterdam.",
   "_regels": [
     "De caption bevat nooit een #: de hashtags gaan in de eerste reactie, want een caption is via de API niet meer te wijzigen en een reactie wel.",
     "Reels krijgen share_to_feed true, zodat ze ook in het profielraster komen.",
-    "Publiceer nooit twee keer dezelfde post: controleer eerst de laatste berichten op het account."
+    "Publiceer nooit twee keer dezelfde post: controleer eerst de laatste berichten op het account.",
+    "Controleer voor elke publicatie met INSTAGRAM_GET_USER_INFO op het expliciete id dat de username klopt bij de taal van de post. Nederlands hoort bij desk_shift_nl, Engels bij desk_shift. Een Engelse post op het Nederlandse account is niet terug te draaien."
   ],
   "posts": [
+    {
+      "nr": 1,
+      "taal": "en",
+      "datum": "2026-07-30",
+      "tijd": "12:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w02-p1-reel-tuesday.mp4",
+      "soort": "reel",
+      "caption": "Three days that nobody fills for you. Fifteen minutes of questions, then one honest read on your own week. Link in bio.",
+      "hashtags": "#boreout #careers #worklife #deskshift"
+    },
     {
       "nr": 2,
       "datum": "2026-07-30",
@@ -18,7 +24,18 @@
       "bestand": "https://deskshift.pro/social/ig-w02-p2-reel-uitgegroeid.mp4",
       "soort": "reel",
       "caption": "Dat is een ander probleem, en het heeft een ander antwoord. Deskshift zoekt dat antwoord in je eigen woorden. Link in bio.",
-      "hashtags": "#werkgeluk #loopbaan #boreout #deskshift"
+      "hashtags": "#werkgeluk #loopbaan #boreout #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 2,
+      "taal": "en",
+      "datum": "2026-08-02",
+      "tijd": "19:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w02-p2-reel-outgrown.mp4",
+      "soort": "reel",
+      "caption": "That is a different problem, and it has a different answer. Deskshift looks for it in your own words. Link in bio.",
+      "hashtags": "#careerchange #boreout #worklife #deskshift"
     },
     {
       "nr": 3,
@@ -27,7 +44,18 @@
       "bestand": "https://deskshift.pro/social/ig-w02-p3-post-verveling.png",
       "soort": "post",
       "caption": "Te weinig uitdaging vreet net zo hard als te veel werk. Er bestaat alleen bijna geen hulp voor. Daarom bestaat Deskshift. Link in bio.",
-      "hashtags": "#boreout #werkstress #werkgeluk #deskshift"
+      "hashtags": "#boreout #werkstress #werkgeluk #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 3,
+      "taal": "en",
+      "datum": "2026-08-04",
+      "tijd": "07:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w02-p3-post-boredom.png",
+      "soort": "post",
+      "caption": "Too little challenge wears you down as fast as too much work. There is just almost no help for it. That is why this exists. Link in bio.",
+      "hashtags": "#boreout #workstress #careers #deskshift"
     },
     {
       "nr": 4,
@@ -36,7 +64,18 @@
       "bestand": "https://deskshift.pro/social/ig-w03-p1-reel-schuiven.mp4",
       "soort": "reel",
       "caption": "Eén taak eruit, één vakgebied erbij. Deskshift rekent uit wat er in jouw week past. Link in bio.",
-      "hashtags": "#jobcrafting #loopbaan #werkgeluk #deskshift"
+      "hashtags": "#jobcrafting #loopbaan #werkgeluk #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 4,
+      "taal": "en",
+      "datum": "2026-08-06",
+      "tijd": "12:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w03-p1-reel-shift.mp4",
+      "soort": "reel",
+      "caption": "One task out, one field in. Deskshift works out what actually fits your week. Link in bio.",
+      "hashtags": "#jobcrafting #careers #worklife #deskshift"
     },
     {
       "nr": 5,
@@ -45,7 +84,18 @@
       "bestand": "https://deskshift.pro/social/ig-w03-p2-reel-onbenutte-tijd.mp4",
       "soort": "reel",
       "caption": "Het is onbenutte tijd, van jou en van je werkgever. Deskshift maakt er een plan van. Link in bio.",
-      "hashtags": "#werkgeluk #productiviteit #boreout #deskshift"
+      "hashtags": "#werkgeluk #productiviteit #boreout #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 5,
+      "taal": "en",
+      "datum": "2026-08-09",
+      "tijd": "19:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w03-p2-reel-unused-hours.mp4",
+      "soort": "reel",
+      "caption": "Not time off. Unused hours, yours and your employer's. Deskshift turns them into a plan. Link in bio.",
+      "hashtags": "#worklife #productivity #boreout #deskshift"
     },
     {
       "nr": 6,
@@ -54,7 +104,18 @@
       "bestand": "https://deskshift.pro/social/ig-w03-p3-post-leegte.png",
       "soort": "post",
       "caption": "Tijd over hebben geeft geen rust zolang die tijd niets doet. Vijftien minuten intake, direct een inzicht. Link in bio.",
-      "hashtags": "#boreout #werkgeluk #zingeving #deskshift"
+      "hashtags": "#boreout #werkgeluk #zingeving #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 6,
+      "taal": "en",
+      "datum": "2026-08-11",
+      "tijd": "07:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w03-p3-post-emptiness.png",
+      "soort": "post",
+      "caption": "Hours to spare give you no peace while those hours do nothing. Fifteen minutes, and the first insight is free. Link in bio.",
+      "hashtags": "#boreout #worklife #purpose #deskshift"
     },
     {
       "nr": 7,
@@ -63,7 +124,18 @@
       "bestand": "https://deskshift.pro/social/ig-w04-p1-reel-zonder-risico.mp4",
       "soort": "reel",
       "caption": "Dat antwoord is bruikbaar. Deskshift maakt het concreet, in een plan van zes weken. Link in bio.",
-      "hashtags": "#loopbaan #ondernemen #werkgeluk #deskshift"
+      "hashtags": "#loopbaan #ondernemen #werkgeluk #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 7,
+      "taal": "en",
+      "datum": "2026-08-13",
+      "tijd": "12:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w04-p1-reel-no-risk.mp4",
+      "soort": "reel",
+      "caption": "That answer is more usable than it sounds. Deskshift makes it concrete, in a plan of six weeks. Link in bio.",
+      "hashtags": "#careers #sideproject #worklife #deskshift"
     },
     {
       "nr": 8,
@@ -72,7 +144,18 @@
       "bestand": "https://deskshift.pro/social/ig-w04-p3-post-te-snel-klaar.png",
       "soort": "post",
       "caption": "Vier banen, hetzelfde patroon. Dat is geen karakterfout. Link in bio voor je eigen inzicht.",
-      "hashtags": "#boreout #loopbaan #werkgeluk #deskshift"
+      "hashtags": "#boreout #loopbaan #werkgeluk #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 8,
+      "taal": "en",
+      "datum": "2026-08-16",
+      "tijd": "19:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w04-p2-reel-fifteen-minutes.mp4",
+      "soort": "reel",
+      "caption": "One honest read on your working week. Then you choose whether to go on. Link in bio.",
+      "hashtags": "#worklife #careers #boreout #deskshift"
     },
     {
       "nr": 9,
@@ -81,10 +164,38 @@
       "bestand": "https://deskshift.pro/social/ig-w04-p2-reel-vijftien-minuten.mp4",
       "soort": "reel",
       "caption": "Eén eerlijk inzicht over jouw werkweek. Daarna kies je zelf of je verder wilt. Link in bio.",
-      "hashtags": "#werkgeluk #loopbaan #boreout #deskshift"
+      "hashtags": "#werkgeluk #loopbaan #boreout #deskshift",
+      "taal": "nl"
+    },
+    {
+      "nr": 9,
+      "taal": "en",
+      "datum": "2026-08-18",
+      "tijd": "12:30",
+      "bestand": "https://deskshift.pro/social/en-ig-w04-p3-post-the-job.png",
+      "soort": "post",
+      "caption": "Four jobs, the same shape every time. That is not a character flaw. Link in bio for your own read.",
+      "hashtags": "#boreout #careers #worklife #deskshift"
     }
   ],
   "_gedaan": [
-    { "nr": 1, "datum": "2026-07-26", "bestand": "ig-w02-p1-reel-dinsdag.mp4", "permalink": "https://www.instagram.com/reel/DbPrk4gGRDc/" }
-  ]
+    {
+      "nr": 1,
+      "datum": "2026-07-26",
+      "bestand": "ig-w02-p1-reel-dinsdag.mp4",
+      "permalink": "https://www.instagram.com/reel/DbPrk4gGRDc/",
+      "taal": "nl"
+    }
+  ],
+  "_accounts": {
+    "nl": {
+      "username": "desk_shift_nl",
+      "ig_user_id": "27843378131945454"
+    },
+    "en": {
+      "username": "desk_shift",
+      "ig_user_id": "NOG ONBEKEND. Opvragen en verifieren met INSTAGRAM_GET_USER_INFO voor de eerste Engelse publicatie."
+    },
+    "verboden": "michieldebruin en elk ander account. Nooit \"me\" als ig_user_id gebruiken."
+  }
 }

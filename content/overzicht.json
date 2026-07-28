@@ -178,5 +178,185 @@
     "duur": null,
     "bron": "/home/user/deskshift/content/bron/ig-w04-p3-post-te-snel-klaar.html",
     "doel": "/home/user/deskshift/content/instagram/ig-w04-p3-post-te-snel-klaar.png"
+  },
+  {
+    "platform": "tiktok",
+    "week": 2,
+    "nr": 1,
+    "slug": "underused",
+    "soort": "video 1080x1920",
+    "duur": 11.5,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w02-p1-underused.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w02-p1-underused.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 2,
+    "nr": 2,
+    "slug": "meetings",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w02-p2-meetings.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w02-p2-meetings.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 2,
+    "nr": 3,
+    "slug": "five-years",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w02-p3-five-years.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w02-p3-five-years.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 3,
+    "nr": 1,
+    "slug": "shifting",
+    "soort": "video 1080x1920",
+    "duur": 11.5,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w03-p1-shifting.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w03-p1-shifting.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 3,
+    "nr": 2,
+    "slug": "colleagues-ask",
+    "soort": "video 1080x1920",
+    "duur": 12,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w03-p2-colleagues-ask.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w03-p2-colleagues-ask.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 3,
+    "nr": 3,
+    "slug": "too-little",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w03-p3-too-little.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w03-p3-too-little.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 4,
+    "nr": 1,
+    "slug": "emptiness",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w04-p1-emptiness.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w04-p1-emptiness.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 4,
+    "nr": 2,
+    "slug": "the-conversation",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w04-p2-the-conversation.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w04-p2-the-conversation.mp4"
+  },
+  {
+    "platform": "tiktok",
+    "week": 4,
+    "nr": 3,
+    "slug": "fifteen-minutes",
+    "soort": "video 1080x1920",
+    "duur": 10.5,
+    "bron": "/home/user/deskshift/content/bron/en-tt-w04-p3-fifteen-minutes.html",
+    "doel": "/home/user/deskshift/content/tiktok/en-tt-w04-p3-fifteen-minutes.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 2,
+    "nr": 1,
+    "slug": "reel-tuesday",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w02-p1-reel-tuesday.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w02-p1-reel-tuesday.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 2,
+    "nr": 2,
+    "slug": "reel-outgrown",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w02-p2-reel-outgrown.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w02-p2-reel-outgrown.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 3,
+    "nr": 1,
+    "slug": "reel-shift",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w03-p1-reel-shift.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w03-p1-reel-shift.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 3,
+    "nr": 2,
+    "slug": "reel-unused-hours",
+    "soort": "video 1080x1920",
+    "duur": 11.5,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w03-p2-reel-unused-hours.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w03-p2-reel-unused-hours.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 4,
+    "nr": 1,
+    "slug": "reel-no-risk",
+    "soort": "video 1080x1920",
+    "duur": 11,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w04-p1-reel-no-risk.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w04-p1-reel-no-risk.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 4,
+    "nr": 2,
+    "slug": "reel-fifteen-minutes",
+    "soort": "video 1080x1920",
+    "duur": 10.5,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w04-p2-reel-fifteen-minutes.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w04-p2-reel-fifteen-minutes.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 2,
+    "nr": 3,
+    "slug": "post-boredom",
+    "soort": "post 1080x1080",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w02-p3-post-boredom.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w02-p3-post-boredom.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 3,
+    "nr": 3,
+    "slug": "post-emptiness",
+    "soort": "post 1080x1080",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w03-p3-post-emptiness.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w03-p3-post-emptiness.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 4,
+    "nr": 3,
+    "slug": "post-the-job",
+    "soort": "post 1080x1080",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w04-p3-post-the-job.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w04-p3-post-the-job.png"
   }
 ]
