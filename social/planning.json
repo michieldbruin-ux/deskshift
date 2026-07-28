@@ -194,7 +194,7 @@
     },
     "en": {
       "username": "desk_shift",
-      "ig_user_id": "NOG ONBEKEND. Opvragen en verifieren met INSTAGRAM_GET_USER_INFO voor de eerste Engelse publicatie."
+      "ig_user_id": "NOG ONBEKEND. Het account hangt op 2026-07-28 niet aan Composio: er is daar maar een verbinding, en dat is desk_shift_nl. Eerst desk_shift als tweede Instagram-account koppelen, daarna geeft de verbinding zelf het id. NIET 17841439417364814: dat stond in de paginabron maar de Graph API kent het niet."
     },
     "verboden": "michieldebruin en elk ander account. Nooit \"me\" als ig_user_id gebruiken."
   }

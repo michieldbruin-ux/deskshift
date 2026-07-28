@@ -87,13 +87,20 @@ een andere datum door.
 | | |
 | --- | --- |
 | Nederlandse content | `desk_shift_nl`, ig_user_id **`27843378131945454`** |
-| Engelse content | `desk_shift`, ig_user_id **nog onbekend**, opvragen en verifiëren voor de eerste publicatie |
+| Engelse content | `desk_shift`, ig_user_id **nog onbekend**, en het account hangt niet aan Composio |
 | Verboden | `michieldebruin` (privéaccount) en elk ander account |
 
 Een Engelse post op het Nederlandse account is niet terug te draaien: een caption
 is via de API niet te wijzigen en een bericht verwijderen kan ook niet. Zolang het
 id van `desk_shift` niet bekend en geverifieerd is, gaat er dus niets Engels de
 deur uit.
+
+Stand op 28 juli 2026: Composio kent maar één Instagram-verbinding, en dat is
+`desk_shift_nl`. Die is standaard, dus een publicatie zonder expliciet id komt
+daar uit. `desk_shift` moet er eerst als tweede account bij, dan geeft de
+verbinding zelf het juiste id. Let op: `17841439417364814` staat in de
+paginabron van `desk_shift` maar is het **niet**. De Graph API geeft daarop
+"object does not exist". Vul het nergens in.
 
 Regels bij het publiceren:
 
