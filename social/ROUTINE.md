@@ -65,10 +65,16 @@ een, en doorloop de stappen hieronder per regel volledig.
 
 CONTROLEER EERST OF HET ER AL STAAT
 Haal met INSTAGRAM_GET_IG_USER_MEDIA de laatste vijf berichten op en vergelijk
-de captions. Staat de caption van vandaag er al tussen, publiceer dan niets:
-dubbel posten is niet terug te draaien.
+de captions. Gebruik ig_user_id 27843378131945454 via de verbinding
+instagram_amaze-burrow. Staat de caption van vandaag er al tussen, publiceer dan
+niets: dubbel posten is niet terug te draaien.
 
 PUBLICEREN
+Bij elk van de vier stappen hieronder geldt: ig_user_id 27843378131945454, via de
+Composio-verbinding instagram_amaze-burrow. Het staat er per stap nog een keer
+bij. Dat is geen herhaling om de herhaling, dat is omdat een stap zonder die
+verbinding op het Engelse account uitkomt en publiceren niet terug te draaien is.
+
 1. Maak een container met INSTAGRAM_POST_IG_USER_MEDIA:
    ig_user_id 27843378131945454, verbinding instagram_amaze-burrow
    bij soort "reel": video_url = het veld "bestand", media_type REELS,
@@ -76,12 +82,14 @@ PUBLICEREN
    bij soort "post": image_url = het veld "bestand"
    caption: het veld "caption", letterlijk. Er hoort geen # in de caption.
 2. Publiceer met INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH, max_wait_seconds 180.
+   ig_user_id 27843378131945454, verbinding instagram_amaze-burrow.
    Een reel verwerken duurt ongeveer een minuut, een foto is meteen klaar.
 3. Zet met INSTAGRAM_POST_IG_MEDIA_COMMENTS het veld "hashtags" als eerste
-   reactie onder de post. Daar horen ze, want een caption is via de API niet
-   meer te wijzigen en een reactie wel.
-4. Controleer met INSTAGRAM_GET_IG_MEDIA en meld de permalink, plus of caption
-   en hashtags goed zijn doorgekomen.
+   reactie onder de post, via de verbinding instagram_amaze-burrow. Daar horen
+   ze, want een caption is via de API niet meer te wijzigen en een reactie wel.
+4. Controleer met INSTAGRAM_GET_IG_MEDIA, via de verbinding
+   instagram_amaze-burrow, en meld de permalink, plus of caption en hashtags
+   goed zijn doorgekomen.
 
 ALS IETS NIET KAN
 Geen Composio-connector, of het aanmaken van de container mislukt: publiceer
@@ -95,6 +103,14 @@ geeft een fout.
 De planning staat in `planning.json` en niet in de prompt, zodat je een caption
 of een datum kunt wijzigen zonder de Routines aan te raken. Het bestand wordt
 door Vercel meegeserveerd, dus de Routine kan er altijd bij.
+
+**De Routine leest de gepubliceerde versie, niet de versie in de repo.** Een
+wijziging in `planning.json` doet dus niets tot hij live staat. Loopt de Routine
+op iets vast wat in de repo allang klopt, kijk dan eerst of wat op
+`deskshift.pro/social/planning.json` staat gelijk is aan wat je hier ziet. Op
+28 juli 2026 was dat niet zo: de productie-branch liep acht commits achter en
+serveerde een oudere planning zonder het veld `taal`, terwijl `main` allang goed
+stond.
 
 De controle op de laatste berichten zit erin omdat een Routine soms twee keer
 kan afgaan. Dubbel posten valt niet terug te draaien, een overgeslagen post wel.
