@@ -5,30 +5,41 @@ connectors meebrengen: de sessie die hij start heeft dan geen Composio en kan
 dus niet posten. Aanmaken via de Routines-interface op claude.ai kan dat wel,
 want daar hang je de connector zelf aan de Routine.
 
-Hieronder staat wat je daar invult. **Zes Routines: drie Nederlandse en drie
+Hieronder staat wat je daar invult. **Acht Routines: vier Nederlandse en vier
 Engelse.** De tijdslots zijn per taal hetzelfde, maar de prompt verschilt, want
 de twee talen gaan naar een ander account via een andere verbinding.
+
+Per account gaan er vier berichten per week uit: drie reels en één foto. De
+maandag is het fotoslot, de andere drie dagen zijn reels. In de weken tot en
+met 18 augustus wijkt dat af, want daar lag de verdeling al vast voor de
+maandag erbij kwam.
 
 Waarom gescheiden en niet één prompt die beide talen doet: een Routine die maar
 één account kent, kan niet op het verkeerde account posten. Een prompt die per
 regel moet kiezen tussen twee accounts kan dat wel, en publiceren is niet terug
 te draaien. Die veiligheid is het dubbele aantal Routines waard.
 
-## De zes Routines
+## De acht Routines
 
-| Routine | Cron (UTC) | Fires op | Account | Voor |
+| Routine | Cron (UTC) | Fires op | Account | Slot |
 | --- | --- | --- | --- | --- |
-| Deskshift IG NL dinsdag | `30 5 * * 2` | dinsdag 07:30 Amsterdam | `desk_shift_nl` | 4 en 11 aug |
-| Deskshift IG NL donderdag | `30 10 * * 4` | donderdag 12:30 Amsterdam | `desk_shift_nl` | 30 jul, 6 en 13 aug |
-| Deskshift IG NL zondag | `30 17 * * 0` | zondag 19:30 Amsterdam | `desk_shift_nl` | 2, 9 en 16 aug |
-| Deskshift IG EN dinsdag | `30 5 * * 2` | dinsdag 07:30 Amsterdam | `desk_shift` | 4, 11 en 18 aug |
-| Deskshift IG EN donderdag | `30 10 * * 4` | donderdag 12:30 Amsterdam | `desk_shift` | 6 en 13 aug |
-| Deskshift IG EN zondag | `30 17 * * 0` | zondag 19:30 Amsterdam | `desk_shift` | 2, 9 en 16 aug |
+| Deskshift IG NL maandag | `30 5 * * 1` | maandag 07:30 Amsterdam | `desk_shift_nl` | foto 4:5 |
+| Deskshift IG NL dinsdag | `30 5 * * 2` | dinsdag 07:30 Amsterdam | `desk_shift_nl` | reel |
+| Deskshift IG NL donderdag | `30 10 * * 4` | donderdag 12:30 Amsterdam | `desk_shift_nl` | reel |
+| Deskshift IG NL zondag | `30 17 * * 0` | zondag 19:30 Amsterdam | `desk_shift_nl` | reel |
+| Deskshift IG EN maandag | `30 5 * * 1` | maandag 07:30 Amsterdam | `desk_shift` | foto 4:5 |
+| Deskshift IG EN dinsdag | `30 5 * * 2` | dinsdag 07:30 Amsterdam | `desk_shift` | reel |
+| Deskshift IG EN donderdag | `30 10 * * 4` | donderdag 12:30 Amsterdam | `desk_shift` | reel |
+| Deskshift IG EN zondag | `30 17 * * 0` | zondag 19:30 Amsterdam | `desk_shift` | reel |
+
+De twee maandag-Routines zijn nieuw. De zes andere blijven staan zoals ze zijn:
+zelfde cron, zelfde prompt, niets aan te passen. De prompt zoekt zelf welke regel
+bij de datum van vandaag hoort, dus een nieuwe dag vraagt geen nieuwe tekst.
 
 De tijden staan in UTC en de posts vallen allemaal in de zomertijd, dus twee uur
 eraf. Loopt het door tot na 25 oktober, zet er dan een uur bij.
 
-Zet bij alle zes de **Composio-connector** aan, anders kan de sessie niet
+Zet bij alle acht de **Composio-connector** aan, anders kan de sessie niet
 publiceren. Laat notificaties aanstaan, dan zie je per keer of het gelukt is.
 
 Een Routine matcht op de **datum**, niet op het veld `tijd`. Dat veld is
@@ -37,8 +48,8 @@ anders belooft de planning iets anders dan er gebeurt. De Engelse post van
 18 augustus stond daarom eerst op 12:30 en is naar 07:30 gezet: dat is de enige
 dinsdag-cron die er is, en een zevende Routine voor één post is niet de moeite.
 
-Na 16 augustus is het Nederlands op en kunnen die drie uit. Het Engels loopt tot
-18 augustus.
+De planning loopt tot en met 30 september. Daarna kunnen de acht uit, of je vult
+de planning bij.
 
 ## De Nederlandse prompt, voor alle drie hetzelfde
 
@@ -284,7 +295,7 @@ Sinds desk_shift erbij kwam is dat omgedraaid en is het Engelse account de
 standaard. Een prompt die alleen het Nederlandse id noemt loopt sindsdien vast.
 
 Let op: deze prompt staat hier alleen ter documentatie. De Routines op claude.ai
-hebben hun eigen kopie. Wijzig je hier iets, werk dan alle zes de Routines bij,
+hebben hun eigen kopie. Wijzig je hier iets, werk dan alle acht de Routines bij,
 anders draait er nog de oude tekst.
 
 Wat de eerste rondes hebben opgeleverd:

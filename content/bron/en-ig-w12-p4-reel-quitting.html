@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Deskshift instagram week 12 post 4, reel-quitting</title>
+<!--
+  Losstaand bestand voor een opname, verticaal 9:16 (1080x1920). Open het en het
+  speelt vanzelf af. Met ?regie start het niet zelf, dan kan record-video.js per
+  frame precies het beeld op een tijdstip opvragen.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#404E3B;--sage:#7B9669;--paper:#E6E6E6;--wit:#FFFFFF}
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+  #doek{width:1080px;height:1920px;flex:0 0 auto;position:relative;overflow:hidden;
+    background:var(--paper);transform-origin:center center}
+  #doek.naarDonker{animation:bgDonker .5s cubic-bezier(.4,0,.2,1) both}
+  @keyframes bgDonker{from{background-color:#E6E6E6}to{background-color:#404E3B}}
+  /* Veilige zone, SYMMETRISCH. TikTok en Reels zetten rechts een knoppenbalk van
+     ongeveer 200 beeldpunten en onderin de caption over de video heen. Die
+     rechtermarge van 216 is dus nodig, en de linkermarge moet daaraan gelijk
+     zijn. Anders loopt de kolom van 72 tot 864 en ligt het midden op 468 in
+     plaats van 540, en staat alle tekst zichtbaar links van het midden. Dat was
+     tot 30 juli 2026 zo. De kolom is nu 648 breed in plaats van 792, vandaar de
+     kleinere letter: anders breken korte regels alsnog. */
+  .regel{position:absolute;left:216px;right:216px;top:45%;transform:translateY(-50%);
+    text-align:center;font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+    font-variation-settings:"wdth" 112;font-weight:800;letter-spacing:-.025em;line-height:1.06;
+    font-size:92px;color:var(--ink)}
+  .regel.klein{font-size:70px;line-height:1.14;letter-spacing:-.02em}
+  .regel.slot{color:var(--wit)}
+  .w{display:inline-block;opacity:0;will-change:opacity,transform}
+  .w.in{animation:wIn .42s cubic-bezier(.22,.61,.36,1) both}
+  .sp{display:inline-block;width:.28em}
+  .w.punch{color:var(--sage)}
+  .w.punch.in{animation:wPunch .48s cubic-bezier(.34,1.56,.64,1) both}
+  .w.accent{color:var(--sage)}
+  @keyframes wIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  @keyframes wPunch{0%{opacity:0;transform:scale(.85) translateY(14px)}62%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+  .regel.uit{animation:regelUit .16s cubic-bezier(.4,0,1,1) both}
+  @keyframes regelUit{from{opacity:1;transform:translateY(-50%)}to{opacity:0;transform:translateY(calc(-50% - 14px))}}
+  .merk{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:52px;
+    font-size:56px;font-weight:700;letter-spacing:-.01em;color:var(--wit)}
+  .merk .licht{font-weight:500;color:#BAC8B1}
+  .merk svg{display:block;width:1.15em;height:1.15em;flex:0 0 auto}
+</style>
+</head>
+<body>
+<div id="doek"></div>
+<script>
+(function(){
+  var doek = document.getElementById("doek");
+  var REGELS = [
+    {
+      "t": 0,
+      "tekst": "You can always quit.",
+      "klein": true,
+      "uit": 0.98
+    },
+    {
+      "t": 1.14,
+      "tekst": "It is the expensive version.",
+      "klein": true,
+      "uit": 2.16
+    },
+    {
+      "t": 2.32,
+      "tekst": "Of a much smaller fix.",
+      "punch": "smaller",
+      "uit": 3.34
+    },
+    {
+      "t": 3.5,
+      "tekst": "That fix exists.",
+      "uit": 4.44
+    },
+    {
+      "t": 4.6,
+      "tekst": "Deskshift finds it in your week.",
+      "klein": true,
+      "uit": 5.66
+    },
+    {
+      "t": 5.82,
+      "slot": true,
+      "tekst": "Free insight.\nLink in bio."
+    }
+  ];
+  var DUUR = 9.4;
+  var STAP=0.085, IN_DUUR=0.42, PUNCH_DUUR=0.48, UIT_DUUR=0.16, BG_DUUR=0.5;
+  var IN_EASE="cubic-bezier(.22,.61,.36,1)", PUNCH_EASE="cubic-bezier(.34,1.56,.64,1)", UIT_EASE="cubic-bezier(.4,0,1,1)";
+  function kaal(s){ return s.replace(/[^\p{L}\p{N}]/gu,"").toLowerCase(); }
+  var bgOp = null;
+  REGELS.forEach(function(r){
+    var el=document.createElement("div");
+    el.className="regel"+(r.klein?" klein":"")+(r.slot?" slot":"");
+    el.dataset.in=r.t; if(r.uit!=null) el.dataset.uit=r.uit;
+    if(r.slot) bgOp=r.t;
+    var n=0;
+    r.tekst.split("\n").forEach(function(stuk,si){
+      if(si>0) el.appendChild(document.createElement("br"));
+      stuk.split(" ").forEach(function(woord,wi){
+        if(wi>0){ var sp=document.createElement("span"); sp.className="sp"; el.appendChild(sp); }
+        var w=document.createElement("span"); w.className="w";
+        if(r.punch && kaal(woord)===kaal(r.punch)) w.className+=" punch";
+        else if(r.accent && kaal(woord)===kaal(r.accent)) w.className+=" accent";
+        w.textContent=woord; w.dataset.in=(r.t+n*STAP).toFixed(3);
+        el.appendChild(w); n++;
+      });
+    });
+    if(r.slot){
+      var merk=document.createElement("span"); merk.className="merk w";
+      merk.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+
+        '<rect x="0" y="10" width="62" height="32" fill="#FFFFFF"></rect>'+
+        '<rect x="38" y="58" width="62" height="32" fill="#7B9669"></rect></svg>'+
+        '<span>Desk<span class="licht">shift</span></span>';
+      merk.dataset.in=(r.t+n*STAP+0.12).toFixed(3);
+      el.appendChild(merk);
+    }
+    doek.appendChild(el);
+  });
+  var regels=[].slice.call(doek.querySelectorAll(".regel"));
+  var woorden=[].slice.call(doek.querySelectorAll(".w"));
+  function start(){
+    woorden.forEach(function(w){ setTimeout(function(){ w.classList.add("in"); }, parseFloat(w.dataset.in)*1000); });
+    regels.forEach(function(el){ if(el.dataset.uit==null) return;
+      setTimeout(function(){ el.classList.add("uit"); }, parseFloat(el.dataset.uit)*1000); });
+    if(bgOp!=null) setTimeout(function(){ doek.classList.add("naarDonker"); }, bgOp*1000);
+  }
+  function bevries(el,naam,duur,easing,positie){
+    el.style.animation="none"; void el.offsetWidth;
+    el.style.animation=naam+" "+duur+"s "+easing+" "+(-positie)+"s 1 both paused";
+  }
+  window.zetFrame=function(t){
+    woorden.forEach(function(w){
+      w.classList.remove("in");
+      var inT=parseFloat(w.dataset.in), punch=w.classList.contains("punch");
+      var duur=punch?PUNCH_DUUR:IN_DUUR, naam=punch?"wPunch":"wIn", ease=punch?PUNCH_EASE:IN_EASE;
+      if(t<inT){ w.style.animation="none"; w.style.opacity=0; return; }
+      w.style.opacity=""; bevries(w,naam,duur,ease,Math.min(t-inT,duur));
+    });
+    regels.forEach(function(el){
+      el.classList.remove("uit");
+      var uitA=el.dataset.uit;
+      if(uitA==null){ el.style.animation="none"; el.style.opacity=""; return; }
+      var uitT=parseFloat(uitA);
+      if(t<uitT){ el.style.animation="none"; el.style.opacity=""; }
+      else if(t<uitT+UIT_DUUR){ el.style.opacity=""; bevries(el,"regelUit",UIT_DUUR,UIT_EASE,t-uitT); }
+      else { el.style.animation="none"; el.style.opacity=0; }
+    });
+    doek.classList.remove("naarDonker");
+    if(bgOp==null||t<bgOp){ doek.style.animation="none"; doek.style.backgroundColor="#E6E6E6"; }
+    else if(t<bgOp+BG_DUUR){ doek.style.backgroundColor=""; bevries(doek,"bgDonker",BG_DUUR,"cubic-bezier(.4,0,.2,1)",t-bgOp); }
+    else { doek.style.animation="none"; doek.style.backgroundColor="#404E3B"; }
+  };
+  window.videoDuur=DUUR;
+  function schaal(){ var s=Math.min(1, window.innerWidth/1080, window.innerHeight/1920);
+    doek.style.transform="scale("+s+")"; }
+  schaal(); window.addEventListener("resize", schaal);
+  var regie=/(\?|&)regie\b/.test(window.location.search);
+  window.klaarVoorRegie=false;
+  function gereed(){ if(regie){ window.zetFrame(0); window.klaarVoorRegie=true; } else { start(); } }
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ setTimeout(gereed,60); });
+    setTimeout(function(){ if(!regie && !document.querySelector(".w.in")) start(); }, 2500);
+  } else { setTimeout(gereed,200); }
+})();
+</script>
+</body>
+</html>
