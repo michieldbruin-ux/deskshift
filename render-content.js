@@ -144,7 +144,15 @@ async function rendersVideo(browser, item) {
   }
   const items = JSON.parse(fs.readFileSync(lijstPad, "utf8"));
   const opnieuw = process.argv.includes("--opnieuw");
-  const todo = items.filter((i) => opnieuw || !fs.existsSync(i.doel));
+  // --alleen=post of --alleen=video, en --max=N. Bedoeld om in blokken te
+  // renderen: een volle ronde video's duurt uren en deze omgeving is vluchtig,
+  // dus je wilt tussendoor kunnen committen.
+  const alleenArg = (process.argv.find((a) => a.startsWith("--alleen=")) || "").split("=")[1];
+  const maxArg = parseInt((process.argv.find((a) => a.startsWith("--max=")) || "").split("=")[1] || "0", 10);
+  let todo = items.filter((i) => opnieuw || !fs.existsSync(i.doel));
+  if (alleenArg === "post") todo = todo.filter((i) => i.duur == null);
+  if (alleenArg === "video") todo = todo.filter((i) => i.duur != null);
+  if (maxArg > 0) todo = todo.slice(0, maxArg);
 
   console.log("Te renderen   : " + todo.length + " van " + items.length);
   console.log("Video's       : 1080x1920, gerenderd op " + (1080 * SCHAAL_VIDEO) + "x" + (1920 * SCHAAL_VIDEO) + ", crf " + CRF);

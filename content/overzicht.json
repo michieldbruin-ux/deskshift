@@ -363,6 +363,556 @@
     "platform": "instagram",
     "week": 5,
     "nr": 1,
+    "slug": "post-nieuw-werk",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w05-p1-post-nieuw-werk.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w05-p1-post-nieuw-werk.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 6,
+    "nr": 1,
+    "slug": "post-niemand-komt",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w06-p1-post-niemand-komt.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w06-p1-post-niemand-komt.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 7,
+    "nr": 1,
+    "slug": "post-zes-weken",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w07-p1-post-zes-weken.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w07-p1-post-zes-weken.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 7,
+    "nr": 2,
+    "slug": "vrijdagmiddag",
+    "soort": "video 1080x1920",
+    "duur": 10.4,
+    "bron": "/home/user/deskshift/content/bron/ig-w07-p2-vrijdagmiddag.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w07-p2-vrijdagmiddag.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 7,
+    "nr": 3,
+    "slug": "langzamer",
+    "soort": "video 1080x1920",
+    "duur": 10.7,
+    "bron": "/home/user/deskshift/content/bron/ig-w07-p3-langzamer.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w07-p3-langzamer.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 7,
+    "nr": 4,
+    "slug": "woensdag-leeg",
+    "soort": "video 1080x1920",
+    "duur": 10.8,
+    "bron": "/home/user/deskshift/content/bron/ig-w07-p4-woensdag-leeg.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w07-p4-woensdag-leeg.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 1,
+    "slug": "post-al-antwoord",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w08-p1-post-al-antwoord.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w08-p1-post-al-antwoord.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 2,
+    "slug": "meer-vragen",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w08-p2-meer-vragen.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w08-p2-meer-vragen.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 3,
+    "slug": "bang",
+    "soort": "video 1080x1920",
+    "duur": 10.8,
+    "bron": "/home/user/deskshift/content/bron/ig-w08-p3-bang.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w08-p3-bang.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 4,
+    "slug": "reflex",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/ig-w08-p4-reflex.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w08-p4-reflex.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 1,
+    "slug": "post-geen-test",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w09-p1-post-geen-test.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w09-p1-post-geen-test.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 2,
+    "slug": "liever-overwerkt",
+    "soort": "video 1080x1920",
+    "duur": 9.3,
+    "bron": "/home/user/deskshift/content/bron/ig-w09-p2-liever-overwerkt.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w09-p2-liever-overwerkt.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 3,
+    "slug": "niemand-vraagt",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w09-p3-niemand-vraagt.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w09-p3-niemand-vraagt.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 4,
+    "slug": "goed-is-probleem",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w09-p4-goed-is-probleem.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w09-p4-goed-is-probleem.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 1,
+    "slug": "post-een-project",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w10-p1-post-een-project.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w10-p1-post-een-project.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 2,
+    "slug": "leren-stopte",
+    "soort": "video 1080x1920",
+    "duur": 9.3,
+    "bron": "/home/user/deskshift/content/bron/ig-w10-p2-leren-stopte.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w10-p2-leren-stopte.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 3,
+    "slug": "cv-groeit",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/ig-w10-p3-cv-groeit.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w10-p3-cv-groeit.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 4,
+    "slug": "weggepromoveerd",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w10-p4-weggepromoveerd.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w10-p4-weggepromoveerd.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 1,
+    "slug": "post-eerst-gratis",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w11-p1-post-eerst-gratis.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w11-p1-post-eerst-gratis.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 2,
+    "slug": "functietitel",
+    "soort": "video 1080x1920",
+    "duur": 9.3,
+    "bron": "/home/user/deskshift/content/bron/ig-w11-p2-functietitel.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w11-p2-functietitel.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 3,
+    "slug": "manager-denkt",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w11-p3-manager-denkt.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w11-p3-manager-denkt.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 4,
+    "slug": "laat-maar-weten",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w11-p4-laat-maar-weten.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w11-p4-laat-maar-weten.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 1,
+    "slug": "post-stilte",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w12-p1-post-stilte.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w12-p1-post-stilte.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 2,
+    "slug": "benoemen",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w12-p2-benoemen.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w12-p2-benoemen.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 3,
+    "slug": "overtreft",
+    "soort": "video 1080x1920",
+    "duur": 9.2,
+    "bron": "/home/user/deskshift/content/bron/ig-w12-p3-overtreft.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w12-p3-overtreft.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 4,
+    "slug": "opzeggen-duur",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/ig-w12-p4-opzeggen-duur.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w12-p4-opzeggen-duur.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 13,
+    "nr": 1,
+    "slug": "post-geen-luiheid",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/ig-w13-p1-post-geen-luiheid.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w13-p1-post-geen-luiheid.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 13,
+    "nr": 2,
+    "slug": "twee-uur",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/ig-w13-p2-twee-uur.html",
+    "doel": "/home/user/deskshift/content/instagram/ig-w13-p2-twee-uur.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 5,
+    "nr": 1,
+    "slug": "post-new-work",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w05-p1-post-new-work.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w05-p1-post-new-work.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 6,
+    "nr": 1,
+    "slug": "post-nobody-fills",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w06-p1-post-nobody-fills.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w06-p1-post-nobody-fills.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 7,
+    "nr": 1,
+    "slug": "post-six-weeks",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w07-p1-post-six-weeks.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w07-p1-post-six-weeks.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 7,
+    "nr": 3,
+    "slug": "reel-friday",
+    "soort": "video 1080x1920",
+    "duur": 10.5,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w07-p3-reel-friday.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w07-p3-reel-friday.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 7,
+    "nr": 4,
+    "slug": "reel-slower",
+    "soort": "video 1080x1920",
+    "duur": 10.7,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w07-p4-reel-slower.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w07-p4-reel-slower.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 1,
+    "slug": "post-already-know",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w08-p1-post-already-know.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w08-p1-post-already-know.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 2,
+    "slug": "reel-wednesday",
+    "soort": "video 1080x1920",
+    "duur": 10.8,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w08-p2-reel-wednesday.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w08-p2-reel-wednesday.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 3,
+    "slug": "reel-asking",
+    "soort": "video 1080x1920",
+    "duur": 9.3,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w08-p3-reel-asking.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w08-p3-reel-asking.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 8,
+    "nr": 4,
+    "slug": "reel-afraid",
+    "soort": "video 1080x1920",
+    "duur": 10.8,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w08-p4-reel-afraid.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w08-p4-reel-afraid.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 1,
+    "slug": "post-not-a-test",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w09-p1-post-not-a-test.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w09-p1-post-not-a-test.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 2,
+    "slug": "reel-rather",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w09-p2-reel-rather.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w09-p2-reel-rather.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 3,
+    "slug": "reel-nobody-asks",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w09-p3-reel-nobody-asks.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w09-p3-reel-nobody-asks.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 9,
+    "nr": 4,
+    "slug": "reel-good",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w09-p4-reel-good.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w09-p4-reel-good.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 1,
+    "slug": "post-one-project",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w10-p1-post-one-project.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w10-p1-post-one-project.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 2,
+    "slug": "reel-learning",
+    "soort": "video 1080x1920",
+    "duur": 9.3,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w10-p2-reel-learning.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w10-p2-reel-learning.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 3,
+    "slug": "reel-cv",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w10-p3-reel-cv.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w10-p3-reel-cv.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 10,
+    "nr": 4,
+    "slug": "reel-promoted",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w10-p4-reel-promoted.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w10-p4-reel-promoted.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 1,
+    "slug": "post-free-first",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w11-p1-post-free-first.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w11-p1-post-free-first.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 2,
+    "slug": "reel-title",
+    "soort": "video 1080x1920",
+    "duur": 9.3,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w11-p2-reel-title.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w11-p2-reel-title.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 3,
+    "slug": "reel-silence",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w11-p3-reel-silence.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w11-p3-reel-silence.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 11,
+    "nr": 4,
+    "slug": "reel-let-me-know",
+    "soort": "video 1080x1920",
+    "duur": 9.5,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w11-p4-reel-let-me-know.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w11-p4-reel-let-me-know.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 1,
+    "slug": "post-silence-costs",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w12-p1-post-silence-costs.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w12-p1-post-silence-costs.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 2,
+    "slug": "reel-name-it",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w12-p2-reel-name-it.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w12-p2-reel-name-it.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 3,
+    "slug": "reel-exceeds",
+    "soort": "video 1080x1920",
+    "duur": 9.1,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w12-p3-reel-exceeds.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w12-p3-reel-exceeds.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 12,
+    "nr": 4,
+    "slug": "reel-quitting",
+    "soort": "video 1080x1920",
+    "duur": 9.4,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w12-p4-reel-quitting.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w12-p4-reel-quitting.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 13,
+    "nr": 1,
+    "slug": "post-not-lazy",
+    "soort": "post 1080x1350",
+    "duur": null,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w13-p1-post-not-lazy.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w13-p1-post-not-lazy.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 13,
+    "nr": 2,
+    "slug": "reel-two-hours",
+    "soort": "video 1080x1920",
+    "duur": 9.3,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w13-p2-reel-two-hours.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w13-p2-reel-two-hours.mp4"
+  },
+  {
+    "platform": "instagram",
+    "week": 5,
+    "nr": 1,
     "slug": "post-told-no-one",
     "soort": "post 1080x1080",
     "duur": null,

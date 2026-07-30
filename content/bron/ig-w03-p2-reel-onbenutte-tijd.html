@@ -20,9 +20,13 @@
     background:var(--paper);transform-origin:center center}
   #doek.naarDonker{animation:bgDonker .5s cubic-bezier(.4,0,.2,1) both}
   @keyframes bgDonker{from{background-color:#E6E6E6}to{background-color:#404E3B}}
-  /* Veilige zone. TikTok en Reels zetten rechts een knoppenbalk van ongeveer
-     200 beeldpunten en onderin de caption over de video heen. De tekst staat
-     daarom in het bruikbare vak, niet midden in het hele frame. */
+  /* Veilige zone, SYMMETRISCH. TikTok en Reels zetten rechts een knoppenbalk van
+     ongeveer 200 beeldpunten en onderin de caption over de video heen. Die
+     rechtermarge van 216 is dus nodig, en de linkermarge moet daaraan gelijk
+     zijn. Anders loopt de kolom van 72 tot 864 en ligt het midden op 468 in
+     plaats van 540, en staat alle tekst zichtbaar links van het midden. Dat was
+     tot 30 juli 2026 zo. De kolom is nu 648 breed in plaats van 792, vandaar de
+     kleinere letter: anders breken korte regels alsnog. */
   .regel{position:absolute;left:216px;right:216px;top:45%;transform:translateY(-50%);
     text-align:center;font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
     font-variation-settings:"wdth" 112;font-weight:800;letter-spacing:-.025em;line-height:1.06;

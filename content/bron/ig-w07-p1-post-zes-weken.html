@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Deskshift instagram week 7 post 1, post-zes-weken</title>
+<!-- Vierkant 1080x1080 voor de Instagram-tijdlijn. Statisch beeld, geen animatie. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#404E3B;--sage:#7B9669;--paper:#E6E6E6;--wit:#FFFFFF;--limeL:#BAC8B1}
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+  /* 4:5 en niet vierkant: 1080x1350 pakt in de tijdlijn merkbaar meer
+     schermruimte dan 1080x1080, en Instagram schaalt het niet weg. */
+  #doek{width:1080px;height:1350px;flex:0 0 auto;position:relative;overflow:hidden;
+    transform-origin:center center;padding:104px 92px;display:flex;flex-direction:column;
+    justify-content:space-between;
+    background:var(--paper);
+    color:var(--ink)}
+  .label{font-family:"IBM Plex Mono",monospace;font-size:26px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--sage)}
+  .kop{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:800;
+    font-size:104px;line-height:1.05;letter-spacing:-.03em;max-width:18ch}
+  .kop u{text-decoration:none;
+    background:linear-gradient(var(--sage),var(--sage)) 0 99%/100% 7% no-repeat;
+    padding-bottom:.06em}
+  .voet{display:flex;align-items:center;gap:16px;font-family:"Archivo",sans-serif;
+    font-variation-settings:"wdth" 112;font-weight:700;font-size:40px;letter-spacing:-.01em}
+  .voet .licht{font-weight:500;color:var(--sage)}
+  .voet svg{display:block;width:1.15em;height:1.15em;flex:0 0 auto}
+</style>
+</head>
+<body>
+<div id="doek">
+  <div class="label">Hoe het werkt</div>
+  <div class="kop">Het plan is <u>zes weken</u>. Geen vijf jaar.</div>
+  <div class="voet">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <rect x="0" y="10" width="62" height="32" fill="#404E3B"></rect>
+      <rect x="38" y="58" width="62" height="32" fill="#7B9669"></rect>
+    </svg>
+    <span>Desk<span class="licht">shift</span></span>
+  </div>
+</div>
+<script>
+(function(){
+  var doek=document.getElementById("doek");
+  function schaal(){ var s=Math.min(1, window.innerWidth/1080, window.innerHeight/1350);
+    doek.style.transform="scale("+s+")"; }
+  schaal(); window.addEventListener("resize", schaal);
+  // Laat een opname weten dat het lettertype er is.
+  window.klaarVoorRegie=false;
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ setTimeout(function(){ window.klaarVoorRegie=true; },80); }); }
+  else { setTimeout(function(){ window.klaarVoorRegie=true; },300); }
+})();
+</script>
+</body>
+</html>
