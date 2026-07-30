@@ -129,9 +129,22 @@ onbereikbaar voor Instagram.
 ## Content
 
 - `content/bron/*.html` zijn de bronnen, `node render-content.js` maakt de mp4's
-  en png's. `content/CONTENTPLAN.md` en `contentplan.csv` zijn de planning.
-- Video's zijn 1080x1920, posts 1080x1080. Tekst blijft binnen de veilige zone,
-  anders valt hij achter de knoppenbalk van TikTok en Reels.
+  en png's. **`maak-content.js` genereert die bronnen** uit één structuur, en dat
+  is de echte bron: bewerk je alleen een bestand in `content/bron/`, dan is die
+  wijziging weg bij de eerstvolgende keer dat iemand de generator draait. Pas dus
+  het sjabloon in `maak-content.js` aan.
+- `content/CONTENTPLAN.md` en `contentplan.csv` zijn de planning.
+- Reels en TikTok zijn 1080x1920 (9:16). Posts zijn **1080x1350 (4:5)** en niet
+  vierkant: dat pakt in de tijdlijn merkbaar meer schermruimte. De maat staat per
+  item in het veld `soort` van `content/overzicht.json` en `render-content.js`
+  leest hem daar uit. Staat de maat er niet in, dan valt hij terug op vierkant en
+  snijdt de onderkant van een 4:5-beeld eraf.
+- De posts van voor 30 juli 2026 zijn nog 1080x1080. Die blijven zo, want ze
+  staan al in de planning.
+- Per account gaan er vier berichten per week uit: drie reels en op maandag een
+  foto. Dat zijn acht Routines, vier per taal. Zie `social/ROUTINE.md`.
+- Tekst blijft binnen de veilige zone, anders valt hij achter de knoppenbalk van
+  TikTok en Reels.
 - **Die zone is symmetrisch: links 216px, rechts 216px.** De rechtermarge van 216
   is nodig voor de knoppenbalk, en de linkermarge moet daaraan gelijk zijn, anders
   staat de tekst niet in het midden van het beeld. Dat ging eerst mis: met links
