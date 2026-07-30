@@ -378,5 +378,15 @@
     "duur": null,
     "bron": "/home/user/deskshift/content/bron/en-ig-w05-p2-post-calendar.html",
     "doel": "/home/user/deskshift/content/instagram/en-ig-w05-p2-post-calendar.png"
+  },
+  {
+    "platform": "instagram",
+    "week": 5,
+    "nr": 3,
+    "slug": "reel-look-busy",
+    "soort": "video 1080x1920",
+    "duur": 10.2,
+    "bron": "/home/user/deskshift/content/bron/en-ig-w05-p3-reel-look-busy.html",
+    "doel": "/home/user/deskshift/content/instagram/en-ig-w05-p3-reel-look-busy.mp4"
   }
 ]
