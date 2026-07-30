@@ -155,10 +155,24 @@ waarop achteraf te zien is of deze Routine bij Instagram kon. Een ronde die
 alleen meldt dat er niets gepland stond, zegt daar niets over.
 
 WELKE POST
-Haal https://deskshift.pro/social/planning.json op. Krijg je een 403 of een
-andere fout van de proxy, haal hem dan op met curl. Lukt ophalen helemaal
-niet, publiceer dan niets en meld dat, want zonder de planning weet je niet
-wat er vandaag hoort te gebeuren.
+De planning staat in de repo michieldbruin-ux/deskshift, die in deze sessie is
+uitgecheckt. Lees hem daar, niet over het netwerk:
+
+  git fetch origin main
+  git diff origin/main -- social/planning.json
+  daarna social/planning.json lezen
+
+Geeft die diff niets, dan is je kopie gelijk aan wat er live staat en kun je
+hem vertrouwen. Geeft hij wel verschil, ga dan uit van de versie in
+origin/main, want dat is wat gedeployed is.
+
+Haal de planning NIET op via https://deskshift.pro/social/planning.json. Het
+egressbeleid van deze omgeving blokkeert dat domein met een 403 op de
+CONNECT-tunnel, en curl loopt tegen diezelfde blokkade aan. Dat is een
+bewuste beleidsblokkade en geen storing, dus probeer er niet omheen te werken.
+
+Lukt het lezen uit de repo ook niet, publiceer dan niets en meld dat. Zonder
+de planning weet je niet wat er vandaag hoort te gebeuren.
 
 Zoek in "posts" de regels waarvan "datum" gelijk is aan de datum van vandaag
 in Europe/Amsterdam.
@@ -200,6 +214,8 @@ draaien is.
 3. Zet met INSTAGRAM_POST_IG_MEDIA_COMMENTS het veld "hashtags" als eerste
    reactie onder de post, via de verbinding instagram_aoul-mastax. Daar horen
    ze, want een caption is via de API niet meer te wijzigen en een reactie wel.
+   Let op de POST in die toolnaam. INSTAGRAM_GET_IG_MEDIA_COMMENTS bestaat ook
+   en leest alleen: die geeft een lege lijst terug en plaatst niets.
 4. Controleer met INSTAGRAM_GET_IG_MEDIA, via de verbinding
    instagram_aoul-mastax, en meld de permalink, plus of caption en hashtags
    goed zijn doorgekomen.
@@ -253,3 +269,13 @@ vangnet staat nu in de prompt. En de ronde meldde alleen dat er niets gepland
 stond, zonder de accountcontrole te noemen, waardoor achteraf niet te zien was
 of hij bij Instagram kon. Daarom moet die controle nu altijd gebeuren en altijd
 in het antwoord staan, ook op een lege dag.
+
+Op 30 juli 2026 bleek de curl-vangnet zelf niet meer te werken: het egressbeleid
+blokkeert `deskshift.pro` met een 403 op de CONNECT-tunnel, en dat treft curl
+net zo hard als een gewone fetch. Dat is een bewuste beleidskeuze, geen storing,
+dus de Engelse prompt probeert er niet meer omheen te werken. In plaats daarvan
+leest hij `social/planning.json` uit de repo-checkout van de sessie zelf, met
+`git diff origin/main` als controle dat die kopie gelijk is aan wat gedeployed
+is. De Nederlandse prompt hierboven heeft deze aanpassing nog niet gekregen: als
+diezelfde blokkade daar ook speelt, moet die op dezelfde manier worden
+bijgewerkt.
