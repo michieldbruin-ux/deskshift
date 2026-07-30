@@ -126,6 +126,8 @@ verbinding op het Engelse account uitkomt en publiceren niet terug te draaien is
 3. Zet met INSTAGRAM_POST_IG_MEDIA_COMMENTS het veld "hashtags" als eerste
    reactie onder de post, via de verbinding instagram_amaze-burrow. Daar horen
    ze, want een caption is via de API niet meer te wijzigen en een reactie wel.
+   Let op de POST in die toolnaam. INSTAGRAM_GET_IG_MEDIA_COMMENTS bestaat ook
+   en leest alleen: die geeft een lege lijst terug en plaatst niets.
 4. Controleer met INSTAGRAM_GET_IG_MEDIA, via de verbinding
    instagram_amaze-burrow, en meld de permalink, plus of caption en hashtags
    goed zijn doorgekomen.
@@ -228,6 +230,8 @@ draaien is.
 3. Zet met INSTAGRAM_POST_IG_MEDIA_COMMENTS het veld "hashtags" als eerste
    reactie onder de post, via de verbinding instagram_aoul-mastax. Daar horen
    ze, want een caption is via de API niet meer te wijzigen en een reactie wel.
+   Let op de POST in die toolnaam. INSTAGRAM_GET_IG_MEDIA_COMMENTS bestaat ook
+   en leest alleen: die geeft een lege lijst terug en plaatst niets.
 4. Controleer met INSTAGRAM_GET_IG_MEDIA, via de verbinding
    instagram_aoul-mastax, en meld de permalink, plus of caption en hashtags
    goed zijn doorgekomen.
