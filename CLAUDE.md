@@ -130,9 +130,20 @@ onbereikbaar voor Instagram.
 
 - `content/bron/*.html` zijn de bronnen, `node render-content.js` maakt de mp4's
   en png's. `content/CONTENTPLAN.md` en `contentplan.csv` zijn de planning.
-- Video's zijn 1080x1920, posts 1080x1080. Tekst blijft binnen de veilige zone
-  (links 72px, rechts 216px), anders valt hij achter de knoppenbalk van TikTok
-  en Reels.
+- Video's zijn 1080x1920, posts 1080x1080. Tekst blijft binnen de veilige zone,
+  anders valt hij achter de knoppenbalk van TikTok en Reels.
+- **Die zone is symmetrisch: links 216px, rechts 216px.** De rechtermarge van 216
+  is nodig voor de knoppenbalk, en de linkermarge moet daaraan gelijk zijn, anders
+  staat de tekst niet in het midden van het beeld. Dat ging eerst mis: met links
+  72 en rechts 216 loopt de kolom van 72 tot 864, en dat midden ligt op 468 in
+  plaats van 540. `text-align:center` centreert dan wel binnen de kolom, maar de
+  kolom zelf staat 72 beeldpunten links. Zichtbaar scheef.
+- Die smallere kolom (648 in plaats van 792) vraagt een kleinere letter, anders
+  breken korte regels alsnog. Voor de videoregels werkt 92px, en 70px voor de
+  regels met de klasse `klein`.
+- Controleer een nieuwe video niet op het oog: open de bron met `?regie`, roep
+  `zetFrame(t)` aan en meet met `getBoundingClientRect()` of het midden van de
+  tekstkolom op 540 uitkomt.
 
 ## Testen
 
