@@ -383,14 +383,18 @@ function bouwVideo(it) {
     background:var(--paper);transform-origin:center center}
   #doek.naarDonker{animation:bgDonker .5s cubic-bezier(.4,0,.2,1) both}
   @keyframes bgDonker{from{background-color:#E6E6E6}to{background-color:#404E3B}}
-  /* Veilige zone. TikTok en Reels zetten rechts een knoppenbalk van ongeveer
-     200 beeldpunten en onderin de caption over de video heen. De tekst staat
-     daarom in het bruikbare vak, niet midden in het hele frame. */
-  .regel{position:absolute;left:72px;right:216px;top:45%;transform:translateY(-50%);
+  /* Veilige zone, SYMMETRISCH. TikTok en Reels zetten rechts een knoppenbalk van
+     ongeveer 200 beeldpunten en onderin de caption over de video heen. Die
+     rechtermarge van 216 is dus nodig, en de linkermarge moet daaraan gelijk
+     zijn. Anders loopt de kolom van 72 tot 864 en ligt het midden op 468 in
+     plaats van 540, en staat alle tekst zichtbaar links van het midden. Dat was
+     tot 30 juli 2026 zo. De kolom is nu 648 breed in plaats van 792, vandaar de
+     kleinere letter: anders breken korte regels alsnog. */
+  .regel{position:absolute;left:216px;right:216px;top:45%;transform:translateY(-50%);
     text-align:center;font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
     font-variation-settings:"wdth" 112;font-weight:800;letter-spacing:-.025em;line-height:1.06;
-    font-size:112px;color:var(--ink)}
-  .regel.klein{font-size:86px;line-height:1.12;letter-spacing:-.02em}
+    font-size:92px;color:var(--ink)}
+  .regel.klein{font-size:70px;line-height:1.14;letter-spacing:-.02em}
   .regel.slot{color:var(--wit)}
   .w{display:inline-block;opacity:0;will-change:opacity,transform}
   .w.in{animation:wIn .42s cubic-bezier(.22,.61,.36,1) both}
@@ -519,15 +523,17 @@ function bouwPost(it) {
   *{box-sizing:border-box;margin:0}
   html,body{height:100%;background:#000;overflow:hidden}
   body{display:flex;align-items:center;justify-content:center}
-  #doek{width:1080px;height:1080px;flex:0 0 auto;position:relative;overflow:hidden;
-    transform-origin:center center;padding:88px 92px;display:flex;flex-direction:column;
+  /* 4:5 en niet vierkant: 1080x1350 pakt in de tijdlijn merkbaar meer
+     schermruimte dan 1080x1080, en Instagram schaalt het niet weg. */
+  #doek{width:1080px;height:1350px;flex:0 0 auto;position:relative;overflow:hidden;
+    transform-origin:center center;padding:104px 92px;display:flex;flex-direction:column;
     justify-content:space-between;
     background:${donker ? 'var(--ink)' : 'var(--paper)'};
     color:${donker ? 'var(--wit)' : 'var(--ink)'}}
   .label{font-family:"IBM Plex Mono",monospace;font-size:26px;letter-spacing:.16em;
     text-transform:uppercase;color:${donker ? 'var(--limeL)' : 'var(--sage)'}}
   .kop{font-family:"Archivo",sans-serif;font-variation-settings:"wdth" 112;font-weight:800;
-    font-size:112px;line-height:1.03;letter-spacing:-.03em;max-width:14ch}
+    font-size:104px;line-height:1.05;letter-spacing:-.03em;max-width:18ch}
   .kop u{text-decoration:none;
     background:linear-gradient(var(--sage),var(--sage)) 0 99%/100% 7% no-repeat;
     padding-bottom:.06em}
@@ -552,7 +558,7 @@ function bouwPost(it) {
 <script>
 (function(){
   var doek=document.getElementById("doek");
-  function schaal(){ var s=Math.min(1, window.innerWidth/1080, window.innerHeight/1080);
+  function schaal(){ var s=Math.min(1, window.innerWidth/1080, window.innerHeight/1350);
     doek.style.transform="scale("+s+")"; }
   schaal(); window.addEventListener("resize", schaal);
   // Laat een opname weten dat het lettertype er is.

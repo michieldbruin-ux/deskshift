@@ -60,18 +60,27 @@ function browserPad() {
 }
 
 // Een vierkante post: één beeld, ruim gerenderd en netjes teruggeschaald.
+// De maat van een post staat in het veld "soort", bijvoorbeeld "post 1080x1350".
+// Niet meer hardgecodeerd vierkant: 4:5 pakt in de tijdlijn meer schermruimte,
+// en zonder deze uitlezing werd de onderkant van zo'n beeld afgesneden.
+function postMaat(item) {
+  const m = /(\d{3,4})\s*[x×]\s*(\d{3,4})/.exec(item.soort || "");
+  if (m) return { b: parseInt(m[1], 10), h: parseInt(m[2], 10) };
+  return { b: 1080, h: 1080 };
+}
+
 async function rendersPost(browser, item) {
-  const maat = 1080;
+  const { b: breed, h: hoog } = postMaat(item);
   const pagina = await browser.newPage();
   try {
-    await pagina.setViewport({ width: maat, height: maat, deviceScaleFactor: SCHAAL_POST });
+    await pagina.setViewport({ width: breed, height: hoog, deviceScaleFactor: SCHAAL_POST });
     await pagina.goto("file://" + item.bron, { waitUntil: "load" });
     await pagina.waitForFunction("window.klaarVoorRegie === true", { timeout: 15000 });
     const tijdelijk = item.doel.replace(/\.png$/, "-groot.png");
-    await pagina.screenshot({ path: tijdelijk, clip: { x: 0, y: 0, width: maat, height: maat } });
+    await pagina.screenshot({ path: tijdelijk, clip: { x: 0, y: 0, width: breed, height: hoog } });
     const r = spawnSync("ffmpeg", [
       "-y", "-v", "error", "-i", tijdelijk,
-      "-vf", "scale=" + maat + ":" + maat + ":flags=lanczos",
+      "-vf", "scale=" + breed + ":" + hoog + ":flags=lanczos",
       item.doel,
     ], { stdio: "inherit" });
     fs.rmSync(tijdelijk, { force: true });
@@ -139,7 +148,7 @@ async function rendersVideo(browser, item) {
 
   console.log("Te renderen   : " + todo.length + " van " + items.length);
   console.log("Video's       : 1080x1920, gerenderd op " + (1080 * SCHAAL_VIDEO) + "x" + (1920 * SCHAAL_VIDEO) + ", crf " + CRF);
-  console.log("Posts         : 1080x1080, gerenderd op " + (1080 * SCHAAL_POST) + "x" + (1080 * SCHAAL_POST));
+  console.log("Posts         : maat uit het veld soort, gerenderd op " + SCHAAL_POST + "x en teruggeschaald met lanczos");
   if (!todo.length) { console.log("Niets te doen."); return; }
 
   const exe = browserPad();
