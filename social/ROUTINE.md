@@ -68,10 +68,24 @@ waarop achteraf te zien is of deze Routine bij Instagram kon. Een ronde die
 alleen meldt dat er niets gepland stond, zegt daar niets over.
 
 WELKE POST
-Haal https://deskshift.pro/social/planning.json op. Krijg je een 403 of een
-andere fout van de proxy, haal hem dan op met curl. Lukt ophalen helemaal
-niet, publiceer dan niets en meld dat, want zonder de planning weet je niet
-wat er vandaag hoort te gebeuren.
+De planning staat in de repo michieldbruin-ux/deskshift, die in deze sessie is
+uitgecheckt. Lees hem daar, niet over het netwerk:
+
+  git fetch origin main
+  git diff origin/main -- social/planning.json
+  daarna social/planning.json lezen
+
+Geeft die diff niets, dan is je kopie gelijk aan wat er live staat en kun je
+hem vertrouwen. Geeft hij wel verschil, ga dan uit van de versie in
+origin/main, want dat is wat gedeployed is.
+
+Haal de planning NIET op via https://deskshift.pro/social/planning.json. Het
+egressbeleid van deze omgeving blokkeert dat domein met een 403 op de
+CONNECT-tunnel, en curl loopt tegen diezelfde blokkade aan. Dat is een
+bewuste beleidsblokkade en geen storing, dus probeer er niet omheen te werken.
+
+Lukt het lezen uit de repo ook niet, publiceer dan niets en meld dat. Zonder
+de planning weet je niet wat er vandaag hoort te gebeuren.
 
 Zoek in "posts" de regels waarvan "datum" gelijk is aan de datum van vandaag
 in Europe/Amsterdam.
@@ -155,10 +169,24 @@ waarop achteraf te zien is of deze Routine bij Instagram kon. Een ronde die
 alleen meldt dat er niets gepland stond, zegt daar niets over.
 
 WELKE POST
-Haal https://deskshift.pro/social/planning.json op. Krijg je een 403 of een
-andere fout van de proxy, haal hem dan op met curl. Lukt ophalen helemaal
-niet, publiceer dan niets en meld dat, want zonder de planning weet je niet
-wat er vandaag hoort te gebeuren.
+De planning staat in de repo michieldbruin-ux/deskshift, die in deze sessie is
+uitgecheckt. Lees hem daar, niet over het netwerk:
+
+  git fetch origin main
+  git diff origin/main -- social/planning.json
+  daarna social/planning.json lezen
+
+Geeft die diff niets, dan is je kopie gelijk aan wat er live staat en kun je
+hem vertrouwen. Geeft hij wel verschil, ga dan uit van de versie in
+origin/main, want dat is wat gedeployed is.
+
+Haal de planning NIET op via https://deskshift.pro/social/planning.json. Het
+egressbeleid van deze omgeving blokkeert dat domein met een 403 op de
+CONNECT-tunnel, en curl loopt tegen diezelfde blokkade aan. Dat is een
+bewuste beleidsblokkade en geen storing, dus probeer er niet omheen te werken.
+
+Lukt het lezen uit de repo ook niet, publiceer dan niets en meld dat. Zonder
+de planning weet je niet wat er vandaag hoort te gebeuren.
 
 Zoek in "posts" de regels waarvan "datum" gelijk is aan de datum van vandaag
 in Europe/Amsterdam.
@@ -214,20 +242,28 @@ geeft een fout.
 ## Waarom het zo is opgezet
 
 De planning staat in `planning.json` en niet in de prompt, zodat je een caption
-of een datum kunt wijzigen zonder de Routines aan te raken. Het bestand wordt
-door Vercel meegeserveerd, dus de Routine kan er altijd bij.
+of een datum kunt wijzigen zonder de Routines aan te raken.
 
-**De Routine leest de gepubliceerde versie, niet de versie in de repo.** Een
-wijziging in `planning.json` doet dus niets tot hij live staat. Loopt de Routine
-op iets vast wat in de repo allang klopt, kijk dan eerst of wat op
-`deskshift.pro/social/planning.json` staat gelijk is aan wat je hier ziet.
+**De Routine leest de planning uit de repo, niet van het domein.** Dat is sinds
+30 juli 2026 zo, en het is een correctie. Eerst haalde hij
+`deskshift.pro/social/planning.json` op, maar het egressbeleid van de
+Routine-omgeving blokkeert dat domein met een 403 op de CONNECT-tunnel. De
+Nederlandse ronde van donderdag 30 juli liep daarop vast en heeft die dag niets
+gepubliceerd, precies zoals de instructie voorschrijft. De Engelse ronde van
+datzelfde moment loste het zelf op door de repo-checkout te lezen en met
+`git diff origin/main` te controleren dat die gelijk is aan wat gedeployed is.
+Die aanpak staat nu in beide prompts.
 
-Op 28 juli 2026 was dat niet zo. De Routine vond het veld `taal` niet, terwijl
-`main` toen al zeventien regels had die het allemaal hadden. Wat live stond was
-een oudere versie met acht regels en zonder dat veld. De repo was dus niet het
-probleem, de productiedeploy op Vercel had `main` niet opgepakt. Dat is de
-eerste plek om te kijken als de planning zich anders gedraagt dan het bestand
-dat je voor je hebt.
+Zet er geen curl-vangnet meer in. De blokkade zit op de tunnel, dus curl loopt
+tegen dezelfde 403 aan. Dat stond hier een dag lang wel, en dat was fout.
+
+Let er wel op dat de repo en de deploy uit elkaar kunnen lopen. Op 28 juli 2026
+vond de Routine het veld `taal` niet, terwijl `main` toen al zeventien regels had
+die het allemaal hadden: de productiedeploy had `main` niet opgepakt en wat live
+stond was een oudere versie met acht regels. Voor de planning maakt dat nu niets
+meer uit, want die komt uit de repo. Voor de **media** wel: die haalt de Graph
+API van het domein, dus een bestand dat niet gedeployed is geeft een 404 en dan
+mislukt het aanmaken van de container.
 
 De controle op de laatste berichten zit erin omdat een Routine soms twee keer
 kan afgaan. Dubbel posten valt niet terug te draaien, een overgeslagen post wel.
@@ -247,9 +283,16 @@ Let op: deze prompt staat hier alleen ter documentatie. De Routines op claude.ai
 hebben hun eigen kopie. Wijzig je hier iets, werk dan alle zes de Routines bij,
 anders draait er nog de oude tekst.
 
-Twee dingen kwamen uit de eerste proefronde op 28 juli 2026. Het ophalen van de
-planning liep vast op een 403 van de proxy en lukte wel met curl, dus dat
-vangnet staat nu in de prompt. En de ronde meldde alleen dat er niets gepland
-stond, zonder de accountcontrole te noemen, waardoor achteraf niet te zien was
-of hij bij Instagram kon. Daarom moet die controle nu altijd gebeuren en altijd
-in het antwoord staan, ook op een lege dag.
+Wat de eerste rondes hebben opgeleverd:
+
+- **28 juli, proefronde.** De ronde meldde alleen dat er niets gepland stond,
+  zonder de accountcontrole te noemen, waardoor achteraf niet te zien was of hij
+  bij Instagram kon. Daarom moet die controle nu altijd gebeuren en altijd in het
+  antwoord staan, ook op een lege dag.
+- **30 juli, eerste echte ronde.** Nederlands liep vast op de 403 en publiceerde
+  niets, Engels loste het op via de repo. Sindsdien lezen beide prompts de
+  planning uit de repo. De post van die donderdag is met de hand nagestuurd.
+
+Wat hier telkens uit blijkt: de prompt moet nooit afhangen van iets buiten de
+repo en Composio. Elke keer dat er iets stukliep, was het een derde partij
+ertussen.
