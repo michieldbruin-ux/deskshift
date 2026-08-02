@@ -9,16 +9,6 @@
   ],
   "posts": [
     {
-      "nr": 2,
-      "taal": "en",
-      "datum": "2026-08-02",
-      "tijd": "19:30",
-      "bestand": "https://deskshift.pro/social/en-ig-w02-p2-reel-outgrown.mp4",
-      "soort": "reel",
-      "caption": "That is a different problem, and it has a different answer. Deskshift looks for it in your own words. Link in bio.",
-      "hashtags": "#careerchange #boreout #worklife #deskshift"
-    },
-    {
       "nr": 3,
       "datum": "2026-08-02",
       "tijd": "19:30",
@@ -739,6 +729,13 @@
       "permalink": "https://www.instagram.com/reel/DbalFUaFD_3/",
       "taal": "nl",
       "opmerking": "Eerste post die een Routine zelf heeft geplaatst. De ronde van 12:30 liep vast op de 403 en publiceerde niets; deze ging eruit nadat de prompt de planning uit de repo ging lezen."
+    },
+    {
+      "nr": 2,
+      "datum": "2026-08-02",
+      "bestand": "en-ig-w02-p2-reel-outgrown.mp4",
+      "permalink": "https://www.instagram.com/reel/Dbi9iAoiY7T/",
+      "taal": "en"
     }
   ],
   "_accounts": {
