@@ -4486,4 +4486,11 @@ try{ checkBetaalTerugkeer(); }catch(e){}
      pagina. De vragen en antwoorden in de FAQPage komen letterlijk uit
      landing.faq, dus ze kunnen niet uit de pas gaan lopen met wat er op het
      scherm staat. -->
+<!-- Vercel Web Analytics. Bewust het script van Vercel zelf en niet het npm-
+     pakket: dit is geen Next-app maar statische HTML zonder bundler, dus er is
+     niets om een React-component in te hangen. Het pad ligt op het eigen
+     domein, dus de CSP hoeft niet open: script-src en connect-src staan al
+     op self. -->
+<script defer src="/_vercel/insights/script.js"></script>
+
 {{JSONLD}}

@@ -97,6 +97,7 @@
         <tr><td>Payment data</td><td>To take your payment</td><td>With our payment provider; we never see or store card or account details</td></tr>
         <tr><td>Technical data in server logs (including IP address, timestamp, request type)</td><td>To run the service, prevent abuse and rate-limit requests</td><td>Briefly, with our hosting and AI providers</td></tr>
         <tr><td>An anonymous measurement of which step of the intake you reach: a random session number, the name of the step, and how many seconds after the first step. No answers, no email address, no IP address, no device data</td><td>To see where people drop out, so we can make the intake shorter and clearer</td><td>In our own database, for at most 90 days, then deleted automatically. The session number lives in your browser's session storage and disappears when you close the tab; it is known nowhere else and so cannot be traced back to you</td></tr>
+        <tr><td>Page statistics: which page was viewed, which site you came from, which country, and the type of browser and device. No cookie, no profile, no name, no email address</td><td>To see how many people visit the site and what works. This is separate from the intake measurement above</td><td>Vercel Web Analytics, at the hosting provider that already serves the site. The measurement script sits on our own domain, so your request does not go to another party</td></tr>
       </tbody>
     </table>
 
@@ -131,6 +132,7 @@
       <li><strong>Payment data:</strong> kept by our payment provider under their policy and statutory retention rules.</li>
       <li><strong>Server logs:</strong> kept only briefly, for security and abuse prevention.</li>
       <li><strong>Anonymous intake measurement:</strong> at most 90 days. A nightly job in our database deletes anything older.</li>
+      <li><strong>Page statistics:</strong> kept by Vercel according to their retention period for Web Analytics. Nothing in it points to you.</li>
     </ul>
 
     <h2>Your rights</h2>
@@ -141,6 +143,7 @@
     <h2>Cookies and storage</h2>
     <p>We use no tracking cookies and no advertising cookies. To make the intake work we use technical storage in your browser (local storage and session storage), for instance to keep your progress. That storage stays on your own device.</p>
     <p>We do measure which step of the intake gets reached, so we can see where people drop out. That runs without a cookie and without a profile: all that is sent is a random session number, which disappears when you close the tab, plus the name of the step. Your answers are not part of it, and there is no way to link that measurement to you as a person. There is no third-party service in between that could follow you across other websites.</p>
+    <p>We also count visits with Vercel Web Analytics. That runs without a cookie and without a profile, and the measurement script is served from our own domain, so no request goes to another party. What we see is counted, never individual: which page was viewed, which site someone came from, which country, and what type of browser and device. Vercel already serves the site, so it sees those requests either way.</p>
 
     <h2>Security</h2>
     <p>We take reasonable technical and organisational measures to protect your data, including encrypted connections (HTTPS) and the principle of keeping as little as possible centrally. No online service can guarantee absolute security.</p>
@@ -157,5 +160,6 @@
   </div>
   <p class="foot"><a href="/en">Deskshift</a> &middot; <a href="/en/terms">Terms</a> &middot; <a href="/privacy">Nederlands</a></p>
 </div>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

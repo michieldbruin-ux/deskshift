@@ -92,6 +92,7 @@
         <tr><td>Betaalgegevens</td><td>Om je betaling van &euro;25 te verwerken</td><td>Bij onze betaaldienstverlener; wij zien of bewaren geen kaart- of rekeninggegevens</td></tr>
         <tr><td>Technische gegevens (o.a. IP-adres, tijdstip, type verzoek) in serverlogs</td><td>Om de dienst te laten werken, misbruik te voorkomen en verzoeken te begrenzen (rate-limiting)</td><td>Kortstondig bij onze hosting- en AI-dienstverlener</td></tr>
         <tr><td>Anonieme meting van welke stap in de intake je bereikt: een willekeurig sessienummer, de naam van de stap, en hoeveel seconden na de eerste stap. Geen antwoorden, geen e-mailadres, geen IP-adres, geen apparaatgegevens</td><td>Om te zien waar mensen afhaken, zodat we de intake korter en duidelijker kunnen maken</td><td>In onze eigen database, maximaal 90 dagen, daarna automatisch verwijderd. Het sessienummer staat in de session storage van je browser en verdwijnt zodra je het tabblad sluit; het is nergens anders bekend en dus niet naar jou te herleiden</td></tr>
+        <tr><td>Bezoekstatistieken van de pagina: welke pagina is bekeken, van welke site je kwam, uit welk land, en het type browser en toestel. Geen cookie, geen profiel, geen naam, geen e-mailadres</td><td>Om te zien hoeveel mensen de site bezoeken en wat er werkt. Dit staat los van de meting van de intake hierboven</td><td>Vercel Web Analytics, bij onze hostingpartij die de site toch al uitlevert. Het meetscript staat op ons eigen domein, dus je verzoek gaat niet naar een andere partij</td></tr>
       </tbody>
     </table>
 
@@ -126,6 +127,7 @@
       <li><strong>Betaalgegevens:</strong> worden bewaard door onze betaaldienstverlener volgens diens beleid en de wettelijke bewaarplichten.</li>
       <li><strong>Serverlogs:</strong> worden slechts kort bewaard voor beveiliging en misbruikpreventie.</li>
       <li><strong>Anonieme meting van de intake:</strong> maximaal 90 dagen. Een taak in onze database verwijdert elke nacht alles wat ouder is.</li>
+      <li><strong>Bezoekstatistieken:</strong> bewaard door Vercel volgens hun bewaartermijn voor Web Analytics. Er zit geen gegeven in dat naar jou wijst.</li>
     </ul>
 
     <h2>Jouw rechten</h2>
@@ -135,6 +137,7 @@
     <h2>Cookies en opslag</h2>
     <p>We gebruiken geen trackingcookies en geen advertentiecookies. Voor de werking van de intake gebruiken we technische opslag in je browser (local storage en session storage), bijvoorbeeld om je voortgang te bewaren. Die opslag blijft op je eigen toestel.</p>
     <p>We meten wel welke stap van de intake wordt bereikt, zodat we zien waar mensen afhaken. Dat gaat zonder cookie en zonder profiel: er wordt alleen een willekeurig sessienummer meegestuurd dat verdwijnt als je het tabblad sluit, plus de naam van de stap. Je antwoorden gaan daar niet in mee, en er is geen manier om die meting aan jou als persoon te koppelen. Er zit ook geen dienst van een derde partij tussen die je over andere websites zou kunnen volgen.</p>
+    <p>Daarnaast tellen we bezoeken met Vercel Web Analytics. Dat gebeurt zonder cookie en zonder profiel, en het meetscript wordt uitgeleverd vanaf ons eigen domein, dus er gaat geen verzoek naar een andere partij. Wat we daarvan zien is geteld en niet individueel: welke pagina bekeken is, van welke site iemand kwam, uit welk land, en welk type browser en toestel. Vercel levert de site toch al uit en ziet die verzoeken dus sowieso.</p>
 
     <h2>Beveiliging</h2>
     <p>We nemen redelijke technische en organisatorische maatregelen om je gegevens te beschermen, waaronder versleutelde verbindingen (HTTPS) en het principe om zo min mogelijk gegevens centraal te bewaren. Geen enkele online dienst kan echter absolute veiligheid garanderen.</p>
@@ -150,5 +153,6 @@
   </div>
   <p class="foot"><a href="/">Deskshift</a> &middot; <a href="/terms">Algemene voorwaarden</a> &middot; <a href="/en/privacy">English</a></p>
 </div>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
