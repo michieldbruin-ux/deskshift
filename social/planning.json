@@ -739,6 +739,21 @@
       "permalink": "https://www.instagram.com/reel/DbalFUaFD_3/",
       "taal": "nl",
       "opmerking": "Eerste post die een Routine zelf heeft geplaatst. De ronde van 12:30 liep vast op de 403 en publiceerde niets; deze ging eruit nadat de prompt de planning uit de repo ging lezen."
+    },
+    {
+      "nr": 4,
+      "datum": "2026-08-04",
+      "bestand": "ig-w03-p1-reel-schuiven.mp4",
+      "permalink": "https://www.instagram.com/reel/DbnJgEVjw7y/",
+      "taal": "nl",
+      "opmerking": "Buiten Code om gepubliceerd door Claude in de chat, vanwege de aanhoudende egress-blokkade op deskshift.pro in de Code-sandbox."
+    },
+    {
+      "nr": 3,
+      "datum": "2026-08-04",
+      "bestand": "en-ig-w02-p3-post-boredom.png",
+      "permalink": "https://www.instagram.com/p/Dbm1YXmFnms/",
+      "taal": "en"
     }
   ],
   "_accounts": {
