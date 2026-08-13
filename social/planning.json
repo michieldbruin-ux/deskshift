@@ -149,16 +149,6 @@
       "taal": "nl"
     },
     {
-      "nr": 7,
-      "taal": "en",
-      "datum": "2026-08-13",
-      "tijd": "12:30",
-      "bestand": "https://deskshift.pro/social/en-ig-w04-p1-reel-no-risk.mp4",
-      "soort": "reel",
-      "caption": "That answer is more usable than it sounds. Deskshift makes it concrete, in a plan of six weeks. Link in bio.",
-      "hashtags": "#careers #sideproject #worklife #deskshift"
-    },
-    {
       "nr": 8,
       "datum": "2026-08-13",
       "tijd": "12:30",
@@ -739,6 +729,13 @@
       "permalink": "https://www.instagram.com/reel/DbalFUaFD_3/",
       "taal": "nl",
       "opmerking": "Eerste post die een Routine zelf heeft geplaatst. De ronde van 12:30 liep vast op de 403 en publiceerde niets; deze ging eruit nadat de prompt de planning uit de repo ging lezen."
+    },
+    {
+      "nr": 7,
+      "datum": "2026-08-13",
+      "bestand": "en-ig-w04-p1-reel-no-risk.mp4",
+      "permalink": "https://www.instagram.com/reel/Db-i_RrAKKx/",
+      "taal": "en"
     }
   ],
   "_accounts": {
