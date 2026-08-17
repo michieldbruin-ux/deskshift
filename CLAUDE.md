@@ -158,6 +158,29 @@ onbereikbaar voor Instagram.
   `zetFrame(t)` aan en meet met `getBoundingClientRect()` of het midden van de
   tekstkolom op 540 uitkomt.
 
+## Pushen kost geld, dus bundel
+
+De gratis Actions-minuten van dit account zijn op. Er staat nog een budget van
+ongeveer 600 minuten en dat reset op 1 september. Actions blokkeert volledig
+zodra dat op is.
+
+**Deskshift zelf verbruikt daar niets van**, want deze repo heeft geen enkele
+workflow en geen testsuite. Maar elke push naar een branch start wel een
+Vercel-build, en elke merge naar `main` een productiedeploy. Die builds zijn
+niet gratis en ze zijn hier goedkoop te vermijden.
+
+Daarom: **bundel wijzigingen in één commit en één push.** Niet pushen na elke
+losse aanpassing. Werk een blok af, controleer het, en push dan één keer. Alleen
+afwijken als het werk anders verloren gaat, bijvoorbeeld bij een lange render in
+een vluchtige omgeving; noem die reden dan in het verslag.
+
+Meld bij elk blok werk hoeveel builds het gekost heeft. Een blok dat niet binnen
+het resterende budget past, meld je voordat je begint.
+
+Loop je tegen een CI aan die hier niet bestaat, zoals matrixjobs, RLS-suites of
+Playwright in Actions: dat is een andere repo, waarschijnlijk VendorRadar. Ga
+hier geen workflow schrijven om aan zo'n verzoek te voldoen.
+
 ## Testen
 
 Geen testsuite in de repo. Werk verifiëren met Puppeteer tegen de gebouwde
