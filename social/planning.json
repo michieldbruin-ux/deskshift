@@ -250,16 +250,6 @@
     },
     {
       "nr": "7-4",
-      "taal": "en",
-      "datum": "2026-08-23",
-      "tijd": "19:30",
-      "bestand": "https://deskshift.pro/social/en-ig-w07-p4-reel-slower.mp4",
-      "soort": "reel",
-      "caption": "You reply slower than you can. So it looks like it took time. That is not laziness. That is hiding. And it costs you a year. Deskshift does the maths. Link in bio.",
-      "hashtags": "#workstress #purpose #careers #deskshift"
-    },
-    {
-      "nr": "7-4",
       "taal": "nl",
       "datum": "2026-08-23",
       "tijd": "19:30",
@@ -739,6 +729,13 @@
       "permalink": "https://www.instagram.com/reel/DbalFUaFD_3/",
       "taal": "nl",
       "opmerking": "Eerste post die een Routine zelf heeft geplaatst. De ronde van 12:30 liep vast op de 403 en publiceerde niets; deze ging eruit nadat de prompt de planning uit de repo ging lezen."
+    },
+    {
+      "nr": "7-4",
+      "datum": "2026-08-23",
+      "bestand": "en-ig-w07-p4-reel-slower.mp4",
+      "permalink": "https://www.instagram.com/reel/DcZCMWij6tI/",
+      "taal": "en"
     }
   ],
   "_accounts": {
