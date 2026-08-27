@@ -310,16 +310,6 @@
     },
     {
       "nr": "8-3",
-      "taal": "en",
-      "datum": "2026-08-27",
-      "tijd": "12:30",
-      "bestand": "https://deskshift.pro/social/en-ig-w08-p3-reel-asking.mp4",
-      "soort": "reel",
-      "caption": "Asking for more work. It sounds like bragging. So you do not ask. And nothing moves. Deskshift finds the words. Link in bio.",
-      "hashtags": "#workstress #purpose #careers #deskshift"
-    },
-    {
-      "nr": "8-3",
       "taal": "nl",
       "datum": "2026-08-27",
       "tijd": "12:30",
@@ -710,6 +700,13 @@
     }
   ],
   "_gedaan": [
+    {
+      "nr": "8-3",
+      "datum": "2026-08-27",
+      "bestand": "en-ig-w08-p3-reel-asking.mp4",
+      "permalink": "https://www.instagram.com/reel/DcimG3Yk7TP/",
+      "taal": "en"
+    },
     {
       "nr": 1,
       "datum": "2026-07-26",
