@@ -399,16 +399,6 @@
       "hashtags": "#jobcrafting #worklife #boreout #deskshift"
     },
     {
-      "nr": "9-3",
-      "taal": "nl",
-      "datum": "2026-09-03",
-      "tijd": "12:30",
-      "bestand": "https://deskshift.pro/social/ig-w09-p3-niemand-vraagt.mp4",
-      "soort": "reel",
-      "caption": "Niemand vraagt wat je vandaag deed. Dat voelt als vrijheid. Twee maanden lang. Daarna voelt het als niets. Deskshift kijkt wat er wel past. Link in bio.",
-      "hashtags": "#jobcrafting #werkgeluk #boreout #deskshift"
-    },
-    {
       "nr": "9-4",
       "taal": "en",
       "datum": "2026-09-06",
@@ -739,6 +729,13 @@
       "permalink": "https://www.instagram.com/reel/DbalFUaFD_3/",
       "taal": "nl",
       "opmerking": "Eerste post die een Routine zelf heeft geplaatst. De ronde van 12:30 liep vast op de 403 en publiceerde niets; deze ging eruit nadat de prompt de planning uit de repo ging lezen."
+    },
+    {
+      "nr": "9-3",
+      "datum": "2026-09-03",
+      "bestand": "ig-w09-p3-niemand-vraagt.mp4",
+      "permalink": "https://www.instagram.com/reel/Dc0nP4qiFug/",
+      "taal": "nl"
     }
   ],
   "_accounts": {
