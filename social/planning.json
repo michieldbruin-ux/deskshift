@@ -550,16 +550,6 @@
     },
     {
       "nr": "11-3",
-      "taal": "en",
-      "datum": "2026-09-17",
-      "tijd": "12:30",
-      "bestand": "https://deskshift.pro/social/en-ig-w11-p3-reel-silence.mp4",
-      "soort": "reel",
-      "caption": "Your manager hears nothing. So they assume it is fine. Silence reads as content. That is the mistake. Deskshift gives you the words. Link in bio.",
-      "hashtags": "#worklife #underused #careers #deskshift"
-    },
-    {
-      "nr": "11-3",
       "taal": "nl",
       "datum": "2026-09-17",
       "tijd": "12:30",
@@ -739,6 +729,14 @@
       "permalink": "https://www.instagram.com/reel/DbalFUaFD_3/",
       "taal": "nl",
       "opmerking": "Eerste post die een Routine zelf heeft geplaatst. De ronde van 12:30 liep vast op de 403 en publiceerde niets; deze ging eruit nadat de prompt de planning uit de repo ging lezen."
+    },
+    {
+      "nr": "11-3",
+      "datum": "2026-09-17",
+      "bestand": "en-ig-w11-p3-reel-silence.mp4",
+      "permalink": "https://www.instagram.com/reel/DdYqx38jUS2/",
+      "taal": "en",
+      "opmerking": "deskshift.pro was voor deze Routine niet bereikbaar door de egress proxy (403 op de CONNECT); de planning is uit de repo gelezen, gelijk aan origin/main op het moment van draaien."
     }
   ],
   "_accounts": {
